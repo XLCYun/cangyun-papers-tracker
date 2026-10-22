@@ -11,8 +11,8 @@
   "stats": {
     "fetched": 1252,
     "matched": 343,
-    "translated": 338,
-    "fallback": 5
+    "translated": 341,
+    "fallback": 2
   },
   "papers": [
     {
@@ -8109,10 +8109,10 @@
       "pdfUrl": "https://arxiv.org/pdf/2605.14381v3",
       "htmlUrl": "https://arxiv.org/html/2605.14381v3",
       "translation": {
-        "status": "fallback",
-        "title": "NodeSynth: Socially Aligned Synthetic Data for AI Evaluation",
-        "abstract": "Recent advancements in generative AI facilitate large-scale synthetic data generation for model evaluation. However, without targeted approaches, these datasets often lack the sociotechnical nuance required for sensitive domains. We introduce NodeSyn, a methodology that pairs a fine-tuned taxonomy generator (TaG) with credible published sources and extracted sensitive attributes to generate queries reflecting authentic societal contexts and nuanced harms. Evaluated across ten open-weight and proprietary LLMs in Medical Advice and Self-Harm using human-validated autoraters, NodeSyn ranked first on 8 of 10 models in each domain. NodeSyn datasets induced average failure rates 3.1 times higher than generic synthetic baselines, 2.4 times higher than structured synthetic benchmarks, and 1.6 times higher than authentic human-authored queries. Ablation studies confirm that, controlling for structural confounds, our granular Level 3 taxonomic expansion significantly drives these failure rates over Level 2 across 9 of 10 models (+29.2% relative lift in Medical Advice and +24.0% in Self-Harm). Variance attribution analysis reveals that failures are driven not only by what topics are queried (taxonomic nodes and lexical specificity), but also by their sociotechnical grounding (affected demographics, occupations, geographies, and querying personas). We embed this method into a research prototype, and open-source (https://github.com/google-research/nodesynth) the code and datasets to enable scalable, high-stakes model evaluation",
-        "brief": ""
+        "title": "NodeSyn：面向AI评估的社会对齐合成数据",
+        "abstract": "生成式AI的最新进展使得大规模合成数据生成用于模型评估成为可能。然而，若缺乏有针对性的方法，这些数据集往往缺少敏感领域所需的社会技术细节。我们提出NodeSyn，一种将微调的分类体系生成器（TaG）与可信的已发表来源及提取的敏感属性相结合的方法，用以生成反映真实社会情境和细微危害的查询。在Medical Advice和Self-Harm两个领域，使用经人工验证的自动评估器对十个开源权重及专有LLM进行评估，NodeSyn在每个领域的10个模型中有8个排名第一。NodeSyn数据集诱导的平均失败率是通用合成基线的3.1倍，是结构化合成基准的2.4倍，是真实人工撰写查询的1.6倍。消融研究证实，在控制结构混淆因素的情况下，我们细粒度的Level 3分类扩展在10个模型中的9个上显著推动了失败率相对Level 2的提升（Medical Advice相对提升29.2%，Self-Harm相对提升24.0%）。方差归因分析表明，失败不仅由查询的主题（分类节点和词汇特异性）驱动，还由其社会技术背景（受影响的人群、职业、地理区域和查询者角色）驱动。我们将该方法嵌入一个研究原型，并开源（https://github.com/google-research/nodesynth）代码和数据集，以支持可扩展的高风险模型评估。",
+        "brief": "针对敏感领域评估数据缺乏社会技术细节的问题，提出NodeSyn方法，通过微调的分类体系生成器结合可信来源与敏感属性来生成贴近真实社会情境的评估查询。",
+        "status": "translated"
       }
     },
     {
@@ -8139,10 +8139,10 @@
       "pdfUrl": "https://arxiv.org/pdf/2605.15104v3",
       "htmlUrl": "https://arxiv.org/html/2605.15104v3",
       "translation": {
-        "status": "fallback",
-        "title": "From Text to Voice: A Reproducible and Verifiable Framework for Evaluating Tool Calling LLM Agents",
-        "abstract": "Voice agents increasingly require reliable tool use from speech, whereas prominent tool-calling benchmarks remain text-based. We study whether verified text benchmarks can be converted into controlled audio-based tool calling evaluations without re-annotating the tool schema and gold labels. Our dataset-agnostic framework uses text-to-speech, speaker variation, and environmental noise to create paired text-audio instances while preserving the original dataset annotations. Based on extensive evaluation of 7 omni-modal models on audio-converted versions of Confetti and When2Call, our framework demonstrates that the performance is strongly model- and task-dependent: Gemini-3.1-Flash-Live obtains the highest Confetti score (70.4), whereas GPT-Realtime-1.5 performs best on When2Call (71.9). On Confetti, the text-to-voice gap ranges from 1.8 points for Qwen3-Omni to 4.8 points for GPT-Realtime-1.5. A targeted analysis of failure cases demonstrates that degradations most often reflect misunderstandings of argument values in the speech. Considering real-world deployment scenarios, we further report text-only results, an ambiguity-based reformulation stress test, and a reference-free LLM-as-judge protocol validated against human preferences. Notably, we find that open-source Qwen3 judges with at least 8B parameters exceed 80% agreement with proprietary judges, supporting privacy-preserving evaluation. Overall, our framework provides a verifiable and reproducible first-stage diagnostic that complements purpose-built audio corpora.",
-        "brief": ""
+        "title": "从文本到语音：一个可复现、可验证的工具调用 LLM Agent 评估框架",
+        "abstract": "语音 Agent 日益需要可靠的基于语音的工具调用能力，而主流的工具调用基准仍以文本为主。我们研究是否可以在不重新标注工具模式和标准答案标签的情况下，将经过验证的文本基准转换为可控的基于音频的工具调用评估。我们提出的框架与具体数据集无关，利用文本转语音、说话人变化和环境噪声来构建成对的文本-音频实例，同时保留原始数据集的标注。基于对 7 个全模态模型在 Confetti 和 When2Call 音频转换版本上的广泛评估，我们的框架表明性能高度依赖于模型和任务：Gemini-3.1-Flash-Live 在 Confetti 上取得最高分（70.4），而 GPT-Realtime-1.5 在 When2Call 上表现最佳（71.9）。在 Confetti 上，文本到语音的性能差距从 Qwen3-Omni 的 1.8 分到 GPT-Realtime-1.5 的 4.8 分不等。对失败案例的针对性分析表明，性能下降通常源于对语音中参数值的误解。考虑到真实部署场景，我们进一步报告了纯文本结果、基于歧义性改写的压力测试，以及经过人工偏好验证的无参考 LLM-as-judge 协议。值得注意的是，我们发现参数量至少 8B 的开源 Qwen3 评审模型与专有评审模型的一致性超过 80%，支持隐私保护的评估方式。总体而言，我们的框架提供了一个可验证、可复现的第一阶段诊断工具，是对专门构建音频语料库的补充。",
+        "brief": "该论文解决的问题是如何在不重新标注数据的情况下评估语音场景下 LLM Agent 的工具调用能力，核心方法是利用文本转语音、说话人变化和环境噪声将已有文本基准转换为成对的文本-音频评估实例，并保留原始标注。",
+        "status": "translated"
       }
     },
     {
@@ -8195,10 +8195,10 @@
       "pdfUrl": "https://arxiv.org/pdf/2605.20197v2",
       "htmlUrl": "https://arxiv.org/html/2605.20197v2",
       "translation": {
-        "status": "fallback",
-        "title": "MedicalBench: Evaluating Large Language Models Toward Improved Medical Concept Extraction",
-        "abstract": "Medical concept extraction from electronic health records underpins many downstream applications, yet remains challenging because medically meaningful concepts are frequently implied rather than explicitly stated in medical narratives. Existing benchmarks with human-annotated evidence spans underscore the importance of grounding extracted concepts in medical text. However, they predominantly focus on explicitly stated concepts instead of implicit concepts. We present MedicalBench, a benchmark for medical concept extraction with evidence grounding that evaluates implicit medical reasoning. MedicalBench formulates medical concept extraction as a verification task over medical note-concept pairs, coupled with sentence-level evidence identification. Built from MIMIC-IV discharge summaries and human-verified ICD-10 codes, the dataset is curated through a multi-stage large language model (LLM) triage pipeline followed by medical annotation and expert review. It deliberately includes implicit positives, semantically confusable negatives, and cases where LLM judgments disagree with medical expert assessments. We define two complementary evaluation tasks: (1) medical concept extraction and (2) sentence-level evidence retrieval, enabling assessment of both correctness and interpretability. Benchmarking state-of-the-art LLMs reveals that performance remains modest, highlighting the difficulty of extracting implicitly expressed concepts. We further show that performance is largely invariant to note length, indicating that MedicalBench isolates reasoning difficulty rather than superficial confounders. MedicalBench provides the first systematic benchmark for implicit, evidence-grounded medical concept extraction, offering a foundation for developing medical language models that can both identify medically relevant concepts and justify their predictions in a transparent and medically faithful manner.",
-        "brief": ""
+        "title": "MedicalBench：面向医学概念抽取改进的大语言模型评测基准",
+        "abstract": "从电子健康记录中进行医学概念抽取支撑着许多下游应用，但由于医学上有意义的概念在医学叙述中往往是隐含而非明确表述的，这一任务仍然具有挑战性。现有需要人工标注证据片段的基准凸显了将抽取的概念锚定在医学文本中的重要性，但它们主要关注明确表述的概念而非隐含概念。我们提出 MedicalBench，一个带有证据锚定、可评测隐含医学推理的医学概念抽取基准。MedicalBench 将医学概念抽取形式化为对医学笔记-概念对的验证任务，并辅以句子级证据识别。该数据集基于 MIMIC-IV 出院小结和经人工验证的 ICD-10 编码构建，通过多阶段大语言模型（LLM）分诊流水线，再经医学标注和专家审核进行整理。它有意包含隐含正例、语义上易混淆的负例，以及 LLM 判断与医学专家评估不一致的案例。我们定义了两个互补的评测任务：（1）医学概念抽取和（2）句子级证据检索，从而能够同时评估正确性和可解释性。对最先进 LLM 的基准测试表明，其表现仍较为有限，凸显了抽取隐含表达概念的难度。我们进一步证明性能与笔记长度基本无关，表明 MedicalBench 隔离的是推理难度而非表层混淆因素。MedicalBench 为隐含的、有证据锚定的医学概念抽取提供了首个系统性基准，为开发既能识别医学相关概念、又能以透明且忠实于医学的方式论证其预测的医学语言模型奠定了基础。",
+        "brief": "针对现有医学概念抽取基准缺乏隐含概念评测的问题，构建了基于 MIMIC-IV 和人工验证 ICD-10 编码、结合 LLM 分诊与专家审核的证据锚定评测基准 MedicalBench，将概念抽取形式化为笔记-概念对验证与句子级证据识别任务。",
+        "status": "translated"
       }
     },
     {

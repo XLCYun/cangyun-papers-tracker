@@ -51,6 +51,41 @@ Git 路径为 `data/arxiv-daily/YYYY-MM-DD.json`。对象的最小形状如下�
 - 同日重跑可以读取已有每日文件复用成功译文；缺失的历史日期不得用当前 feed 改写成历史数据。
 - 重跑归档保留原始 `source` 和 `fetchedAt`，索引的 `updatedAt` 记录本次归档更新时间。采集器在重写前和发布器在上传前使用同一校验器检查必填元数据、翻译字段与统计；无效归档不会被改写或发布。
 
+## 日报主题标签
+
+标签方案见 [每日 arXiv 主题标签方案](plans/arxiv-daily-tags.md)。八个标签的唯一名称与展示顺序维护在 `shared/daily-tags.json`，Python 和网页共用。`schemaVersion` 保持为 1，以下字段是向后兼容的扩展：旧日报可同时缺少 `tags` 和 `tagging`，新采集及补标签后两者必须同时存在。
+
+每篇论文新增：
+
+```json
+{
+  "tags": ["LLM", "Agent", "CodingAgent", "软件工程"],
+  "tagging": {
+    "status": "tagged",
+    "model": "jev-1.13.0",
+    "rulesVersion": "daily-tags-v1",
+    "threshold": 0.7,
+    "inputSha256": "英文标题、摘要和分类的规范化 JSON 字节的 SHA-256",
+    "scores": {
+      "AI4S": 0.01,
+      "CodingAgent": 0.96,
+      "AgentOps": 0.1,
+      "AgentHarness": 0.2,
+      "企业Agent": 0.15
+    }
+  }
+}
+```
+
+- `tags` 仅允许八个固定名称，无重复，按共享清单顺序排列。一篇论文可有多个标签。
+- LLM、Agent 分别按现有英文标题和摘要的 `\bllm`、`\bagent` 规则判断，忽略大小写；软件工程按 `categories` 包含 `cs.SE` 判断。三个规则标签不由模型改写，也不根据细标签自动补打。
+- Jev 分别判断其余五个标签。`scores` 在成功时必须恰好包含这五个名称，每项为有限的 0–1 数值；分数达到 `threshold` 才加入对应标签。
+- `tagging.status` 只有 `tagged` 和 `fallback`。失败时保留规则标签，`scores` 为 `{}`，不会写入模型错误正文或凭证。五个细标签都不命中、但得到完整有效响应，也属于成功。
+- `model`、`rulesVersion`、`threshold`、`inputSha256` 用于判断是否可以复用；同一输入及配置的成功结果不重复调用，失败项可重试。显式更改模型、规则版本、阈值或原文输入会使缓存失效。
+- 打标状态与 `translation.status` 独立；不改变原有 `stats` 口径。标签数据随每日文件字节参与索引哈希。
+- 网页读取旧日报时可据英文标题、摘要和分类推导三个规则标签，不猜测五个模型标签；带标签的新日报须校验固定标签及打标字段，畸形数据继续走原有读取错误处理。
+- Jev 使用独立环境配置 `JEV_API_KEY`、`JEV_BASE_URL`、`JEV_MODEL`、`JEV_THRESHOLD`、`JEV_WORKERS`。默认基地址为 `https://www.dmxapi.cn/typesafe/v1`，请求 `/systemone`；默认模型 `jev-1.13.0`、阈值 `0.7`。GitHub Actions 将现有 DMXAPI Secret 显式注入 `JEV_API_KEY`，采集器不隐式挪用翻译凭证。未配置 Jev 密钥时仍可生成带规则标签的有效日报。
+
 ## 日期索引
 
 Git 路径为 `data/arxiv-daily/index.json`，OSS 索引为 `research/arxiv-daily/index.json`。

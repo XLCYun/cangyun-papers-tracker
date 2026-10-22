@@ -72,6 +72,17 @@ def rule_tags(paper):
             or (label == "软件工程" and "cs.SE" in paper["categories"])]
 
 
+def derive_tags(paper, scores, threshold):
+    selected = set(rule_tags(paper)) | {label for label, score in scores.items() if score >= threshold}
+    return [label for label in TAGS if label in selected]
+
+
+def _transient(error):
+    code = getattr(error, "code", None)
+    return (code in {408, 425, 429} or (isinstance(code, int) and 500 <= code <= 599)
+            or (code is None and isinstance(error, (URLError, TimeoutError, OSError))))
+
+
 def _request_with_retries(paper, key, model, attempts, delay, stopped):
     for attempt in range(attempts):
         if stopped.is_set():
@@ -79,12 +90,9 @@ def _request_with_retries(paper, key, model, attempts, delay, stopped):
         try:
             return _jev_scores(paper, key, model)
         except Exception as error:
-            code = getattr(error, "code", None)
-            transient = code in {408, 425, 429} or (isinstance(code, int) and 500 <= code <= 599)
-            transient = transient or (code is None and isinstance(error, (URLError, TimeoutError, OSError)))
             if hasattr(error, "close"):
                 error.close()
-            if not transient or attempt + 1 == attempts:
+            if not _transient(error) or attempt + 1 == attempts:
                 raise
             if stopped.wait(min(delay * 2 ** attempt, 60)):
                 return None
@@ -109,8 +117,7 @@ def tag_papers(papers):
         }
         previous = paper.get("tagging", {})
         if previous.get("status") == "tagged" and all(previous.get(name) == value for name, value in metadata.items()):
-            selected = set(rule_tags(paper)) | {label for label, score in previous["scores"].items() if score >= threshold}
-            paper["tags"] = [label for label in TAGS if label in selected]
+            paper["tags"] = derive_tags(paper, previous["scores"], threshold)
             continue
         paper["tags"] = rule_tags(paper)
         paper["tagging"] = dict(metadata, status="fallback", scores={})
@@ -127,7 +134,9 @@ def tag_papers(papers):
             scores = _request_with_retries(paper, key, model, attempts, delay, stopped)
         except Exception as error:
             code = getattr(error, "code", None)
-            if code in {401, 402, 403, 404, 429}:
+            # Once a service failure exhausts its retries, save the remaining
+            # fallback records instead of spending the entire job on an outage.
+            if code in {401, 402, 403, 404} or _transient(error):
                 stopped.set()
             detail = f"HTTP {code}" if code else type(error).__name__
             print(f"Tagging fallback ({detail}).", file=sys.stderr)
@@ -135,8 +144,7 @@ def tag_papers(papers):
         if scores is None:
             return
         paper["tagging"].update(status="tagged", scores=scores)
-        selected = set(paper["tags"]) | {label for label, score in scores.items() if score >= threshold}
-        paper["tags"] = [label for label in TAGS if label in selected]
+        paper["tags"] = derive_tags(paper, scores, threshold)
 
     # Test one real pending item before starting concurrency, so a denied token
     # or exhausted account does not cause a request for every paper in the day.

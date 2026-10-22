@@ -119,6 +119,29 @@ test("legacy rule tags preserve the collector's Unicode word boundaries and pref
   expect(within(filters).getByRole("button", { name: "软件工程 0 篇" })).toBeVisible();
 });
 
+test("published rule labels stay authoritative across browser Unicode versions", async () => {
+  // U+088F was unassigned in the collector's Unicode version, but is a letter
+  // in newer browser runtimes. These are valid collector-generated rule tags.
+  openDaily({ "2026-10-22": day("2026-10-22", [{ ...paper,
+    title: "\u088fLLM \u088fAgent", abstract: "English input.",
+  }]) });
+  await screen.findByRole("article", { name: "编程助手" });
+  const filters = screen.getByRole("group", { name: "按主题标签筛选" });
+  expect(within(filters).getByRole("button", { name: "LLM 1 篇" })).toBeVisible();
+  expect(within(filters).getByRole("button", { name: "Agent 1 篇" })).toBeVisible();
+  expect(within(filters).getByRole("button", { name: "CodingAgent 1 篇" })).toBeVisible();
+  expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+});
+
+test("tag metadata accepts non-whitespace text according to the publisher contract", async () => {
+  // Python strip does not discard U+FEFF, so this remains a nonempty string.
+  openDaily({ "2026-10-22": day("2026-10-22", [{ ...paper,
+    tagging: { ...paper.tagging, model: "\ufeff", rulesVersion: "\ufeff" },
+  }]) });
+  expect(await screen.findByRole("article", { name: "编程助手" })).toBeVisible();
+  expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+});
+
 test("topic selection intersects search, keeps full-day counts, and persists with the query across dates", async () => {
   const user = userEvent.setup();
   openDaily({ "2026-10-22": day("2026-10-22", [paper, science, business]), "2026-10-21": day("2026-10-21", [paper, business]) });
@@ -172,8 +195,11 @@ test.each([
   ["duplicate topic", { ...paper, tags: ["LLM", "Agent", "LLM", "CodingAgent", "软件工程"] }],
   ["wrong topic order", { ...paper, tags: ["Agent", "LLM", "CodingAgent", "软件工程"] }],
   ["unknown tagging status", { ...paper, tagging: { ...paper.tagging, status: "complete" } }],
+  ["extra tagging field", { ...paper, tagging: { ...paper.tagging, extra: true } }],
   ["empty model", { ...paper, tagging: { ...paper.tagging, model: "" } }],
+  ["record separator model", { ...paper, tagging: { ...paper.tagging, model: "\u001c\u001d\u001e\u001f" } }],
   ["empty rule version", { ...paper, tagging: { ...paper.tagging, rulesVersion: "" } }],
+  ["Unicode whitespace rule version", { ...paper, tagging: { ...paper.tagging, rulesVersion: "\u0085\u00a0\u3000" } }],
   ["threshold out of range", { ...paper, tagging: { ...paper.tagging, threshold: 1.1 } }],
   ["invalid input hash", { ...paper, tagging: { ...paper.tagging, inputSha256: "invalid" } }],
   ["missing scores", { ...paper, tagging: { ...paper.tagging, scores: { CodingAgent: 0.97 } } }],
@@ -181,7 +207,7 @@ test.each([
   ["score out of range", { ...paper, tagging: { ...paper.tagging, scores: { ...paper.tagging.scores, AI4S: 2 } } }],
   ["score as text", { ...paper, tagging: { ...paper.tagging, scores: { ...paper.tagging.scores, AI4S: "0.1" } } }],
   ["failed state with scores", { ...paper, tagging: { ...paper.tagging, status: "fallback" } }],
-  ["missing deterministic tag", { ...paper, tags: ["Agent", "CodingAgent", "软件工程"] }],
+  ["missing model tag", { ...paper, tags: ["LLM", "Agent", "软件工程"] }],
   ["unearned model tag", { ...paper, tags: ["LLM", "Agent", "AI4S", "CodingAgent", "软件工程"] }],
 ])("malformed topic data is a retriable read error instead of a partial daily: %s", async (_name, invalid) => {
   openDaily({ "2026-10-22": day("2026-10-22", [invalid, science]) });

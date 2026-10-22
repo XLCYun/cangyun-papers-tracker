@@ -15,14 +15,16 @@ function ruleTags(paper) {
 }
 
 const modelTags = dailyTags.filter((tag) => !["LLM", "Agent", "软件工程"].includes(tag));
+const taggingFields = ["status", "model", "rulesVersion", "threshold", "inputSha256", "scores"];
 const probability = (value) => typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 1;
-const nonempty = (value) => typeof value === "string" && value.trim();
+// Python str.strip includes these four separators, but does not discard U+FEFF.
+const nonempty = (value) => typeof value === "string" && /[^\p{White_Space}\u001c-\u001f]/u.test(value);
 
 function readTags(paper) {
-  const rules = ruleTags(paper);
-  if (!Object.hasOwn(paper, "tags") && !Object.hasOwn(paper, "tagging")) return rules;
+  if (!Object.hasOwn(paper, "tags") && !Object.hasOwn(paper, "tagging")) return ruleTags(paper);
   const tagging = paper.tagging;
   if (!Array.isArray(paper.tags) || !tagging || typeof tagging !== "object" || Array.isArray(tagging) ||
+      Object.keys(tagging).length !== taggingFields.length || !taggingFields.every((field) => Object.hasOwn(tagging, field)) ||
       !["tagged", "fallback"].includes(tagging.status) || !nonempty(tagging.model) || !nonempty(tagging.rulesVersion) ||
       !probability(tagging.threshold) || typeof tagging.inputSha256 !== "string" || !/^[a-f0-9]{64}$/.test(tagging.inputSha256) ||
       !tagging.scores || typeof tagging.scores !== "object" || Array.isArray(tagging.scores)) throw new Error("论文主题标签无效");
@@ -30,9 +32,13 @@ function readTags(paper) {
   if (tagging.status === "tagged"
     ? scoreTags.length !== modelTags.length || !modelTags.every((tag) => Object.hasOwn(tagging.scores, tag) && probability(tagging.scores[tag]))
     : scoreTags.length !== 0) throw new Error("论文主题分数无效");
-  const expected = dailyTags.filter((tag) => rules.includes(tag) ||
-    (tagging.status === "tagged" && modelTags.includes(tag) && tagging.scores[tag] >= tagging.threshold));
-  if (paper.tags.length !== expected.length || paper.tags.some((tag, index) => tag !== expected[index])) throw new Error("论文主题标签与判定不符");
+  const ordered = dailyTags.filter((tag) => paper.tags.includes(tag));
+  if (paper.tags.length !== ordered.length || paper.tags.some((tag, index) => tag !== ordered[index])) throw new Error("论文主题标签无效");
+  // The collector owns rule labels: Unicode word tables may differ between
+  // Python and a reader's browser. Only legacy documents derive them here.
+  const semantic = paper.tags.filter((tag) => modelTags.includes(tag));
+  const expected = modelTags.filter((tag) => tagging.status === "tagged" && tagging.scores[tag] >= tagging.threshold);
+  if (semantic.length !== expected.length || semantic.some((tag, index) => tag !== expected[index])) throw new Error("论文主题标签与判定不符");
   return paper.tags;
 }
 

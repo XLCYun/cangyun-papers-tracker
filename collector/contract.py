@@ -5,7 +5,7 @@ import math
 import re
 from urllib.parse import urlsplit
 
-from .tagging import TAGS, rule_tags, valid_scores
+from .tagging import TAGS, derive_tags, valid_scores
 
 
 class DailyContractError(ValueError):
@@ -66,10 +66,7 @@ def _validate_tagging(paper, *, allow_stale_tags):
     _require(isinstance(tagging["inputSha256"], str) and re.fullmatch(r"[a-f0-9]{64}", tagging["inputSha256"]))
     _require(valid_scores(tagging["scores"]) if tagging["status"] == "tagged" else tagging["scores"] == {})
     if not allow_stale_tags:
-        selected = set(rule_tags(paper))
-        if tagging["status"] == "tagged":
-            selected.update(label for label, score in tagging["scores"].items() if score >= threshold)
-        _require(tags == [label for label in TAGS if label in selected])
+        _require(tags == derive_tags(paper, tagging["scores"], threshold))
 
 
 def validate_daily(daily, requested, *, allow_stale_tags=False):

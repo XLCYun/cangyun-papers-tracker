@@ -83,9 +83,10 @@ Git 路径为 `data/arxiv-daily/YYYY-MM-DD.json`。对象的最小形状如下�
 - `tagging.status` 只有 `tagged` 和 `fallback`。失败时保留规则标签，`scores` 为 `{}`，不会写入模型错误正文或凭证。五个细标签都不命中、但得到完整有效响应，也属于成功。
 - `model`、`rulesVersion`、`threshold`、`inputSha256` 用于判断是否可以复用；同一输入及配置的成功结果不重复调用，失败项可重试。显式更改模型、规则版本、阈值或原文输入会使缓存失效。
 - 打标状态与 `translation.status` 独立；不改变原有 `stats` 口径。标签数据随每日文件字节参与索引哈希。
-- 网页读取旧日报时可据英文标题、摘要和分类推导三个规则标签，不猜测五个模型标签；带标签的新日报须校验固定标签及打标字段，畸形数据继续走原有读取错误处理。
+- 网页只在旧日报同时缺少 `tags` 和 `tagging` 时，据英文标题、摘要和分类推导三个规则标签，不猜测五个模型标签。带标签的新日报以采集器发布的三个规则标签为准，避免 Python 与浏览器的 Unicode 版本差异导致有效日报无法读取；网页仍校验固定标签、顺序、无重复、打标字段，以及五个模型标签与分数和阈值的一致性。畸形数据继续走原有读取错误处理。
+- `tagging` 必须恰好含有示例中的六个字段，不接受额外字段。`model` 和 `rulesVersion` 按 Python `str.strip()` 的空白语义判断非空，包含 Unicode 空白及 `U+001C`–`U+001F` 分隔控制字符；`U+FEFF` 不作为空白删除。采集及发布校验使用同一个纯函数派生规则与模型标签，成功缓存、即时结果和最终校验保持一致。
 - Jev 使用独立环境配置 `JEV_API_KEY`、`JEV_BASE_URL`、`JEV_MODEL`、`JEV_THRESHOLD`、`JEV_WORKERS`。默认基地址为 `https://www.dmxapi.cn/typesafe/v1`，请求 `/systemone`；默认模型 `jev-1.13.0`、阈值 `0.7`、并发 `3`。GitHub Actions 优先使用专用 `JEV_API_KEY` Secret，未设置时将现有 DMXAPI `OPENAI_API_KEY` Secret 显式注入；采集器不隐式挪用翻译凭证。未配置 Jev 密钥时仍可生成带规则标签的有效日报。
-- `JEV_RULES_VERSION` 默认 `daily-tags-v1`；规则变更时显式升级版本以触发重打标。暂时性请求错误由 `JEV_RETRY_ATTEMPTS`（默认 `3`）和 `JEV_RETRY_DELAY_SECONDS`（默认 `2`，指数退避）限制；认证或权限失败不逐篇重复重试。
+- `JEV_RULES_VERSION` 默认 `daily-tags-v1`；规则变更时显式升级版本以触发重打标。暂时性请求错误由 `JEV_RETRY_ATTEMPTS`（默认 `3`）和 `JEV_RETRY_DELAY_SECONDS`（默认 `2`，指数退避）限制。认证、权限或接口不存在错误，以及暂时性服务错误、网络错误或超时耗尽重试后，会停止尚未发起的打标请求；等待已经进行的请求结束后保存成功结果与其余规则回退，不逐篇消耗整日任务时限。
 
 ## 日期索引
 

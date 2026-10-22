@@ -646,6 +646,38 @@ def test_command_stops_global_jev_failures_but_finishes_translation_and_safe_rul
     assert "fixture-not-a-secret" not in content + output.out + output.err
 
 
+def test_command_archives_a_bulk_day_after_exhausted_jev_service_failures_without_losing_success(tmp_path, monkeypatch):
+    from collector import main
+
+    calls = []
+
+    def jev(request):
+        title = json.loads(request["state"])["title"]
+        calls.append(title)
+        if title == "LLM Agent 0":
+            return 200, jev_response({"ai4s": 0, "codingagent": 1, "agentops": 0, "agentharness": 0, "enterprise_agent": 0})
+        return 503, b"fixture service unavailable"
+
+    feed = tagging_feed(*[{"title": f"LLM Agent {position}", "abstract": "English input."} for position in range(208)])
+    with service({"/rss/cs": (200, feed), "/typesafe/v1/systemone": jev}) as origin:
+        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        monkeypatch.setenv("JEV_API_KEY", "tagging-fixture-not-a-secret")
+        monkeypatch.setenv("JEV_BASE_URL", origin + "/typesafe/v1")
+        monkeypatch.setenv("JEV_WORKERS", "1")
+        assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
+
+    daily = json.loads((tmp_path / "2026-10-22.json").read_text())
+    assert calls == ["LLM Agent 0", "LLM Agent 1", "LLM Agent 1", "LLM Agent 1"]
+    assert daily["stats"] == {"fetched": 208, "matched": 208, "translated": 0, "fallback": 208}
+    assert daily["papers"][0]["tags"] == ["LLM", "Agent", "CodingAgent"]
+    assert daily["papers"][0]["tagging"]["status"] == "tagged"
+    assert all(paper["tags"] == ["LLM", "Agent"] and paper["tagging"]["status"] == "fallback"
+               and paper["tagging"]["scores"] == {} for paper in daily["papers"][1:])
+    index = json.loads((tmp_path / "index.json").read_text())
+    assert index["days"][0]["count"] == 208
+    assert index["days"][0]["sha256"] == hashlib.sha256((tmp_path / "2026-10-22.json").read_bytes()).hexdigest()
+
+
 @pytest.mark.parametrize("change", ["model", "rulesVersion", "threshold", "title", "abstract", "categories"])
 def test_command_invalidates_successful_tag_cache_when_configuration_or_english_input_changes(tmp_path, monkeypatch, change):
     from collector import main

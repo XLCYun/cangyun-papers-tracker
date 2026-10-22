@@ -76,4 +76,5 @@ Git 路径为 `data/arxiv-daily/index.json`，OSS 索引为 `research/arxiv-dail
 
 - `uv run python -m collector --date YYYY-MM-DD --output-dir data/arxiv-daily`：采集并翻译，写每日文件及索引。默认使用北京时间今天。历史补跑只能使用已经归档的该日来源内容，不抓取或导入旧日报。
 - `uv run python -m collector.publish --date YYYY-MM-DD --data-dir data/arxiv-daily`：发布并验证当日不可变对象，最后发布索引；失败保留线上旧索引。
+- 加 `--check` 可在没有 OSS 配置的环境中只校验本地 JSON 和索引。发布前会验证全部索引引用，补齐此前已在 Git 备份、但尚未成功上传的日报；索引回退与恢复行为见 [发布说明](publication.md)。
 - 采集器与发布器的可配置 HTTP 服务、模型和 OSS 凭证均使用环境变量，网站只接收公开的数据根地址与备案配置。

@@ -30,7 +30,7 @@ graph LR
 | [#7](https://github.com/XLCYun/cangyun-papers-tracker/issues/7) | 标签功能及发布总任务 | 全部子任务 |
 | [#8](https://github.com/XLCYun/cangyun-papers-tracker/issues/8) | 采集打标与 JSON 校验 | 共享接口已提交 |
 | [#9](https://github.com/XLCYun/cangyun-papers-tracker/issues/9) | 页面筛选、篇数及标签 | 共享接口已提交 |
-| [#10](https://github.com/XLCYun/cangyun-papers-tracker/issues/10) | Actions 配置和运维文档 | #8 |
+| [#10](https://github.com/XLCYun/cangyun-papers-tracker/issues/10) | Actions 配置和运维文档 | 共享配置和 JSON 接口已提交，可与 #8 并行 |
 | [#11](https://github.com/XLCYun/cangyun-papers-tracker/issues/11) | 既有归档补标签、审查及线上发布 | #8、#9、#10 |
 
 测试沿用已确认的采集命令到 JSON、页面到 JSON、发布到公网 HTTP 三个边界。接口联调和发布回执保存在仓库外，不提交凭证或错误响应正文。

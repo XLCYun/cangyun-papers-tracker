@@ -31,6 +31,11 @@ def files(root):
             result[path.relative_to(root).as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
     return result
 
+def public_modes(root):
+    root.chmod(0o755)
+    for path in root.rglob("*"):
+        path.chmod(0o755 if path.is_dir() else 0o644)
+
 def target(link, releases):
     if not os.path.lexists(link):
         return None
@@ -61,6 +66,7 @@ try:
     elif action == "activate":
         if files(stage) != request["manifest"]:
             raise ValueError("uploaded build failed SHA-256 verification")
+        public_modes(stage)
         current = base / "current"
         previous = target(current, releases)
         target(base / "previous", releases)
@@ -68,6 +74,7 @@ try:
         if os.path.lexists(final):
             if final.is_symlink() or files(final) != request["manifest"]:
                 raise ValueError("release name already has different contents")
+            public_modes(final)
             shutil.rmtree(stage)
         else:
             os.replace(stage, final)
@@ -136,7 +143,7 @@ def deploy(args):
     stage = remote(args.host, {**request, "action": "prepare"})["stage"]
     try:
         transfer = subprocess.run(
-            ["rsync", "-a", "--delete", "--chmod=D755,F644", "--", f"{dist}/", f"{args.host}:{stage}/"],
+            ["rsync", "-a", "--delete", "--chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r", "--", f"{dist}/", f"{args.host}:{stage}/"],
             text=True, capture_output=True,
         )
         if transfer.returncode:

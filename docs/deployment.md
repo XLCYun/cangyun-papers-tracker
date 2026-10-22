@@ -19,7 +19,7 @@ RESEARCH_RELEASE=$(git rev-parse --short=12 HEAD)
 python3 scripts/deploy-site.py deploy --host "$RESEARCH_HOST" --release "$RESEARCH_RELEASE" --dist dist
 ```
 
-命令只上传 `dist/`。它先检查静态文件类型，拒绝隐藏文件、软链、PDF 和源代码目录；随后上传到独立临时目录，逐文件比对 SHA-256，校验成功才将其保存为 `releases/<release>` 并原子切换 `current` 软链。相同名称的版本只有内容完全一致时才会复用，上一版保存在 `previous`，上传或校验失败不切换当前版本。旧版本不会自动删除。
+命令只上传 `dist/`。它先检查静态文件类型，拒绝隐藏文件、软链、PDF 和源代码目录；随后上传到独立临时目录，逐文件比对 SHA-256，校验成功后将公开静态文件设为 `0644`、目录设为 `0755`，再保存为 `releases/<release>` 并原子切换 `current` 软链。相同名称的版本只有内容完全一致时才会复用，复用前也会规范其读取权限；上一版保存在 `previous`，上传或校验失败不切换当前版本。旧版本不会自动删除。
 
 标准输出是 JSON 回执，包含当前版本、上一版、文件数和字节数。将实际发布回执、云资源变更回执、Nginx 配置备份和验证截图保存在仓库外。不要提交真实环境文件、密钥或账户配置。`--base` 仅用于另一个明确隔离的部署目录；生产环境沿用默认目录。
 

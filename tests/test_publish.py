@@ -291,8 +291,9 @@ def test_command_does_not_publish_a_daily_file_whose_translation_statistics_disa
     "unknown-tag", "duplicate-tag", "unordered-tags", "missing-state", "missing-tags", "missing-field",
     "unknown-state", "invalid-model", "invalid-version", "invalid-digest", "invalid-threshold",
     "missing-score", "extra-score", "boolean-score", "nonfinite-score", "out-of-range-score", "fallback-scores",
+    "wrong-rule-tags", "wrong-score-tags", "fallback-semantic-tag",
 ])
-def test_commands_reject_malformed_tagging_before_overwriting_or_publishing(tmp_path, monkeypatch, defect):
+def test_publisher_rejects_malformed_tagging_and_collector_only_repairs_stale_labels(tmp_path, monkeypatch, defect):
     from collector import main as collect
     from collector.publish import main as publish
     from datetime import datetime
@@ -328,6 +329,11 @@ def test_commands_reject_malformed_tagging_before_overwriting_or_publishing(tmp_
     elif defect == "boolean-score": tagging["scores"]["AgentOps"] = True
     elif defect == "nonfinite-score": tagging["scores"]["AgentOps"] = float("nan")
     elif defect == "out-of-range-score": tagging["scores"]["AgentOps"] = 1.1
+    elif defect == "wrong-rule-tags": paper["tags"] = ["LLM"]
+    elif defect == "wrong-score-tags": paper["tags"].append("CodingAgent")
+    elif defect == "fallback-semantic-tag":
+        tagging.update(status="fallback", scores={})
+        paper["tags"].append("CodingAgent")
     else: tagging["status"] = "fallback"
     _, content = archive(tmp_path, papers=[paper])
     original_index = (tmp_path / "index.json").read_bytes()
@@ -337,6 +343,14 @@ def test_commands_reject_malformed_tagging_before_overwriting_or_publishing(tmp_
         configure(monkeypatch, origin)
         assert publish(["--date", DAY, "--data-dir", str(tmp_path)]) == 1
         assert state["objects"] == {}
+    if defect in {"wrong-rule-tags", "wrong-score-tags", "fallback-semantic-tag"}:
+        # Public data must be self-consistent, but a collector replay can repair
+        # stale derived labels after original metadata/configuration changes.
+        assert (tmp_path / f"{DAY}.json").read_bytes() == content
+        assert (tmp_path / "index.json").read_bytes() == original_index
+        assert collect(["--date", DAY, "--output-dir", str(tmp_path)], now=datetime.fromisoformat("2026-10-23T13:30:00+08:00")) == 0
+        assert publish(["--date", DAY, "--data-dir", str(tmp_path), "--check"]) == 0
+        return
     assert collect(["--date", DAY, "--output-dir", str(tmp_path)], now=datetime.fromisoformat("2026-10-23T13:30:00+08:00")) == 1
     assert (tmp_path / f"{DAY}.json").read_bytes() == content
     assert (tmp_path / "index.json").read_bytes() == original_index

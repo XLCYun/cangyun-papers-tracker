@@ -268,7 +268,7 @@ def main(argv=None, *, now=None):
         archive = args.output_dir / f"{day.isoformat()}.json"
         if archive.exists():
             previous = json.loads(archive.read_text())
-            validate_daily(previous, day.isoformat())
+            validate_daily(previous, day.isoformat(), allow_stale_tags=True)
             source, papers, fetched = previous["source"], previous["papers"], previous["stats"]["fetched"]
             fetched_at = previous["fetchedAt"]
         else:

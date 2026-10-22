@@ -5,7 +5,7 @@ import math
 import re
 from urllib.parse import urlsplit
 
-from .tagging import TAGS, valid_scores
+from .tagging import TAGS, rule_tags, valid_scores
 
 
 class DailyContractError(ValueError):
@@ -50,7 +50,7 @@ def _paper_url(value, path):
         return False
 
 
-def _validate_tagging(paper):
+def _validate_tagging(paper, *, allow_stale_tags):
     if "tags" not in paper and "tagging" not in paper:
         return
     tags, tagging = paper.get("tags"), paper.get("tagging")
@@ -65,9 +65,14 @@ def _validate_tagging(paper):
     _require(type(threshold) in (int, float) and math.isfinite(threshold) and 0 <= threshold <= 1)
     _require(isinstance(tagging["inputSha256"], str) and re.fullmatch(r"[a-f0-9]{64}", tagging["inputSha256"]))
     _require(valid_scores(tagging["scores"]) if tagging["status"] == "tagged" else tagging["scores"] == {})
+    if not allow_stale_tags:
+        selected = set(rule_tags(paper))
+        if tagging["status"] == "tagged":
+            selected.update(label for label, score in tagging["scores"].items() if score >= threshold)
+        _require(tags == [label for label in TAGS if label in selected])
 
 
-def validate_daily(daily, requested):
+def validate_daily(daily, requested, *, allow_stale_tags=False):
     """Reject incomplete source metadata, translations and inconsistent counts."""
     _require(isinstance(daily, dict) and type(daily.get("schemaVersion")) is int and daily["schemaVersion"] == 1)
     _require(isinstance(daily.get("date"), str) and daily["date"] == requested)
@@ -101,6 +106,6 @@ def validate_daily(daily, requested):
             _require(translation["title"] == paper["title"] and translation["abstract"] == paper["abstract"] and translation["brief"] == "")
         else:
             _require(_text(translation["brief"]))
-        _validate_tagging(paper)
+        _validate_tagging(paper, allow_stale_tags=allow_stale_tags)
         states.append(translation["status"])
     _require(stats["translated"] == states.count("translated") and stats["fallback"] == states.count("fallback"))

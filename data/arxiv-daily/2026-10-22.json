@@ -49,15 +49,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "2528ecf0e9d6dcf9d29e0c6e5a2f31581475ccd9a6bc726e96bb95eb9cc9f3f8",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.04,
-          "CodingAgent": 0.11,
+          "AI4S": 0.05,
+          "CodingAgent": 0.1,
+          "GUI Agent": 0.01,
           "AgentOps": 0.09,
-          "AgentHarness": 0.39,
+          "AgentHarness": 0.38,
           "企业Agent": 0.02
         }
       }
@@ -98,16 +99,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "a3992f8d4db1bcbb96364723f02b43120277a5f9957845dc45071f09fa1e12ca",
         "status": "tagged",
         "scores": {
           "AI4S": 0.07,
           "CodingAgent": 0.05,
-          "AgentOps": 0.03,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.04,
           "AgentHarness": 0.07,
-          "企业Agent": 0.19
+          "企业Agent": 0.15
         }
       }
     },
@@ -147,15 +149,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "3d7ca5e27da576b47076fd550557932ed36931172f8e7d3b049ee725c4ac61fc",
         "status": "tagged",
         "scores": {
           "AI4S": 0.84,
           "CodingAgent": 0.14,
+          "GUI Agent": 0.03,
           "AgentOps": 0.06,
-          "AgentHarness": 0.45,
+          "AgentHarness": 0.43,
           "企业Agent": 0.02
         }
       }
@@ -191,13 +194,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "879054bd590e3d0c8bf8bcb8808c72503aa782130e241c908d6f3abe7ace886e",
         "status": "tagged",
         "scores": {
           "AI4S": 0.14,
           "CodingAgent": 0.1,
+          "GUI Agent": 0.01,
           "AgentOps": 0.03,
           "AgentHarness": 0.05,
           "企业Agent": 0.03
@@ -245,15 +249,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "c298566ac678add48a0d3dfb68a257a42c1fd963eca5f4641c8d89a96c4dc1fc",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.28,
+          "AI4S": 0.31,
           "CodingAgent": 0.14,
+          "GUI Agent": 0.03,
           "AgentOps": 0.06,
-          "AgentHarness": 0.17,
+          "AgentHarness": 0.15,
           "企业Agent": 0.07
         }
       }
@@ -292,13 +297,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "c3a2c5838061cabaf789fee201ac16aa88404c257a519ddd3dffc4ff06b35125",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.86,
+          "AI4S": 0.84,
           "CodingAgent": 0.2,
+          "GUI Agent": 0.03,
           "AgentOps": 0.23,
           "AgentHarness": 0.09,
           "企业Agent": 0.03
@@ -343,14 +349,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "c9cc776fd6a414e5b8e5160d2c39bb3bf05951923a26d43b54c551e5da636f60",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.54,
-          "CodingAgent": 0.3,
-          "AgentOps": 0.08,
+          "AI4S": 0.51,
+          "CodingAgent": 0.29,
+          "GUI Agent": 0.08,
+          "AgentOps": 0.09,
           "AgentHarness": 0.06,
           "企业Agent": 0.04
         }
@@ -388,15 +395,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "270743e18deb1539cc359ad508812b5b491e00fdb97fadf695c2ef9d68ea6b7a",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.63,
-          "CodingAgent": 0.14,
+          "AI4S": 0.56,
+          "CodingAgent": 0.15,
+          "GUI Agent": 0.01,
           "AgentOps": 0.03,
-          "AgentHarness": 0.07,
+          "AgentHarness": 0.08,
           "企业Agent": 0.02
         }
       }
@@ -435,15 +443,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "00b39412dab7dc5c25df4c2357336a16a3138bbf8c4cf41b762c970060d0a4de",
         "status": "tagged",
         "scores": {
           "AI4S": 0.62,
           "CodingAgent": 0.08,
+          "GUI Agent": 0.01,
           "AgentOps": 0.02,
-          "AgentHarness": 0.05,
+          "AgentHarness": 0.04,
           "企业Agent": 0.03
         }
       }
@@ -481,16 +490,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "23f533a6fd75a5b78567401c7c2833c8197a1e285859b161e2d36837d161b960",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.06,
+          "AI4S": 0.05,
           "CodingAgent": 0.97,
+          "GUI Agent": 0.02,
           "AgentOps": 0.07,
           "AgentHarness": 0.06,
-          "企业Agent": 0.06
+          "企业Agent": 0.05
         }
       }
     },
@@ -532,13 +542,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "70b90affd5b3eeb1fe4a328bc8b3603da94dee7d38dba7cd2e01de8f1a9b46c2",
         "status": "tagged",
         "scores": {
           "AI4S": 0.09,
           "CodingAgent": 0.97,
+          "GUI Agent": 0.01,
           "AgentOps": 0.14,
           "AgentHarness": 0.22,
           "企业Agent": 0.03
@@ -578,13 +589,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "6930b74bc444ce21eedda540daed5228406187d8b4df7c12eee46cf107425bdb",
         "status": "tagged",
         "scores": {
           "AI4S": 0.13,
-          "CodingAgent": 0.92,
+          "CodingAgent": 0.91,
+          "GUI Agent": 0.01,
           "AgentOps": 0.02,
           "AgentHarness": 0.04,
           "企业Agent": 0.02
@@ -629,16 +641,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "80875254dbd66845f4fd5b6ad6e0cf74fb455025c8d195a00eed807b550f5624",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.13,
+          "AI4S": 0.12,
           "CodingAgent": 0.97,
-          "AgentOps": 0.03,
-          "AgentHarness": 0.15,
-          "企业Agent": 0.03
+          "GUI Agent": 0.01,
+          "AgentOps": 0.04,
+          "AgentHarness": 0.17,
+          "企业Agent": 0.02
         }
       }
     },
@@ -681,13 +694,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "a7ad50022a81c0a9fbe49eb6aee8789fba821949b1823247a854e12c2d46190c",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.05,
-          "CodingAgent": 0.88,
+          "AI4S": 0.06,
+          "CodingAgent": 0.9,
+          "GUI Agent": 0.04,
           "AgentOps": 0.11,
           "AgentHarness": 0.08,
           "企业Agent": 0.06
@@ -725,14 +739,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "e2751f02172022284fc7ed3204169497e8742af1bb1dcf5a7fcd3e7abc71b875",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
-          "CodingAgent": 0.95,
-          "AgentOps": 0.43,
+          "CodingAgent": 0.93,
+          "GUI Agent": 0.04,
+          "AgentOps": 0.38,
           "AgentHarness": 0.09,
           "企业Agent": 0.21
         }
@@ -772,14 +787,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "d1bef59ead38156060b28fb0a0fb7d3614baf21781e0b4d0a69263f684f96cef",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.16,
+          "AI4S": 0.17,
           "CodingAgent": 0.03,
-          "AgentOps": 0.45,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.43,
           "AgentHarness": 0.93,
           "企业Agent": 0.02
         }
@@ -826,13 +842,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "570f424fabc52b489e6a9e14c0b2801c277d67f6d65d610611b1e134b3dcedfb",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.07,
+          "AI4S": 0.08,
           "CodingAgent": 0.02,
+          "GUI Agent": 0.11,
           "AgentOps": 0.03,
           "AgentHarness": 0.05,
           "企业Agent": 0.02
@@ -874,15 +891,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "692e973ac1bf638c916c512fff70bee66c9b23dcca66dcac2a1fbbdd1e1ff431",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.09,
+          "AI4S": 0.1,
           "CodingAgent": 0.02,
-          "AgentOps": 0.08,
-          "AgentHarness": 0.45,
+          "GUI Agent": 0.02,
+          "AgentOps": 0.09,
+          "AgentHarness": 0.47,
           "企业Agent": 0.03
         }
       }
@@ -920,15 +938,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "dc75e96af9c58030e4ed35c8dfe2879d57cb1c91b6179ef6dc34e39e9597724e",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.9,
-          "CodingAgent": 0.35,
-          "AgentOps": 0.09,
-          "AgentHarness": 0.26,
+          "AI4S": 0.92,
+          "CodingAgent": 0.31,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.08,
+          "AgentHarness": 0.25,
           "企业Agent": 0.02
         }
       }
@@ -965,15 +984,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "62ecfa30af64296824301fdcf6ceee92da1f16a8df4ccca6364abdf6993f2531",
         "status": "tagged",
         "scores": {
           "AI4S": 0.34,
           "CodingAgent": 0.72,
-          "AgentOps": 0.13,
-          "AgentHarness": 0.07,
+          "GUI Agent": 0.02,
+          "AgentOps": 0.12,
+          "AgentHarness": 0.08,
           "企业Agent": 0.03
         }
       }
@@ -1007,13 +1027,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "6c524bce5097bf5650922be3a748afd31f6899a085c401bf8df0ceb0c0d59c41",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.1,
+          "AI4S": 0.09,
           "CodingAgent": 0.08,
+          "GUI Agent": 0.01,
           "AgentOps": 0.02,
           "AgentHarness": 0.02,
           "企业Agent": 0.02
@@ -1056,15 +1077,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "e939d430847ec55729e5e16990e53e4c846f25160033d8ee2f7cb31098a10578",
         "status": "tagged",
         "scores": {
           "AI4S": 0.95,
-          "CodingAgent": 0.91,
+          "CodingAgent": 0.89,
+          "GUI Agent": 0.03,
           "AgentOps": 0.1,
-          "AgentHarness": 0.21,
+          "AgentHarness": 0.23,
           "企业Agent": 0.03
         }
       }
@@ -1105,16 +1127,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "ca4415a8a52d32898bde292827871d379db8b30792b70237841ddda37cf95901",
         "status": "tagged",
         "scores": {
           "AI4S": 0.09,
-          "CodingAgent": 0.09,
+          "CodingAgent": 0.1,
+          "GUI Agent": 0.01,
           "AgentOps": 0.05,
           "AgentHarness": 0.03,
-          "企业Agent": 0.05
+          "企业Agent": 0.04
         }
       }
     },
@@ -1152,15 +1175,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "192b60474d8e6e7abb23cfb295dab2a448600704d4340f18433118b559c3ae19",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.09,
+          "AI4S": 0.08,
           "CodingAgent": 0.1,
+          "GUI Agent": 0.01,
           "AgentOps": 0.04,
-          "AgentHarness": 0.06,
+          "AgentHarness": 0.07,
           "企业Agent": 0.02
         }
       }
@@ -1208,14 +1232,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "58a169721420a75a6b49056633577ed106679dd98e2c77a519e7f0f7fdf0ca81",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.34,
-          "CodingAgent": 0.11,
-          "AgentOps": 0.04,
+          "AI4S": 0.31,
+          "CodingAgent": 0.1,
+          "GUI Agent": 0.02,
+          "AgentOps": 0.03,
           "AgentHarness": 0.05,
           "企业Agent": 0.03
         }
@@ -1253,13 +1278,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "8cfdc2a6ddb8029030079fdfb23e685574af9fa87753e654dce9682b3a418c52",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.06,
-          "CodingAgent": 0.1,
+          "AI4S": 0.05,
+          "CodingAgent": 0.07,
+          "GUI Agent": 0.01,
           "AgentOps": 0.02,
           "AgentHarness": 0.02,
           "企业Agent": 0.02
@@ -1297,15 +1323,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "13354287408cf9f97735a36ac9f32c0d131a81dca58989aefa3bf70d998beca3",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
           "CodingAgent": 0.02,
+          "GUI Agent": 0.02,
           "AgentOps": 0.05,
-          "AgentHarness": 0.1,
+          "AgentHarness": 0.09,
           "企业Agent": 0.03
         }
       }
@@ -1343,16 +1370,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "c11d5fb5bbbf0f7615e66cbf2f25e675bb977d7a9c257e44f7fac2ad86829d8c",
         "status": "tagged",
         "scores": {
           "AI4S": 0.08,
-          "CodingAgent": 0.47,
-          "AgentOps": 0.18,
+          "CodingAgent": 0.48,
+          "GUI Agent": 0.1,
+          "AgentOps": 0.19,
           "AgentHarness": 0.13,
-          "企业Agent": 0.18
+          "企业Agent": 0.17
         }
       }
     },
@@ -1389,16 +1417,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "b1b35cb277ced44593e5a0a1d5716cffe8164d9b90ff79975bd12b1cccb2bf8a",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.14,
+          "AI4S": 0.12,
           "CodingAgent": 0.06,
+          "GUI Agent": 0.02,
           "AgentOps": 0.08,
           "AgentHarness": 0.05,
-          "企业Agent": 0.31
+          "企业Agent": 0.25
         }
       }
     },
@@ -1447,13 +1476,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "96ce1d3fea6a194155bc7a412f4f93cd9ceb7b26a7c6478d936eaa6fe825b78b",
         "status": "tagged",
         "scores": {
           "AI4S": 0.11,
           "CodingAgent": 0.09,
+          "GUI Agent": 0.01,
           "AgentOps": 0.04,
           "AgentHarness": 0.04,
           "企业Agent": 0.03
@@ -1499,16 +1529,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "2e74a5494318e2ee878dede68cc894c71d0807564f0611e77e399072acd4fd07",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.15,
-          "CodingAgent": 0.37,
-          "AgentOps": 0.15,
-          "AgentHarness": 0.52,
-          "企业Agent": 0.07
+          "AI4S": 0.18,
+          "CodingAgent": 0.38,
+          "GUI Agent": 0.02,
+          "AgentOps": 0.13,
+          "AgentHarness": 0.49,
+          "企业Agent": 0.08
         }
       }
     },
@@ -1542,15 +1573,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "0c02a36380bdc801b14833b2d60f79b5a4585c79e7542336652298cde6b467e0",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.08,
+          "AI4S": 0.07,
           "CodingAgent": 0.04,
-          "AgentOps": 0.02,
-          "AgentHarness": 0.03,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.03,
+          "AgentHarness": 0.02,
           "企业Agent": 0.03
         }
       }
@@ -1589,15 +1621,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "510fe79418c23d0ffa24f50f526c8df926eb7936014b9cfe79a8308fdfc72074",
         "status": "tagged",
         "scores": {
           "AI4S": 0.13,
-          "CodingAgent": 0.77,
+          "CodingAgent": 0.79,
+          "GUI Agent": 0.02,
           "AgentOps": 0.14,
-          "AgentHarness": 0.5,
+          "AgentHarness": 0.48,
           "企业Agent": 0.09
         }
       }
@@ -1640,15 +1673,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "21d700a5538cb0537ba9b01a7a76986db63c18f3cc969efeeb0a527aac44ec20",
         "status": "tagged",
         "scores": {
           "AI4S": 0.03,
           "CodingAgent": 0.07,
+          "GUI Agent": 0.02,
           "AgentOps": 0.09,
-          "AgentHarness": 0.54,
+          "AgentHarness": 0.6,
           "企业Agent": 0.07
         }
       }
@@ -1688,16 +1722,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "26d8a730ecc5d4f40a10bbc97488076b554dc6d2778c5d7762f2494e735058d8",
         "status": "tagged",
         "scores": {
           "AI4S": 0.08,
-          "CodingAgent": 0.39,
-          "AgentOps": 0.66,
+          "CodingAgent": 0.37,
+          "GUI Agent": 0.03,
+          "AgentOps": 0.67,
           "AgentHarness": 0.07,
-          "企业Agent": 0.18
+          "企业Agent": 0.21
         }
       }
     },
@@ -1734,16 +1769,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "9b207ead5826dcfc435a20e707b3e63b465d7ae6ea1fd1f52c8772badfce6fa3",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
-          "CodingAgent": 0.33,
-          "AgentOps": 0.1,
-          "AgentHarness": 0.32,
-          "企业Agent": 0.1
+          "CodingAgent": 0.36,
+          "GUI Agent": 0.03,
+          "AgentOps": 0.11,
+          "AgentHarness": 0.31,
+          "企业Agent": 0.11
         }
       }
     },
@@ -1781,13 +1817,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "ffb74d5f087b03767e8d6ac334b8982e2765c9e20bcad0e18f4e27dbeb79241d",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.42,
+          "AI4S": 0.38,
           "CodingAgent": 0.02,
+          "GUI Agent": 0.01,
           "AgentOps": 0.08,
           "AgentHarness": 0.13,
           "企业Agent": 0.03
@@ -1828,16 +1865,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "c9627bfce7dc0ede3e6736887311de03de2c4bcdab5a99a34e72403c0f64159e",
         "status": "tagged",
         "scores": {
           "AI4S": 0.08,
           "CodingAgent": 0.05,
+          "GUI Agent": 0.01,
           "AgentOps": 0.01,
           "AgentHarness": 0.02,
-          "企业Agent": 0.01
+          "企业Agent": 0.02
         }
       }
     },
@@ -1883,16 +1921,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "05c8161b908d8e48ea97eb3e304072cf918344cd58dc137293d5ba3922b9d740",
         "status": "tagged",
         "scores": {
           "AI4S": 0.16,
-          "CodingAgent": 0.09,
+          "CodingAgent": 0.08,
+          "GUI Agent": 0.01,
           "AgentOps": 0.07,
           "AgentHarness": 0.04,
-          "企业Agent": 0.09
+          "企业Agent": 0.1
         }
       }
     },
@@ -1935,15 +1974,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "7bb123d4144638692b839cbed830b5f672003b8a6c128a32c495b511c1937226",
         "status": "tagged",
         "scores": {
           "AI4S": 0.07,
           "CodingAgent": 0.98,
-          "AgentOps": 0.27,
-          "AgentHarness": 0.09,
+          "GUI Agent": 0.02,
+          "AgentOps": 0.28,
+          "AgentHarness": 0.08,
           "企业Agent": 0.05
         }
       }
@@ -1978,16 +2018,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "c43cf08cfa1015043105b49f0bfbbf3c69c1a3450279346791af339f5a323524",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.28,
-          "CodingAgent": 0.08,
-          "AgentOps": 0.13,
-          "AgentHarness": 0.12,
-          "企业Agent": 0.04
+          "AI4S": 0.26,
+          "CodingAgent": 0.09,
+          "GUI Agent": 0.02,
+          "AgentOps": 0.14,
+          "AgentHarness": 0.13,
+          "企业Agent": 0.05
         }
       }
     },
@@ -2025,15 +2066,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "4e275529c1728fe0fc7514e88fbf4627133a7f37ddcc2812ad1b505ac1c30ff6",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.13,
+          "AI4S": 0.14,
           "CodingAgent": 0.05,
+          "GUI Agent": 0.01,
           "AgentOps": 0.04,
-          "AgentHarness": 0.05,
+          "AgentHarness": 0.04,
           "企业Agent": 0.03
         }
       }
@@ -2073,14 +2115,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "a3832ab84ea7f8281369942991a40396429d107aa881a0ff5678bd2f65f7d51d",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.11,
-          "CodingAgent": 0.77,
-          "AgentOps": 0.17,
+          "AI4S": 0.1,
+          "CodingAgent": 0.76,
+          "GUI Agent": 0.02,
+          "AgentOps": 0.16,
           "AgentHarness": 0.09,
           "企业Agent": 0.07
         }
@@ -2123,15 +2166,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "91236b6b2a38fcc64d0f77591ab13c9cf3629eda306c53ce44ae3f82d6da0027",
         "status": "tagged",
         "scores": {
           "AI4S": 0.94,
-          "CodingAgent": 0.32,
+          "CodingAgent": 0.35,
+          "GUI Agent": 0.02,
           "AgentOps": 0.08,
-          "AgentHarness": 0.41,
+          "AgentHarness": 0.4,
           "企业Agent": 0.03
         }
       }
@@ -2168,16 +2212,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "bb7c23743357b329e8418313813f3e7229704c49c78428ce860f83bf176c6de5",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.3,
+          "AI4S": 0.29,
           "CodingAgent": 0.09,
-          "AgentOps": 0.08,
-          "AgentHarness": 0.26,
-          "企业Agent": 0.04
+          "GUI Agent": 0.03,
+          "AgentOps": 0.09,
+          "AgentHarness": 0.27,
+          "企业Agent": 0.05
         }
       }
     },
@@ -2213,13 +2258,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "c073829b08cf482baa70e1d520a8158d593f96abfe0109b2730934b479d88b3e",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
           "CodingAgent": 0.07,
+          "GUI Agent": 0.02,
           "AgentOps": 0.05,
           "AgentHarness": 0.11,
           "企业Agent": 0.03
@@ -2263,13 +2309,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "31b01fb31d4778fd694dc9bafdf672449ca70f33a24da793dc32773a8409bdf0",
         "status": "tagged",
         "scores": {
           "AI4S": 0.86,
           "CodingAgent": 0.02,
+          "GUI Agent": 0.01,
           "AgentOps": 0.06,
           "AgentHarness": 0.6,
           "企业Agent": 0.08
@@ -2308,16 +2355,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "992fcde9190f32f9f59cb385a1710e2c65fa480b1273e29637ef9e4d15f602e0",
         "status": "tagged",
         "scores": {
           "AI4S": 0.22,
           "CodingAgent": 0.26,
+          "GUI Agent": 0.02,
           "AgentOps": 0.15,
           "AgentHarness": 0.23,
-          "企业Agent": 0.05
+          "企业Agent": 0.06
         }
       }
     },
@@ -2352,16 +2400,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "55f3b41b6fb0b3da03a85727387279799b0a5e19d984eb56151993e1db37f296",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.04,
-          "CodingAgent": 0.48,
+          "AI4S": 0.05,
+          "CodingAgent": 0.49,
+          "GUI Agent": 0.15,
           "AgentOps": 0.1,
-          "AgentHarness": 0.09,
-          "企业Agent": 0.11
+          "AgentHarness": 0.1,
+          "企业Agent": 0.09
         }
       }
     },
@@ -2395,15 +2444,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "2f9f54c91f1773609f2f0a69a914dc9fb1075026d7368e14c1c1072f6bf70cfb",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
-          "CodingAgent": 0.13,
-          "AgentOps": 0.04,
-          "AgentHarness": 0.07,
+          "CodingAgent": 0.11,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.05,
+          "AgentHarness": 0.08,
           "企业Agent": 0.03
         }
       }
@@ -2441,15 +2491,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "a933a10caf4699096ae52cec7d725abce7d53218eadd87a99249c369860faf20",
         "status": "tagged",
         "scores": {
           "AI4S": 0.18,
           "CodingAgent": 0.19,
-          "AgentOps": 0.18,
-          "AgentHarness": 0.68,
+          "GUI Agent": 0.05,
+          "AgentOps": 0.17,
+          "AgentHarness": 0.67,
           "企业Agent": 0.05
         }
       }
@@ -2484,16 +2535,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "cd32bc8949f284185370ecf4931ab6cdf7731431b2768aea8fbd535c81e04783",
         "status": "tagged",
         "scores": {
           "AI4S": 0.14,
           "CodingAgent": 0.04,
+          "GUI Agent": 0.01,
           "AgentOps": 0.09,
-          "AgentHarness": 0.14,
-          "企业Agent": 0.5
+          "AgentHarness": 0.13,
+          "企业Agent": 0.49
         }
       }
     },
@@ -2536,15 +2588,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "c659e576e8cbe9897bdaa13174c18f949ec42b51efc8c1efcefb19699a9ec8f0",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
           "CodingAgent": 0.93,
-          "AgentOps": 0.36,
-          "AgentHarness": 0.7,
+          "GUI Agent": 0.04,
+          "AgentOps": 0.35,
+          "AgentHarness": 0.72,
           "企业Agent": 0.05
         }
       }
@@ -2582,15 +2635,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "fb8c90ce80b838dab19a8a6b35bd627472dc73a457f7ff2561b0734fdf4f2802",
         "status": "tagged",
         "scores": {
           "AI4S": 0.08,
-          "CodingAgent": 0.1,
+          "CodingAgent": 0.13,
+          "GUI Agent": 0.14,
           "AgentOps": 0.1,
-          "AgentHarness": 0.36,
+          "AgentHarness": 0.37,
           "企业Agent": 0.04
         }
       }
@@ -2625,14 +2679,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "b6a105db2cd6e2286ffc01075d9d9d9216df6fe90ed05ca89193ca4f64dd00cf",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.05,
-          "CodingAgent": 0.06,
-          "AgentOps": 0.04,
+          "AI4S": 0.06,
+          "CodingAgent": 0.07,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.03,
           "AgentHarness": 0.04,
           "企业Agent": 0.02
         }
@@ -2670,13 +2725,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "8f43e82901568aaf3fd011ad6e8fefc5c2ddc740eb89269d4ac07bf0d9dcf2ca",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
           "CodingAgent": 0.06,
+          "GUI Agent": 0.02,
           "AgentOps": 0.06,
           "AgentHarness": 0.06,
           "企业Agent": 0.03
@@ -2718,13 +2774,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "5148a1ef6c675964d3d9ba4c3543e5bd089a465fe901ec5e207a626fd0f5d303",
         "status": "tagged",
         "scores": {
           "AI4S": 0.06,
-          "CodingAgent": 0.09,
+          "CodingAgent": 0.08,
+          "GUI Agent": 0.03,
           "AgentOps": 0.05,
           "AgentHarness": 0.06,
           "企业Agent": 0.06
@@ -2762,15 +2819,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "cbb47d0f5585a95504f01b1d447ffc5b68b49ef830f16750b58c91659892d679",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.19,
-          "CodingAgent": 0.08,
+          "AI4S": 0.2,
+          "CodingAgent": 0.07,
+          "GUI Agent": 0.02,
           "AgentOps": 0.09,
-          "AgentHarness": 0.11,
+          "AgentHarness": 0.1,
           "企业Agent": 0.03
         }
       }
@@ -2809,13 +2867,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "9a5838828c8db65f19b929e8579dbb8edcf763aaa255491a45752da59e6cb493",
         "status": "tagged",
         "scores": {
           "AI4S": 0.79,
-          "CodingAgent": 0.08,
+          "CodingAgent": 0.06,
+          "GUI Agent": 0.02,
           "AgentOps": 0.1,
           "AgentHarness": 0.13,
           "企业Agent": 0.03
@@ -2857,15 +2916,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "590cc0bce75390c622886f4ed76c50fe2f4d1370870e5d2664044e5988692bca",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.03,
-          "CodingAgent": 0.09,
-          "AgentOps": 0.12,
-          "AgentHarness": 0.05,
+          "AI4S": 0.04,
+          "CodingAgent": 0.12,
+          "GUI Agent": 0.03,
+          "AgentOps": 0.11,
+          "AgentHarness": 0.06,
           "企业Agent": 0.1
         }
       }
@@ -2906,15 +2966,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "e139bf1f53a703b85a21ce3a86d420e2d067f6d238cceee74967951376a20910",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.08,
+          "AI4S": 0.1,
           "CodingAgent": 0.27,
+          "GUI Agent": 0.02,
           "AgentOps": 0.21,
-          "AgentHarness": 0.91,
+          "AgentHarness": 0.9,
           "企业Agent": 0.06
         }
       }
@@ -2950,14 +3011,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "7442bf48bc1ee2f0b986be9ace353b92b726d6bdcda89cc18b77a291ee85c049",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
-          "CodingAgent": 0.21,
-          "AgentOps": 0.15,
+          "CodingAgent": 0.22,
+          "GUI Agent": 0.03,
+          "AgentOps": 0.16,
           "AgentHarness": 0.05,
           "企业Agent": 0.12
         }
@@ -2997,15 +3059,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "153505ab18a3df44b60ef1c86a7cb2e1f233a60481539f29c3f350125234ed78",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.06,
-          "CodingAgent": 0.11,
-          "AgentOps": 0.18,
-          "AgentHarness": 0.23,
+          "AI4S": 0.07,
+          "CodingAgent": 0.13,
+          "GUI Agent": 0.04,
+          "AgentOps": 0.19,
+          "AgentHarness": 0.21,
           "企业Agent": 0.15
         }
       }
@@ -3046,13 +3109,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "06038cd479752ff7079d959ac2ded0ceba44ec765e646d8914f562eff98cd58d",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.21,
-          "CodingAgent": 0.04,
+          "AI4S": 0.2,
+          "CodingAgent": 0.05,
+          "GUI Agent": 0.01,
           "AgentOps": 0.03,
           "AgentHarness": 0.02,
           "企业Agent": 0.02
@@ -3091,15 +3155,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "1a462cdf5c26da52f597667a8449fab7f4592ce55cdcd28ad63948b1a2e620a1",
         "status": "tagged",
         "scores": {
           "AI4S": 0.07,
-          "CodingAgent": 0.54,
+          "CodingAgent": 0.51,
+          "GUI Agent": 0.04,
           "AgentOps": 0.12,
-          "AgentHarness": 0.76,
+          "AgentHarness": 0.77,
           "企业Agent": 0.12
         }
       }
@@ -3140,14 +3205,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "82d267a3a378f9ff66464fce01aec4463f64d7d4f0d29d33091bcd3aecab426d",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
-          "CodingAgent": 0.59,
-          "AgentOps": 0.19,
+          "CodingAgent": 0.62,
+          "GUI Agent": 0.14,
+          "AgentOps": 0.18,
           "AgentHarness": 0.2,
           "企业Agent": 0.22
         }
@@ -3185,15 +3251,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "45db5f452df8ef406cf5295cb3540c73f8374ced6d74093f84de940dbb118307",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.27,
-          "CodingAgent": 0.08,
+          "AI4S": 0.25,
+          "CodingAgent": 0.09,
+          "GUI Agent": 0.04,
           "AgentOps": 0.07,
-          "AgentHarness": 0.17,
+          "AgentHarness": 0.16,
           "企业Agent": 0.03
         }
       }
@@ -3245,16 +3312,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "c8539bfdc07815b9a632fad3d10d6323027796766592574b499c624297def11e",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.05,
+          "AI4S": 0.06,
           "CodingAgent": 0.98,
+          "GUI Agent": 0.05,
           "AgentOps": 0.13,
-          "AgentHarness": 0.13,
-          "企业Agent": 0.04
+          "AgentHarness": 0.12,
+          "企业Agent": 0.03
         }
       }
     },
@@ -3289,13 +3357,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "931f5161919ae5a9ad1e34d3b9cfc28bdb1b301914387da8ad7e8756a4a90983",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.11,
+          "AI4S": 0.1,
           "CodingAgent": 0.02,
+          "GUI Agent": 0.02,
           "AgentOps": 0.03,
           "AgentHarness": 0.03,
           "企业Agent": 0.03
@@ -3334,16 +3403,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "254f62a110ac08f51596d0594a09c75af4bc5014d120ccfe47e6d94b3a82ebd6",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.11,
-          "CodingAgent": 0.41,
+          "AI4S": 0.12,
+          "CodingAgent": 0.47,
+          "GUI Agent": 0.02,
           "AgentOps": 0.09,
           "AgentHarness": 0.12,
-          "企业Agent": 0.13
+          "企业Agent": 0.12
         }
       }
     },
@@ -3378,16 +3448,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "f95abc439c88fe2a56d31b22518c5dde12601147a43e756dd97e48cdcea63240",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.07,
+          "AI4S": 0.06,
           "CodingAgent": 0.03,
-          "AgentOps": 0.06,
-          "AgentHarness": 0.16,
-          "企业Agent": 0.01
+          "GUI Agent": 0.02,
+          "AgentOps": 0.05,
+          "AgentHarness": 0.17,
+          "企业Agent": 0.02
         }
       }
     },
@@ -3423,13 +3494,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "8959bad0f40f790050f61c635cd463cfb0b2a51287626ab6d2fa76e67fe2df13",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.09,
-          "CodingAgent": 0.73,
+          "AI4S": 0.08,
+          "CodingAgent": 0.71,
+          "GUI Agent": 0.01,
           "AgentOps": 0.02,
           "AgentHarness": 0.03,
           "企业Agent": 0.02
@@ -3472,16 +3544,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "12249d5d961ff257f28137d6e98b0cc71090fa9729f24bb5b06ba01712264475",
         "status": "tagged",
         "scores": {
           "AI4S": 0.08,
-          "CodingAgent": 0.35,
-          "AgentOps": 0.12,
-          "AgentHarness": 0.06,
-          "企业Agent": 0.31
+          "CodingAgent": 0.3,
+          "GUI Agent": 0.03,
+          "AgentOps": 0.13,
+          "AgentHarness": 0.05,
+          "企业Agent": 0.33
         }
       }
     },
@@ -3516,13 +3589,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "d4ee084743a94633a0289b57756ce2612fa662e28543b7543fc123efc8490aff",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
-          "CodingAgent": 0.05,
+          "CodingAgent": 0.06,
+          "GUI Agent": 0.01,
           "AgentOps": 0.04,
           "AgentHarness": 0.03,
           "企业Agent": 0.04
@@ -3566,13 +3640,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "c9c7bd5dbd9986411afe01886597f9b0bc3ff0f690698ffb56e6dae95da53aa2",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
-          "CodingAgent": 0.08,
+          "CodingAgent": 0.1,
+          "GUI Agent": 0.01,
           "AgentOps": 0.03,
           "AgentHarness": 0.04,
           "企业Agent": 0.03
@@ -3615,14 +3690,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "3ad0def2673a8cebbbd1c593c33dbaed1514403d93259d25ab5f254e6f07c9f1",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.05,
+          "AI4S": 0.04,
           "CodingAgent": 0.06,
-          "AgentOps": 0.12,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.11,
           "AgentHarness": 0.02,
           "企业Agent": 0.03
         }
@@ -3665,14 +3741,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "36d1746f7b821ab8df78e5febcf602def78640ff358fc133e238e8be058ca804",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
           "CodingAgent": 0.06,
-          "AgentOps": 0.07,
+          "GUI Agent": 0.02,
+          "AgentOps": 0.08,
           "AgentHarness": 0.15,
           "企业Agent": 0.03
         }
@@ -3711,16 +3788,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "d0207fbe896d70ff7781dc86901adc33c914cadf0205827e4b73e35680e9c34a",
         "status": "tagged",
         "scores": {
           "AI4S": 0.07,
           "CodingAgent": 0.96,
-          "AgentOps": 0.12,
-          "AgentHarness": 0.22,
-          "企业Agent": 0.04
+          "GUI Agent": 0.02,
+          "AgentOps": 0.11,
+          "AgentHarness": 0.23,
+          "企业Agent": 0.03
         }
       }
     },
@@ -3758,13 +3836,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "bd01e807cb12beb71e6b34760f6821385a126d12630c9d50c0ea7f07e7017c2b",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.9,
+          "AI4S": 0.89,
           "CodingAgent": 0.12,
+          "GUI Agent": 0.05,
           "AgentOps": 0.03,
           "AgentHarness": 0.04,
           "企业Agent": 0.02
@@ -3807,16 +3886,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "27bff179ee306681ab9c88f4a12367e58d5fea1146d5757d438a393803493fc6",
         "status": "tagged",
         "scores": {
           "AI4S": 0.11,
           "CodingAgent": 0.15,
-          "AgentOps": 0.1,
+          "GUI Agent": 0.64,
+          "AgentOps": 0.11,
           "AgentHarness": 0.18,
-          "企业Agent": 0.07
+          "企业Agent": 0.06
         }
       }
     },
@@ -3853,15 +3933,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "7b2ec534ef6de02b4bb51feeff360fd44d44389c8798abd26de9619336688fbb",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.17,
-          "CodingAgent": 0.95,
+          "AI4S": 0.16,
+          "CodingAgent": 0.94,
+          "GUI Agent": 0.02,
           "AgentOps": 0.05,
-          "AgentHarness": 0.04,
+          "AgentHarness": 0.03,
           "企业Agent": 0.07
         }
       }
@@ -3898,20 +3979,20 @@
       "tags": [
         "LLM",
         "Agent",
-        "CodingAgent",
         "软件工程"
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "0bd8515e00881c07d2956c27a85cbd204b06d5d4d7ad3673054799ae6217e09c",
         "status": "tagged",
         "scores": {
           "AI4S": 0.08,
-          "CodingAgent": 0.71,
+          "CodingAgent": 0.66,
+          "GUI Agent": 0.01,
           "AgentOps": 0.06,
-          "AgentHarness": 0.14,
+          "AgentHarness": 0.15,
           "企业Agent": 0.02
         }
       }
@@ -3950,15 +4031,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "0bd2d3482c6c6a67fb278c53384a8c1368e67e7aa17448c8c344e1abf23293f6",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.37,
-          "CodingAgent": 0.5,
+          "AI4S": 0.34,
+          "CodingAgent": 0.52,
+          "GUI Agent": 0.04,
           "AgentOps": 0.07,
-          "AgentHarness": 0.52,
+          "AgentHarness": 0.57,
           "企业Agent": 0.02
         }
       }
@@ -3996,13 +4078,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "17584208b9801eba44920e15edd930a2f92395b20d1489eb794958a24b93bf28",
         "status": "tagged",
         "scores": {
           "AI4S": 0.09,
-          "CodingAgent": 0.84,
+          "CodingAgent": 0.85,
+          "GUI Agent": 0.02,
           "AgentOps": 0.07,
           "AgentHarness": 0.15,
           "企业Agent": 0.03
@@ -4041,13 +4124,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "aab91affcc236867908564c18935b5df4741be08fddd0129a0b9d041cd6e6b8e",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.05,
+          "AI4S": 0.06,
           "CodingAgent": 0.09,
+          "GUI Agent": 0.01,
           "AgentOps": 0.02,
           "AgentHarness": 0.02,
           "企业Agent": 0.02
@@ -4093,14 +4177,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "249edc34f64599b27a3083c4a81b9ebd31c61e3796414f2c2f6fd9826e740b3a",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.26,
+          "AI4S": 0.24,
           "CodingAgent": 0.22,
-          "AgentOps": 0.09,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.1,
           "AgentHarness": 0.16,
           "企业Agent": 0.02
         }
@@ -4137,15 +4222,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "116f57d08dd4fffc992b54707ae3bf2e7602031837e66919615ed75beef70742",
         "status": "tagged",
         "scores": {
           "AI4S": 0.06,
-          "CodingAgent": 0.16,
+          "CodingAgent": 0.17,
+          "GUI Agent": 0.02,
           "AgentOps": 0.47,
-          "AgentHarness": 0.18,
+          "AgentHarness": 0.17,
           "企业Agent": 0.45
         }
       }
@@ -4184,14 +4270,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "fb655a1cf9750f8507d53dd5739bdd2f1f9dec56b770b3ca1a115b79014740f9",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.08,
-          "CodingAgent": 0.21,
-          "AgentOps": 0.38,
+          "AI4S": 0.07,
+          "CodingAgent": 0.23,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.33,
           "AgentHarness": 0.04,
           "企业Agent": 0.05
         }
@@ -4229,13 +4316,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "7d72e07f97da2666fb5794d56d15b3ad39cbcc4d1e2db2df5f09a242356ce34f",
         "status": "tagged",
         "scores": {
           "AI4S": 0.07,
-          "CodingAgent": 0.16,
+          "CodingAgent": 0.18,
+          "GUI Agent": 0.01,
           "AgentOps": 0.02,
           "AgentHarness": 0.03,
           "企业Agent": 0.03
@@ -4276,15 +4364,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "c1ec67aa47cc7c8c3da802ed479a404f924ce2695d42b225916100be1a5573c6",
         "status": "tagged",
         "scores": {
           "AI4S": 0.06,
           "CodingAgent": 0.13,
+          "GUI Agent": 0.02,
           "AgentOps": 0.07,
-          "AgentHarness": 0.35,
+          "AgentHarness": 0.37,
           "企业Agent": 0.05
         }
       }
@@ -4320,13 +4409,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "fbab3ed046fdabe96d48e98963e5048f677b64da2820b3d1a1478e4f9191d655",
         "status": "tagged",
         "scores": {
           "AI4S": 0.01,
           "CodingAgent": 0.01,
+          "GUI Agent": 0.01,
           "AgentOps": 0.02,
           "AgentHarness": 0.02,
           "企业Agent": 0.02
@@ -4367,13 +4457,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "3ea45eefc632f83968e3c4a682551812fb1c25ffda6e67677dfd7b9f3afcf0ce",
         "status": "tagged",
         "scores": {
           "AI4S": 0.03,
           "CodingAgent": 0.08,
+          "GUI Agent": 0.05,
           "AgentOps": 0.07,
           "AgentHarness": 0.06,
           "企业Agent": 0.12
@@ -4426,13 +4517,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "25e247eb596dda3a54ca53d2bfc153d6d7a18104d46a17cf7f7bd1de4f92a14e",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.03,
-          "CodingAgent": 0.09,
+          "AI4S": 0.04,
+          "CodingAgent": 0.08,
+          "GUI Agent": 0.01,
           "AgentOps": 0.05,
           "AgentHarness": 0.03,
           "企业Agent": 0.04
@@ -4471,15 +4563,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "7b234d8f8d956f632d430867ef40c164cf27899454d31ed378ad292d9cb0e67d",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
           "CodingAgent": 0.07,
+          "GUI Agent": 0.01,
           "AgentOps": 0.03,
-          "AgentHarness": 0.19,
+          "AgentHarness": 0.2,
           "企业Agent": 0.02
         }
       }
@@ -4518,13 +4611,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "92b1135d18bfae624ea70ef295420d0e081e38d1e249a10c5d6afffbd0208ea2",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.27,
-          "CodingAgent": 0.01,
+          "AI4S": 0.29,
+          "CodingAgent": 0.02,
+          "GUI Agent": 0.01,
           "AgentOps": 0.03,
           "AgentHarness": 0.04,
           "企业Agent": 0.02
@@ -4564,16 +4658,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "e5e1569160a84bbc35300bfc332485322ca3aeeb957254fd658060e137453f61",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.38,
-          "CodingAgent": 0.1,
-          "AgentOps": 0.13,
-          "AgentHarness": 0.26,
-          "企业Agent": 0.45
+          "AI4S": 0.42,
+          "CodingAgent": 0.08,
+          "GUI Agent": 0.02,
+          "AgentOps": 0.11,
+          "AgentHarness": 0.23,
+          "企业Agent": 0.44
         }
       }
     },
@@ -4616,16 +4711,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "41cfc99f792cac3041a090996b254f7d4195592c5ec7a8b4d1a2def556a47dd6",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
-          "CodingAgent": 0.07,
-          "AgentOps": 0.13,
+          "CodingAgent": 0.06,
+          "GUI Agent": 0.03,
+          "AgentOps": 0.14,
           "AgentHarness": 0.18,
-          "企业Agent": 0.08
+          "企业Agent": 0.11
         }
       }
     },
@@ -4664,16 +4760,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "42785c76f3a8690924004c95b305c5018a713ed986b3150271888ce65b252434",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.05,
-          "CodingAgent": 0.17,
+          "AI4S": 0.06,
+          "CodingAgent": 0.15,
+          "GUI Agent": 0.09,
           "AgentOps": 0.13,
-          "AgentHarness": 0.5,
-          "企业Agent": 0.05
+          "AgentHarness": 0.51,
+          "企业Agent": 0.04
         }
       }
     },
@@ -4709,13 +4806,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "2208d75e05bb628c5fb1aa611cf4ab3033bb8fb47afb7e966d5619117361abb5",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.1,
+          "AI4S": 0.11,
           "CodingAgent": 0.02,
+          "GUI Agent": 0.01,
           "AgentOps": 0.01,
           "AgentHarness": 0.02,
           "企业Agent": 0.02
@@ -4759,13 +4857,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "ab2a48bab2801ca887cb11cdcfb5f1f81f546b99046dd8faad6d6f0ffe78de8c",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
           "CodingAgent": 0.06,
+          "GUI Agent": 0.01,
           "AgentOps": 0.02,
           "AgentHarness": 0.03,
           "企业Agent": 0.02
@@ -4803,15 +4902,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "4387a1fec960f772b9cfbe639c56c09c91e4a535beb37dfa9d912b7fb2d29442",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.05,
-          "CodingAgent": 0.13,
+          "AI4S": 0.06,
+          "CodingAgent": 0.11,
+          "GUI Agent": 0.02,
           "AgentOps": 0.02,
-          "AgentHarness": 0.08,
+          "AgentHarness": 0.09,
           "企业Agent": 0.02
         }
       }
@@ -4848,16 +4948,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "68bc67c0a550227bc054b3e41764d85474e7696abcab966825ec4c149caa70c9",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.14,
-          "CodingAgent": 0.63,
+          "AI4S": 0.15,
+          "CodingAgent": 0.62,
+          "GUI Agent": 0.02,
           "AgentOps": 0.06,
           "AgentHarness": 0.08,
-          "企业Agent": 0.05
+          "企业Agent": 0.06
         }
       }
     },
@@ -4893,13 +4994,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "ff80013f32eaf175af435dcd034e1ba8db6ee8af7e2e77c755f246599b7fa6fe",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
-          "CodingAgent": 0.13,
+          "CodingAgent": 0.14,
+          "GUI Agent": 0.01,
           "AgentOps": 0.03,
           "AgentHarness": 0.04,
           "企业Agent": 0.02
@@ -4938,16 +5040,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "21a3c898fb30f19b3f89afdf1e3e9b502e47ca1b49f74b990b2faaf1239f547e",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.46,
-          "CodingAgent": 0.09,
+          "AI4S": 0.52,
+          "CodingAgent": 0.08,
+          "GUI Agent": 0.01,
           "AgentOps": 0.05,
           "AgentHarness": 0.12,
-          "企业Agent": 0.03
+          "企业Agent": 0.04
         }
       }
     },
@@ -4984,14 +5087,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "06339f79ef4c64a1e2b94cf3d1601ea2620cff20a55875ae6b935352113c4d7f",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.05,
-          "CodingAgent": 0.71,
-          "AgentOps": 0.51,
+          "AI4S": 0.06,
+          "CodingAgent": 0.7,
+          "GUI Agent": 0.02,
+          "AgentOps": 0.49,
           "AgentHarness": 0.12,
           "企业Agent": 0.08
         }
@@ -5032,14 +5136,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "c6a4c13262439c81e2e289da7fcf596989519335c572b99bd815c912d8e627a3",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
           "CodingAgent": 0.07,
-          "AgentOps": 0.05,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.06,
           "AgentHarness": 0.03,
           "企业Agent": 0.13
         }
@@ -5085,15 +5190,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "c1826ab79a76e9031f3514099f454518c657453ea520c16048e1a522cd588f9d",
         "status": "tagged",
         "scores": {
           "AI4S": 0.84,
           "CodingAgent": 0.83,
+          "GUI Agent": 0.02,
           "AgentOps": 0.04,
-          "AgentHarness": 0.13,
+          "AgentHarness": 0.14,
           "企业Agent": 0.02
         }
       }
@@ -5132,16 +5238,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "92ef6d9404b03bb1b948caa482c686e5e417fd6efe7fec09854a423f5b893cab",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.15,
+          "AI4S": 0.18,
           "CodingAgent": 0.08,
-          "AgentOps": 0.07,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.08,
           "AgentHarness": 0.21,
-          "企业Agent": 0.39
+          "企业Agent": 0.38
         }
       }
     },
@@ -5176,15 +5283,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "3c50d9c678744f6a27d480cc218145bcbd70f54129c8ae383b897395c25211f7",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.23,
-          "CodingAgent": 0.11,
+          "AI4S": 0.21,
+          "CodingAgent": 0.12,
+          "GUI Agent": 0.02,
           "AgentOps": 0.09,
-          "AgentHarness": 0.12,
+          "AgentHarness": 0.13,
           "企业Agent": 0.03
         }
       }
@@ -5228,15 +5336,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "b5a12b0671225b8f91a144413c1f8fec88ea71fbeb24814384974dfa2e8a3a25",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.09,
+          "AI4S": 0.08,
           "CodingAgent": 0.11,
+          "GUI Agent": 0.01,
           "AgentOps": 0.04,
-          "AgentHarness": 0.05,
+          "AgentHarness": 0.06,
           "企业Agent": 0.43
         }
       }
@@ -5271,16 +5380,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "7cc034094668df7fd46aca0741f14909dd0c7d75135829baad965833ef484231",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.03,
-          "CodingAgent": 0.22,
-          "AgentOps": 0.27,
-          "AgentHarness": 0.46,
-          "企业Agent": 0.6
+          "AI4S": 0.04,
+          "CodingAgent": 0.18,
+          "GUI Agent": 0.02,
+          "AgentOps": 0.3,
+          "AgentHarness": 0.5,
+          "企业Agent": 0.62
         }
       }
     },
@@ -5320,16 +5430,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "6125080c883ca357cecace8e9d57ebf66da462ed1976552184127e9393f8df3c",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
           "CodingAgent": 0.04,
+          "GUI Agent": 0.04,
           "AgentOps": 0.07,
           "AgentHarness": 0.22,
-          "企业Agent": 0.02
+          "企业Agent": 0.03
         }
       }
     },
@@ -5368,15 +5479,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "e5a867cd841064bb76ad128290cf36dad80e3cd687fb2f66a7638ee4bd0f7c71",
         "status": "tagged",
         "scores": {
           "AI4S": 0.09,
           "CodingAgent": 0.06,
+          "GUI Agent": 0.02,
           "AgentOps": 0.07,
-          "AgentHarness": 0.03,
+          "AgentHarness": 0.04,
           "企业Agent": 0.03
         }
       }
@@ -5415,16 +5527,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "3bc7e92e2f715de0c96b30824317d9bff0978675274ae3db4c767881d2c3ce65",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.09,
+          "AI4S": 0.1,
           "CodingAgent": 0.07,
+          "GUI Agent": 0.02,
           "AgentOps": 0.06,
           "AgentHarness": 0.15,
-          "企业Agent": 0.08
+          "企业Agent": 0.09
         }
       }
     },
@@ -5460,15 +5573,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "81d4344d489df50ff52997eb3e86e80a1d046afd993b49a43b04bd9006da8d67",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.68,
+          "AI4S": 0.64,
           "CodingAgent": 0.15,
+          "GUI Agent": 0.02,
           "AgentOps": 0.05,
-          "AgentHarness": 0.11,
+          "AgentHarness": 0.1,
           "企业Agent": 0.03
         }
       }
@@ -5513,16 +5627,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "26425a9057368e867f9c78c28ac577f5d0f53964eb7e47911c8936de3e21cdd1",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.07,
+          "AI4S": 0.08,
           "CodingAgent": 0.97,
-          "AgentOps": 0.13,
+          "GUI Agent": 0.02,
+          "AgentOps": 0.14,
           "AgentHarness": 0.05,
-          "企业Agent": 0.06
+          "企业Agent": 0.05
         }
       }
     },
@@ -5561,15 +5676,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "c3baae3d863c639beefcac8250f95f35f20ea86d39a7b9ee863389abee574653",
         "status": "tagged",
         "scores": {
           "AI4S": 0.07,
           "CodingAgent": 0.03,
-          "AgentOps": 0.17,
-          "AgentHarness": 0.78,
+          "GUI Agent": 0.02,
+          "AgentOps": 0.16,
+          "AgentHarness": 0.77,
           "企业Agent": 0.05
         }
       }
@@ -5607,16 +5723,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "e2adbbaa3e813e1d562bd84fb31bd5a43eefa5e7ba6bdc51d382c140d383491f",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.16,
-          "CodingAgent": 0.21,
-          "AgentOps": 0.68,
-          "AgentHarness": 0.13,
-          "企业Agent": 0.18
+          "AI4S": 0.21,
+          "CodingAgent": 0.2,
+          "GUI Agent": 0.09,
+          "AgentOps": 0.67,
+          "AgentHarness": 0.12,
+          "企业Agent": 0.19
         }
       }
     },
@@ -5654,13 +5771,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "245c56e9954aab67ac53bb50ca5310234130f726aed52803dfd49708374f6e75",
         "status": "tagged",
         "scores": {
           "AI4S": 0.1,
-          "CodingAgent": 0.06,
+          "CodingAgent": 0.07,
+          "GUI Agent": 0.01,
           "AgentOps": 0.02,
           "AgentHarness": 0.02,
           "企业Agent": 0.02
@@ -5697,14 +5815,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "63829a36db77da03ee2eebe12909b487172f1d1f0d4d63607290402d8ff3c2f0",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
-          "CodingAgent": 0.05,
-          "AgentOps": 0.05,
+          "CodingAgent": 0.04,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.04,
           "AgentHarness": 0.03,
           "企业Agent": 0.03
         }
@@ -5745,13 +5864,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "60fa74c7f3e31a02293e697817d6b91c138cbadca9f547e4b0c3045e4d43bb42",
         "status": "tagged",
         "scores": {
           "AI4S": 0.1,
-          "CodingAgent": 0.11,
+          "CodingAgent": 0.1,
+          "GUI Agent": 0.02,
           "AgentOps": 0.05,
           "AgentHarness": 0.04,
           "企业Agent": 0.05
@@ -5815,15 +5935,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "d7156c57224c6a0a5dee2688dcfe2aba9c2368e93fbd716ba857ec239d7d3488",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.05,
+          "AI4S": 0.04,
           "CodingAgent": 0.09,
+          "GUI Agent": 0.03,
           "AgentOps": 0.1,
-          "AgentHarness": 0.59,
+          "AgentHarness": 0.58,
           "企业Agent": 0.05
         }
       }
@@ -5868,13 +5989,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "3ae106ec2238ee15add7ac7e893651777fada80bbdbc2c1737dfc95cfc0b3a05",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
-          "CodingAgent": 0.13,
+          "CodingAgent": 0.15,
+          "GUI Agent": 0.01,
           "AgentOps": 0.04,
           "AgentHarness": 0.04,
           "企业Agent": 0.02
@@ -5914,13 +6036,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "e31286a4644b1758c1040de2d2e6beb5f4b545afaa3c5cb22bae2f82cb818f36",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.24,
-          "CodingAgent": 0.04,
+          "AI4S": 0.25,
+          "CodingAgent": 0.05,
+          "GUI Agent": 0.01,
           "AgentOps": 0.03,
           "AgentHarness": 0.05,
           "企业Agent": 0.03
@@ -5964,14 +6087,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "230e0e3fa2a7f46c07156db83b8f1bfbbd1aa5d148b80a59d574bfe76c417c1c",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.05,
+          "AI4S": 0.04,
           "CodingAgent": 0.05,
-          "AgentOps": 0.03,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.04,
           "AgentHarness": 0.03,
           "企业Agent": 0.02
         }
@@ -6007,15 +6131,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "480c6be6652b1c450038cc4500cb272440b1a94bde856684c885b1f0f45b0af7",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
-          "CodingAgent": 0.1,
+          "CodingAgent": 0.11,
+          "GUI Agent": 0.01,
           "AgentOps": 0.03,
-          "AgentHarness": 0.08,
+          "AgentHarness": 0.07,
           "企业Agent": 0.02
         }
       }
@@ -6057,16 +6182,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "7aaa8669679e3ab791d8cc75a815185eefec3a16b43a130643ecb738b29e5f3e",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
-          "CodingAgent": 0.06,
+          "CodingAgent": 0.05,
+          "GUI Agent": 0.02,
           "AgentOps": 0.05,
           "AgentHarness": 0.05,
-          "企业Agent": 0.04
+          "企业Agent": 0.05
         }
       }
     },
@@ -6110,16 +6236,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "f850f98979529eb648b7ad95a7763f4604d4b4cca8e372f31450dea99d9e06b4",
         "status": "tagged",
         "scores": {
           "AI4S": 0.07,
-          "CodingAgent": 0.9,
-          "AgentOps": 0.15,
-          "AgentHarness": 0.82,
-          "企业Agent": 0.12
+          "CodingAgent": 0.89,
+          "GUI Agent": 0.02,
+          "AgentOps": 0.14,
+          "AgentHarness": 0.84,
+          "企业Agent": 0.13
         }
       }
     },
@@ -6162,15 +6289,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "1c009ee2f35a9e68e249ee7f7a125b37bc40cea52838f69aeb055febef28a32c",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
-          "CodingAgent": 0.2,
+          "CodingAgent": 0.15,
+          "GUI Agent": 0.55,
           "AgentOps": 0.05,
-          "AgentHarness": 0.06,
+          "AgentHarness": 0.05,
           "企业Agent": 0.07
         }
       }
@@ -6209,16 +6337,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "18fe3920f081222751df4484761c94fa3ab117b88816b5cf4b72933e5903af11",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
-          "CodingAgent": 0.38,
+          "CodingAgent": 0.39,
+          "GUI Agent": 0.11,
           "AgentOps": 0.1,
-          "AgentHarness": 0.35,
-          "企业Agent": 0.14
+          "AgentHarness": 0.36,
+          "企业Agent": 0.16
         }
       }
     },
@@ -6261,13 +6390,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "1ce8c73521e19d6e740cde95b2537bbcb534a6c3f86d1b7aed97131c93f2f2a9",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
-          "CodingAgent": 0.08,
+          "CodingAgent": 0.09,
+          "GUI Agent": 0.01,
           "AgentOps": 0.02,
           "AgentHarness": 0.02,
           "企业Agent": 0.02
@@ -6314,15 +6444,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "959583b96261b763ec64b239e31d7ec36b580249e5d789b8f0b8c89f0eba5420",
         "status": "tagged",
         "scores": {
           "AI4S": 0.06,
           "CodingAgent": 0.96,
+          "GUI Agent": 0.02,
           "AgentOps": 0.08,
-          "AgentHarness": 0.31,
+          "AgentHarness": 0.34,
           "企业Agent": 0.04
         }
       }
@@ -6365,15 +6496,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "16ff7c9c3c5570bf8624c9256777bd2c4cf763b1ce1893d29bbeca533c4f86f3",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.04,
+          "AI4S": 0.05,
           "CodingAgent": 0.16,
+          "GUI Agent": 0.08,
           "AgentOps": 0.07,
-          "AgentHarness": 0.46,
+          "AgentHarness": 0.49,
           "企业Agent": 0.07
         }
       }
@@ -6417,15 +6549,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "ed59dbe776a2b116d55a245d9679228deea5af3f096dea38370361745fe5d829",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
-          "CodingAgent": 0.09,
+          "CodingAgent": 0.08,
+          "GUI Agent": 0.02,
           "AgentOps": 0.07,
-          "AgentHarness": 0.62,
+          "AgentHarness": 0.59,
           "企业Agent": 0.05
         }
       }
@@ -6475,15 +6608,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "877c2b224f9282250f15715c11e264bca6178687c99a2cfcb6abe3c76983d3e9",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.08,
-          "CodingAgent": 0.08,
-          "AgentOps": 0.06,
-          "AgentHarness": 0.07,
+          "AI4S": 0.07,
+          "CodingAgent": 0.1,
+          "GUI Agent": 0.03,
+          "AgentOps": 0.07,
+          "AgentHarness": 0.06,
           "企业Agent": 0.05
         }
       }
@@ -6518,13 +6652,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "11f0467c7f45dfcb4918d0cd559db4bee5dd63f7289a8ea7bf9bdbc7471a8219",
         "status": "tagged",
         "scores": {
           "AI4S": 0.06,
           "CodingAgent": 0.03,
+          "GUI Agent": 0.03,
           "AgentOps": 0.02,
           "AgentHarness": 0.02,
           "企业Agent": 0.02
@@ -6565,13 +6700,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "3940801617827d5a4698cfd3e641f1f06957b4408703c161ea338937c7ecb310",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
           "CodingAgent": 0.12,
+          "GUI Agent": 0.01,
           "AgentOps": 0.03,
           "AgentHarness": 0.05,
           "企业Agent": 0.02
@@ -6611,13 +6747,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "9367a2c20df9da7012ed96f3ef9a2eea2878a65c3f064bec7c2ac97cb202ac72",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.16,
+          "AI4S": 0.14,
           "CodingAgent": 0.04,
+          "GUI Agent": 0.01,
           "AgentOps": 0.07,
           "AgentHarness": 0.07,
           "企业Agent": 0.06
@@ -6657,13 +6794,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "a029a7bfb26ba4dda8dfd8af899cb1d0d8e4f201aa54e6ba0613e93e3c73209a",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.05,
-          "CodingAgent": 0.05,
+          "AI4S": 0.04,
+          "CodingAgent": 0.06,
+          "GUI Agent": 0.01,
           "AgentOps": 0.02,
           "AgentHarness": 0.02,
           "企业Agent": 0.02
@@ -6701,13 +6839,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "60e634cc5a131b1c845c38db10dab4b1503ad1f064c928661910da4403c0eb1f",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
           "CodingAgent": 0.08,
+          "GUI Agent": 0.01,
           "AgentOps": 0.03,
           "AgentHarness": 0.03,
           "企业Agent": 0.02
@@ -6747,13 +6886,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "36b741082dca229312ea0986a30e2895759751fe7d65ba51dd4b8fa0e75f0060",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.07,
+          "AI4S": 0.08,
           "CodingAgent": 0.05,
+          "GUI Agent": 0.01,
           "AgentOps": 0.02,
           "AgentHarness": 0.03,
           "企业Agent": 0.03
@@ -6789,15 +6929,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "66fd47b9389c4e07b29f56ec4b2dab5840cf1a1222bb6779443bfa4ae2769bd1",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
-          "CodingAgent": 0.1,
-          "AgentOps": 0.13,
-          "AgentHarness": 0.28,
+          "CodingAgent": 0.12,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.14,
+          "AgentHarness": 0.35,
           "企业Agent": 0.02
         }
       }
@@ -6833,16 +6974,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "d20671443f822fcfbc88fa216218600eb62929d3c988997ef1f09663832d1544",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
           "CodingAgent": 0.02,
+          "GUI Agent": 0.01,
           "AgentOps": 0.06,
           "AgentHarness": 0.03,
-          "企业Agent": 0.04
+          "企业Agent": 0.03
         }
       }
     },
@@ -6881,15 +7023,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "dedd89f5d502bd56c4b70d07f9ae8c6df3f022e900b2ad7786fe626f0f6ff83d",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.26,
-          "CodingAgent": 0.67,
-          "AgentOps": 0.15,
-          "AgentHarness": 0.33,
+          "AI4S": 0.27,
+          "CodingAgent": 0.68,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.16,
+          "AgentHarness": 0.32,
           "企业Agent": 0.03
         }
       }
@@ -6932,15 +7075,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "931922a2c1dcf4b4cdcbcec3bc5b6f1529abfa9d0d2d36a29776851ebfd6815f",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.37,
-          "CodingAgent": 0.04,
+          "AI4S": 0.39,
+          "CodingAgent": 0.05,
+          "GUI Agent": 0.01,
           "AgentOps": 0.02,
-          "AgentHarness": 0.02,
+          "AgentHarness": 0.03,
           "企业Agent": 0.02
         }
       }
@@ -6974,21 +7118,23 @@
       },
       "tags": [
         "Agent",
+        "GUI Agent",
         "AgentOps",
         "软件工程"
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "7c0fa0ed234a73700cfd77de554f88467e348cfd234e75defae4af34e3b6c1e7",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.05,
-          "CodingAgent": 0.35,
-          "AgentOps": 0.77,
-          "AgentHarness": 0.12,
-          "企业Agent": 0.48
+          "AI4S": 0.06,
+          "CodingAgent": 0.27,
+          "GUI Agent": 0.95,
+          "AgentOps": 0.79,
+          "AgentHarness": 0.13,
+          "企业Agent": 0.52
         }
       }
     },
@@ -7022,13 +7168,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "3cb85b513cceecc416db4ec9b13fd469bfdaba08629d4ebdb2f0e70e3af17513",
         "status": "tagged",
         "scores": {
           "AI4S": 0.02,
           "CodingAgent": 0.01,
+          "GUI Agent": 0.01,
           "AgentOps": 0.01,
           "AgentHarness": 0.02,
           "企业Agent": 0.01
@@ -7075,15 +7222,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "f2e1e2749a0fae752de7c9a406df10f1515c3db384a6e00596b8578b579e58c3",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.43,
-          "CodingAgent": 0.78,
+          "AI4S": 0.45,
+          "CodingAgent": 0.8,
+          "GUI Agent": 0.01,
           "AgentOps": 0.06,
-          "AgentHarness": 0.23,
+          "AgentHarness": 0.25,
           "企业Agent": 0.02
         }
       }
@@ -7118,15 +7266,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "de4ebb30df9e4586f3e6a0d51ae7349ca888198a1f5d1e6f6369609cf0df7bd1",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.26,
-          "CodingAgent": 0.05,
+          "AI4S": 0.27,
+          "CodingAgent": 0.06,
+          "GUI Agent": 0.01,
           "AgentOps": 0.02,
-          "AgentHarness": 0.02,
+          "AgentHarness": 0.03,
           "企业Agent": 0.03
         }
       }
@@ -7163,14 +7312,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "660ecf7b5be4167a1a92e9b37d0396f1b2d30b107ce918db2906992a70cde980",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
           "CodingAgent": 0.01,
-          "AgentOps": 0.07,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.06,
           "AgentHarness": 0.07,
           "企业Agent": 0.02
         }
@@ -7210,16 +7360,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "c002a95eeabe11d88f4e08a8c929fae876ebd5bbbbb18b5ef2ac097e7a541646",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.05,
-          "CodingAgent": 0.21,
-          "AgentOps": 0.34,
-          "AgentHarness": 0.28,
-          "企业Agent": 0.14
+          "AI4S": 0.06,
+          "CodingAgent": 0.22,
+          "GUI Agent": 0.02,
+          "AgentOps": 0.36,
+          "AgentHarness": 0.25,
+          "企业Agent": 0.15
         }
       }
     },
@@ -7262,16 +7413,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "7712ba194e1e3f24d21c98d80ec3c2f1b75466fc1cf11a28ea35b13eba92a6d3",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
-          "CodingAgent": 0.1,
+          "CodingAgent": 0.11,
+          "GUI Agent": 0.03,
           "AgentOps": 0.09,
-          "AgentHarness": 0.64,
-          "企业Agent": 0.07
+          "AgentHarness": 0.65,
+          "企业Agent": 0.06
         }
       }
     },
@@ -7305,14 +7457,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "4e263414857de0492031be6d5198c3daeb52e1ac16e0598234474e6c900ea4e5",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.03,
+          "AI4S": 0.04,
           "CodingAgent": 0.02,
-          "AgentOps": 0.11,
+          "GUI Agent": 0.02,
+          "AgentOps": 0.12,
           "AgentHarness": 0.06,
           "企业Agent": 0.03
         }
@@ -7348,13 +7501,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "073cfb306b82a408fca182a51de096206a5928c7ff04b3eba1d37879b1bc5b4c",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
-          "CodingAgent": 0.6,
+          "CodingAgent": 0.63,
+          "GUI Agent": 0.01,
           "AgentOps": 0.04,
           "AgentHarness": 0.04,
           "企业Agent": 0.03
@@ -7395,14 +7549,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "2ca54df240846c7aed76a92a13d88b97fcc8622fe32476d8aec652338adac328",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
           "CodingAgent": 0.03,
-          "AgentOps": 0.02,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.01,
           "AgentHarness": 0.02,
           "企业Agent": 0.02
         }
@@ -7445,13 +7600,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "40b76ecc8c1e49ef384774184b82db2d8cde42b210a9513120401160f8b68d9c",
         "status": "tagged",
         "scores": {
           "AI4S": 0.07,
           "CodingAgent": 0.97,
+          "GUI Agent": 0.02,
           "AgentOps": 0.2,
           "AgentHarness": 0.08,
           "企业Agent": 0.06
@@ -7490,15 +7646,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "133cd959b673c2fe8dd963ee43a0e705bc06601aaf0630ead7bcfcb480c132f6",
         "status": "tagged",
         "scores": {
           "AI4S": 0.08,
           "CodingAgent": 0.14,
+          "GUI Agent": 0.01,
           "AgentOps": 0.07,
-          "AgentHarness": 0.11,
+          "AgentHarness": 0.1,
           "企业Agent": 0.05
         }
       }
@@ -7541,13 +7698,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "5e93d1d3101f81fd1daced82df7bb9814cc9f5ebef7a82089dca72f10ecc7bb6",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
           "CodingAgent": 0.23,
+          "GUI Agent": 0.06,
           "AgentOps": 0.13,
           "AgentHarness": 0.05,
           "企业Agent": 0.16
@@ -7588,13 +7746,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "8723518dacd1170dd27f6225d063152f68d9178a3ff3f2d8cca4c6fe4e680938",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
-          "CodingAgent": 0.84,
+          "CodingAgent": 0.81,
+          "GUI Agent": 0.01,
           "AgentOps": 0.03,
           "AgentHarness": 0.07,
           "企业Agent": 0.02
@@ -7639,16 +7798,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "be85dac20270fd5401fc2b6073eab461e0a2b6e537ced2fbae7f56d251c415b1",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
-          "CodingAgent": 0.29,
-          "AgentOps": 0.56,
+          "CodingAgent": 0.28,
+          "GUI Agent": 0.13,
+          "AgentOps": 0.51,
           "AgentHarness": 0.09,
-          "企业Agent": 0.27
+          "企业Agent": 0.26
         }
       }
     },
@@ -7693,14 +7853,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "fadfd4bf6d2d6e82b89b03025711446fe4e2dae7875ce5aca4be6f04c80f1602",
         "status": "tagged",
         "scores": {
           "AI4S": 0.08,
           "CodingAgent": 0.97,
-          "AgentOps": 0.07,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.08,
           "AgentHarness": 0.15,
           "企业Agent": 0.02
         }
@@ -7743,13 +7904,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "e0597bab09d05737de6295f01ec82ded97b6a12fa10c6635144c8737a6f95cef",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
           "CodingAgent": 0.95,
+          "GUI Agent": 0.02,
           "AgentOps": 0.08,
           "AgentHarness": 0.11,
           "企业Agent": 0.04
@@ -7792,18 +7954,20 @@
       },
       "tags": [
         "LLM",
+        "CodingAgent",
         "软件工程"
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "0afe4de2bbe8b1a1fe55f61b540c2589768797a70c8920f2ba02a8e40a0ddb1a",
         "status": "tagged",
         "scores": {
           "AI4S": 0.09,
-          "CodingAgent": 0.68,
-          "AgentOps": 0.04,
+          "CodingAgent": 0.72,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.03,
           "AgentHarness": 0.04,
           "企业Agent": 0.02
         }
@@ -7853,16 +8017,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "53e6ceeb3c9522f611e3a42a71465d728440a5b04fcc3b441406fa32fe2ee766",
         "status": "tagged",
         "scores": {
           "AI4S": 0.08,
           "CodingAgent": 0.05,
-          "AgentOps": 0.08,
+          "GUI Agent": 0.02,
+          "AgentOps": 0.09,
           "AgentHarness": 0.33,
-          "企业Agent": 0.03
+          "企业Agent": 0.04
         }
       }
     },
@@ -7900,16 +8065,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "04ae89f86b195174389cc34f9901fbd719f27ebb1959cdeb17eaed85ec633b3e",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.05,
-          "CodingAgent": 0.06,
+          "AI4S": 0.04,
+          "CodingAgent": 0.07,
+          "GUI Agent": 0.02,
           "AgentOps": 0.03,
           "AgentHarness": 0.03,
-          "企业Agent": 0.03
+          "企业Agent": 0.04
         }
       }
     },
@@ -7949,15 +8115,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "707693df0639a15176ebc78a214cca6029b0db3e3eb9d01451be695c77b5d894",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.04,
-          "CodingAgent": 0.1,
-          "AgentOps": 0.04,
-          "AgentHarness": 0.33,
+          "AI4S": 0.05,
+          "CodingAgent": 0.11,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.05,
+          "AgentHarness": 0.31,
           "企业Agent": 0.02
         }
       }
@@ -7991,18 +8158,20 @@
       },
       "tags": [
         "LLM",
-        "Agent"
+        "Agent",
+        "AI4S"
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "cc540032ed27735d75f7640255d84da6cbd02bc671bad963fcb40359a870c00f",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.68,
-          "CodingAgent": 0.12,
-          "AgentOps": 0.15,
+          "AI4S": 0.71,
+          "CodingAgent": 0.14,
+          "GUI Agent": 0.02,
+          "AgentOps": 0.14,
           "AgentHarness": 0.57,
           "企业Agent": 0.04
         }
@@ -8044,15 +8213,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "d290495cf88c9c3bf7739b556ace50ba466f4c46b4f1c10f6e06ecc60dbb5833",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
           "CodingAgent": 0.11,
+          "GUI Agent": 0.01,
           "AgentOps": 0.04,
-          "AgentHarness": 0.59,
+          "AgentHarness": 0.54,
           "企业Agent": 0.02
         }
       }
@@ -8094,16 +8264,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "dd018cd073c204fd46281c0da6637841ef94b4c8a9466b2c3db4819be2661e7c",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
           "CodingAgent": 0.98,
+          "GUI Agent": 0.02,
           "AgentOps": 0.1,
-          "AgentHarness": 0.17,
-          "企业Agent": 0.06
+          "AgentHarness": 0.19,
+          "企业Agent": 0.08
         }
       }
     },
@@ -8133,17 +8304,19 @@
         "status": "translated"
       },
       "tags": [
-        "Agent"
+        "Agent",
+        "CodingAgent"
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "3b2672f629614baea36c7ba661c9c15ebbec3aab5e03d8492ce858522ffd25ef",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
-          "CodingAgent": 0.69,
+          "CodingAgent": 0.73,
+          "GUI Agent": 0.12,
           "AgentOps": 0.23,
           "AgentHarness": 0.62,
           "企业Agent": 0.08
@@ -8185,13 +8358,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "6829e30607bffee5652e8b77906db454c93f9e6f2153420db7ce3f87dbd2428a",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
           "CodingAgent": 0.09,
+          "GUI Agent": 0.01,
           "AgentOps": 0.04,
           "AgentHarness": 0.02,
           "企业Agent": 0.03
@@ -8229,13 +8403,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "909ca36b499e6c24c756e20d7e1fb71174522137bc894a124b8fb923d16e7a4e",
         "status": "tagged",
         "scores": {
           "AI4S": 0.06,
-          "CodingAgent": 0.05,
+          "CodingAgent": 0.06,
+          "GUI Agent": 0.01,
           "AgentOps": 0.02,
           "AgentHarness": 0.02,
           "企业Agent": 0.02
@@ -8277,15 +8452,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "637f39f889092b13ec2fa413fb3ddf19e03df1d2306cd246ba03f3c6e71cc8e2",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
           "CodingAgent": 0.98,
-          "AgentOps": 0.34,
-          "AgentHarness": 0.4,
+          "GUI Agent": 0.03,
+          "AgentOps": 0.29,
+          "AgentHarness": 0.41,
           "企业Agent": 0.04
         }
       }
@@ -8325,16 +8501,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "0027c9e337846d736b3353acf368ba4124e323226e1e159d4cfa3ce1f4f4360e",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
           "CodingAgent": 0.06,
+          "GUI Agent": 0.01,
           "AgentOps": 0.04,
-          "AgentHarness": 0.23,
-          "企业Agent": 0.01
+          "AgentHarness": 0.24,
+          "企业Agent": 0.02
         }
       }
     },
@@ -8372,14 +8549,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "1e10a7873afa277e31a37aea5283979b90f1827f4771e3a83a37c246fdfbee51",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
-          "CodingAgent": 0.78,
-          "AgentOps": 0.05,
+          "CodingAgent": 0.79,
+          "GUI Agent": 0.02,
+          "AgentOps": 0.04,
           "AgentHarness": 0.16,
           "企业Agent": 0.03
         }
@@ -8416,14 +8594,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "7dd6d43fcacbaa6153cc8a29ea6346bbe3dff8e281fb34ef894703e2893cd579",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.17,
-          "CodingAgent": 0.1,
-          "AgentOps": 0.13,
+          "AI4S": 0.18,
+          "CodingAgent": 0.11,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.11,
           "AgentHarness": 0.04,
           "企业Agent": 0.03
         }
@@ -8463,13 +8642,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "e3b733bdade37a398e807bcf60168df9c95408354d69d23b3eadec2779fa55b9",
         "status": "tagged",
         "scores": {
           "AI4S": 0.03,
           "CodingAgent": 0.06,
+          "GUI Agent": 0.01,
           "AgentOps": 0.04,
           "AgentHarness": 0.02,
           "企业Agent": 0.03
@@ -8510,13 +8690,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "c7b4105dbbb9339f68c8bac5e18160d490a62dcc2e81e8e8dc0d51075eb0dc74",
         "status": "tagged",
         "scores": {
           "AI4S": 0.03,
-          "CodingAgent": 0.06,
+          "CodingAgent": 0.07,
+          "GUI Agent": 0.02,
           "AgentOps": 0.06,
           "AgentHarness": 0.03,
           "企业Agent": 0.05
@@ -8559,15 +8740,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "d9e05315e8b024a26d1b08f72bca374d3a4140b0bd95bd32d8cce0a0b3dea4b4",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.03,
-          "CodingAgent": 0.13,
+          "AI4S": 0.04,
+          "CodingAgent": 0.12,
+          "GUI Agent": 0.08,
           "AgentOps": 0.07,
-          "AgentHarness": 0.19,
+          "AgentHarness": 0.18,
           "企业Agent": 0.07
         }
       }
@@ -8607,15 +8789,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "907f8cc12949bae340846c9901e873f0de45eca85463a17ca642dff6375acb8c",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
           "CodingAgent": 0.1,
+          "GUI Agent": 0.01,
           "AgentOps": 0.03,
-          "AgentHarness": 0.15,
+          "AgentHarness": 0.14,
           "企业Agent": 0.02
         }
       }
@@ -8656,13 +8839,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "fe271946c24755b95c391afd166bffcfa404891e86b9038fa935007c6af05c96",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
-          "CodingAgent": 0.07,
+          "CodingAgent": 0.06,
+          "GUI Agent": 0.02,
           "AgentOps": 0.04,
           "AgentHarness": 0.08,
           "企业Agent": 0.03
@@ -8700,16 +8884,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "b586aebeded06fb31ffc4f19e418ba3d3bb7744a84912622fa2c2b76a14a44bb",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
           "CodingAgent": 0.1,
+          "GUI Agent": 0.01,
           "AgentOps": 0.06,
-          "AgentHarness": 0.04,
-          "企业Agent": 0.05
+          "AgentHarness": 0.03,
+          "企业Agent": 0.04
         }
       }
     },
@@ -8747,20 +8932,22 @@
         "status": "translated"
       },
       "tags": [
-        "Agent"
+        "Agent",
+        "GUI Agent"
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "70f1cdd33f7b68bd282534a4219deaa58e0bfab09b5686ddc49af5d3029192ab",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.04,
-          "CodingAgent": 0.18,
-          "AgentOps": 0.05,
+          "AI4S": 0.05,
+          "CodingAgent": 0.17,
+          "GUI Agent": 0.72,
+          "AgentOps": 0.04,
           "AgentHarness": 0.04,
-          "企业Agent": 0.09
+          "企业Agent": 0.08
         }
       }
     },
@@ -8951,16 +9138,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "e00e5dcec5ca397723881808719cd2cbdeafd89db482fde1ec0719f29ec2aedb",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
-          "CodingAgent": 0.07,
+          "CodingAgent": 0.08,
+          "GUI Agent": 0.01,
           "AgentOps": 0.02,
           "AgentHarness": 0.02,
-          "企业Agent": 0.03
+          "企业Agent": 0.02
         }
       }
     },
@@ -8997,16 +9185,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "dc2a3e99e6fe9a36b25f6b86ba9fce0da487e06c1888f827578c92b2c6c7417c",
         "status": "tagged",
         "scores": {
           "AI4S": 0.57,
-          "CodingAgent": 0.79,
-          "AgentOps": 0.29,
-          "AgentHarness": 0.13,
-          "企业Agent": 0.03
+          "CodingAgent": 0.81,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.32,
+          "AgentHarness": 0.14,
+          "企业Agent": 0.02
         }
       }
     },
@@ -9054,16 +9243,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "582a870b350c3ba1a4fd829b1f5fedf12a1fa43185b1262fd3b2015917745a26",
         "status": "tagged",
         "scores": {
           "AI4S": 0.09,
-          "CodingAgent": 0.12,
-          "AgentOps": 0.04,
+          "CodingAgent": 0.13,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.05,
           "AgentHarness": 0.03,
-          "企业Agent": 0.07
+          "企业Agent": 0.06
         }
       }
     },
@@ -9101,20 +9291,20 @@
         "status": "translated"
       },
       "tags": [
-        "Agent",
-        "AgentHarness"
+        "Agent"
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "9d131f75aa85b51e8e03ea42ef21e5a13e1a04024039e195e84814c4eef9b81d",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
-          "CodingAgent": 0.07,
+          "CodingAgent": 0.08,
+          "GUI Agent": 0.04,
           "AgentOps": 0.06,
-          "AgentHarness": 0.73,
+          "AgentHarness": 0.68,
           "企业Agent": 0.04
         }
       }
@@ -9153,13 +9343,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "0a84546f630a5e8efe850111c895013d1b3a7cd70c890e493b275f4308d4c14a",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.05,
-          "CodingAgent": 0.24,
+          "AI4S": 0.06,
+          "CodingAgent": 0.25,
+          "GUI Agent": 0.01,
           "AgentOps": 0.04,
           "AgentHarness": 0.04,
           "企业Agent": 0.03
@@ -9201,15 +9392,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "3d9d460036ff2b308099a6d2ce4783aa65c3f1faddb6bca1440593509c70e2a3",
         "status": "tagged",
         "scores": {
           "AI4S": 0.06,
-          "CodingAgent": 0.15,
+          "CodingAgent": 0.14,
+          "GUI Agent": 0.01,
           "AgentOps": 0.04,
-          "AgentHarness": 0.05,
+          "AgentHarness": 0.04,
           "企业Agent": 0.02
         }
       }
@@ -9245,15 +9437,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "189c2c152134d53c1d62cabcb4178206216152d076643042fca6dac75b2a1dd5",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.47,
+          "AI4S": 0.46,
           "CodingAgent": 0.05,
-          "AgentOps": 0.28,
-          "AgentHarness": 0.1,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.27,
+          "AgentHarness": 0.09,
           "企业Agent": 0.05
         }
       }
@@ -9294,16 +9487,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "37f7de93d83e43fa7a71796c7f7f52204a6e4053a40c28df184a3bfd34a6dd52",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.09,
-          "CodingAgent": 0.15,
+          "AI4S": 0.08,
+          "CodingAgent": 0.13,
+          "GUI Agent": 0.09,
           "AgentOps": 0.17,
-          "AgentHarness": 0.07,
-          "企业Agent": 0.08
+          "AgentHarness": 0.06,
+          "企业Agent": 0.07
         }
       }
     },
@@ -9344,15 +9538,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "01bf7c14c83a845a36a4149762a0d3013c7376977100344ecbec747251355e85",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
-          "CodingAgent": 0.74,
+          "CodingAgent": 0.76,
+          "GUI Agent": 0.02,
           "AgentOps": 0.06,
-          "AgentHarness": 0.15,
+          "AgentHarness": 0.16,
           "企业Agent": 0.04
         }
       }
@@ -9388,14 +9583,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "32c11a4c1bac03af25dc22d26d89b2608dc0799472de9c1dfd7a3eeea69e1075",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.06,
-          "CodingAgent": 0.23,
-          "AgentOps": 0.17,
+          "AI4S": 0.05,
+          "CodingAgent": 0.26,
+          "GUI Agent": 0.03,
+          "AgentOps": 0.18,
           "AgentHarness": 0.43,
           "企业Agent": 0.06
         }
@@ -9436,16 +9632,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "d87d6c7b7302c9b62f8a42639aad48fcb74798e9193b48549c0ef08d04d0e0af",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.05,
+          "AI4S": 0.06,
           "CodingAgent": 0.1,
-          "AgentOps": 0.26,
-          "AgentHarness": 0.22,
-          "企业Agent": 0.81
+          "GUI Agent": 0.02,
+          "AgentOps": 0.27,
+          "AgentHarness": 0.25,
+          "企业Agent": 0.82
         }
       }
     },
@@ -9479,16 +9676,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "8b9bc03817d4ddfb9cb37343a7598a4ca99f7791e1f6add26380412bc1151fb4",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
-          "CodingAgent": 0.28,
+          "CodingAgent": 0.23,
+          "GUI Agent": 0.09,
           "AgentOps": 0.08,
           "AgentHarness": 0.06,
-          "企业Agent": 0.33
+          "企业Agent": 0.32
         }
       }
     },
@@ -9529,15 +9727,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "526c04c24125404377d069138114eb8cf4e2303c47c906d407923df2ebd382f7",
         "status": "tagged",
         "scores": {
           "AI4S": 0.04,
-          "CodingAgent": 0.2,
-          "AgentOps": 0.2,
-          "AgentHarness": 0.32,
+          "CodingAgent": 0.19,
+          "GUI Agent": 0.03,
+          "AgentOps": 0.21,
+          "AgentHarness": 0.31,
           "企业Agent": 0.07
         }
       }
@@ -9576,15 +9775,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "5f6c9a30284015e9247157309bc30cc0773fdc15882da1cb5e5fc70151046c28",
         "status": "tagged",
         "scores": {
           "AI4S": 0.09,
           "CodingAgent": 0.98,
+          "GUI Agent": 0.03,
           "AgentOps": 0.13,
-          "AgentHarness": 0.53,
+          "AgentHarness": 0.52,
           "企业Agent": 0.08
         }
       }
@@ -9625,14 +9825,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "36ca29e4c061b41e122989f9abfcfe211ee3f5ccc96a7a1840f19241dc083f85",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
           "CodingAgent": 0.87,
-          "AgentOps": 0.04,
+          "GUI Agent": 0.01,
+          "AgentOps": 0.05,
           "AgentHarness": 0.04,
           "企业Agent": 0.02
         }
@@ -9671,15 +9872,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "8d3d862d33c46071dec8ed7ac6bc19f3b637475d38bc503445a198ac8cdf2e76",
         "status": "tagged",
         "scores": {
           "AI4S": 0.22,
-          "CodingAgent": 0.13,
+          "CodingAgent": 0.12,
+          "GUI Agent": 0.18,
           "AgentOps": 0.08,
-          "AgentHarness": 0.21,
+          "AgentHarness": 0.22,
           "企业Agent": 0.09
         }
       }
@@ -9717,14 +9919,15 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "872f8126c347973d356e9a5b1fccdb79c0ea25842d507e4ca52335b64d2186cc",
         "status": "tagged",
         "scores": {
           "AI4S": 0.11,
           "CodingAgent": 0.43,
-          "AgentOps": 0.18,
+          "GUI Agent": 0.02,
+          "AgentOps": 0.17,
           "AgentHarness": 0.17,
           "企业Agent": 0.06
         }
@@ -9765,16 +9968,17 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "024405113096bc724a12442dfacbf4e2a233a0efc69887d3cf6bdf9ac85906be",
         "status": "tagged",
         "scores": {
           "AI4S": 0.05,
-          "CodingAgent": 0.1,
+          "CodingAgent": 0.09,
+          "GUI Agent": 0.01,
           "AgentOps": 0.08,
           "AgentHarness": 0.05,
-          "企业Agent": 0.16
+          "企业Agent": 0.15
         }
       }
     },
@@ -9809,15 +10013,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "28f0383c84b5b71d1a3d532c9371f370eba2310ffbb7e7eadb4b17a6837ad183",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.08,
-          "CodingAgent": 0.18,
+          "AI4S": 0.09,
+          "CodingAgent": 0.17,
+          "GUI Agent": 0.01,
           "AgentOps": 0.03,
-          "AgentHarness": 0.04,
+          "AgentHarness": 0.05,
           "企业Agent": 0.03
         }
       }
@@ -9856,15 +10061,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "1305188de15df00447961e57c8486878d60ea6475cf2c113f29194b485ba1047",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.15,
-          "CodingAgent": 0.63,
+          "AI4S": 0.14,
+          "CodingAgent": 0.57,
+          "GUI Agent": 0.01,
           "AgentOps": 0.04,
-          "AgentHarness": 0.08,
+          "AgentHarness": 0.07,
           "企业Agent": 0.02
         }
       }
@@ -9912,15 +10118,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "c63db1cd805a9784fd5878e38b93ac8b2275d370a1faf2f24c701c4a19e685cc",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.46,
-          "CodingAgent": 0.5,
-          "AgentOps": 0.06,
-          "AgentHarness": 0.18,
+          "AI4S": 0.48,
+          "CodingAgent": 0.51,
+          "GUI Agent": 0.02,
+          "AgentOps": 0.05,
+          "AgentHarness": 0.16,
           "企业Agent": 0.47
         }
       }
@@ -9963,15 +10170,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "536631f7977725bcec4fd696ee836cc081ea48767192f817c9395a898d1b2d9f",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.93,
-          "CodingAgent": 0.69,
+          "AI4S": 0.94,
+          "CodingAgent": 0.67,
+          "GUI Agent": 0.02,
           "AgentOps": 0.09,
-          "AgentHarness": 0.5,
+          "AgentHarness": 0.53,
           "企业Agent": 0.02
         }
       }
@@ -10011,15 +10219,16 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "ccf943d861083d9f48cc3a32eb4638f1227a57e7d21696599ecb67c4e19b9d07",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.09,
-          "CodingAgent": 0.23,
-          "AgentOps": 0.07,
-          "AgentHarness": 0.1,
+          "AI4S": 0.1,
+          "CodingAgent": 0.28,
+          "GUI Agent": 0.17,
+          "AgentOps": 0.06,
+          "AgentHarness": 0.09,
           "企业Agent": 0.05
         }
       }
@@ -10058,13 +10267,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "b35f91d86666e4568644ecf4a882ea05916a61f6e37c595974ce131b4a6f45ea",
         "status": "tagged",
         "scores": {
           "AI4S": 0.02,
           "CodingAgent": 0.01,
+          "GUI Agent": 0.01,
           "AgentOps": 0.03,
           "AgentHarness": 0.03,
           "企业Agent": 0.02
@@ -10102,13 +10312,14 @@
       ],
       "tagging": {
         "model": "jev-1.13.0",
-        "rulesVersion": "daily-tags-v1",
+        "rulesVersion": "daily-tags-v2",
         "threshold": 0.7,
         "inputSha256": "d96fb2a709cc955d4867bc90ad7b5ff8d7c186e0c5b1f029e74c7908921500d0",
         "status": "tagged",
         "scores": {
-          "AI4S": 0.04,
-          "CodingAgent": 0.11,
+          "AI4S": 0.05,
+          "CodingAgent": 0.1,
+          "GUI Agent": 0.01,
           "AgentOps": 0.03,
           "AgentHarness": 0.07,
           "企业Agent": 0.02

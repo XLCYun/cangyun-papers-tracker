@@ -1,6 +1,6 @@
 # 每日 arXiv 主题标签方案
 
-2026-10-22，状态：已确认。用户已确认 Q1、Q2 和 Q4–Q8，并补充 CodingAgent、AI4S、AgentOps 的收录边界。本文为实施依据；功能尚未实施。
+2026-10-22 确认方案，2026-10-23 已实现并完成归档补标签；正式发布验收由 [#11](https://github.com/XLCYun/cangyun-papers-tracker/issues/11) 跟踪。用户已确认 Q1、Q2 和 Q4–Q8，并补充 CodingAgent、AI4S、AgentOps 的收录边界。
 
 2026-10-23 补充澄清：CodingAgent 以编程 Agent 为主，相关的大模型编程研究适当放宽，不以特定 Agent 架构或论文是否自称 Agent 为硬门槛。
 
@@ -71,6 +71,13 @@ AgentOps 与 AgentHarness 可以同时出现；普通 Benchmark 不自动算 Age
 6. 既有归档：补齐当前 208 篇，复用译文，不新增历史抓取，已确认。
 
 产品决策无未决项；接口实际可用性及具体错误处理通过实施验证。
+
+## 实施验证
+
+- 2026-10-23 已通过 DMXAPI 的固定 `jev-1.13.0` 实际调用验证，为 2026-10-22 的 208 篇归档论文完成打标，成功 208 篇、回退 0 篇。
+- 原始论文元数据、来源时间、统计与全部既有译文保持不变；移除两类 API 密钥后重跑，成功打标和日报字节完全复用。
+- 代码按 [#8](https://github.com/XLCYun/cangyun-papers-tracker/issues/8)、[#9](https://github.com/XLCYun/cangyun-papers-tracker/issues/9)、[#10](https://github.com/XLCYun/cangyun-papers-tracker/issues/10) 实现，双轴审查发现的问题由 [#12](https://github.com/XLCYun/cangyun-papers-tracker/issues/12) 修复。
+- 119 项 Python 测试、54 项网页测试及生产构建通过；本地浏览器已验证日期、单选筛选、搜索交集、卡片互斥展开和窄屏布局。公网 JSON、构建文件及浏览器发布验收记录在 #11。
 
 ## 资料
 

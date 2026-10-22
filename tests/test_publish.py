@@ -285,3 +285,58 @@ def test_command_does_not_publish_a_daily_file_whose_translation_statistics_disa
         configure(monkeypatch, origin)
         assert main(["--date", DAY, "--data-dir", str(tmp_path)]) == 1
         assert state["objects"] == {}
+
+
+@pytest.mark.parametrize("defect", [
+    "unknown-tag", "duplicate-tag", "unordered-tags", "missing-state", "missing-tags", "missing-field",
+    "unknown-state", "invalid-model", "invalid-version", "invalid-digest", "invalid-threshold",
+    "missing-score", "extra-score", "boolean-score", "nonfinite-score", "out-of-range-score", "fallback-scores",
+])
+def test_commands_reject_malformed_tagging_before_overwriting_or_publishing(tmp_path, monkeypatch, defect):
+    from collector import main as collect
+    from collector.publish import main as publish
+    from datetime import datetime
+
+    paper = {
+        "id": "2610.00001v1", "title": "LLM Agent paper", "abstract": "Original abstract.",
+        "authors": ["Example Author"], "affiliations": [], "categories": ["cs.AI"], "primaryCategory": "cs.AI",
+        "publishedAt": "2026-10-22T00:00:00-04:00", "updatedAt": None, "announceType": "new",
+        "absUrl": "https://arxiv.org/abs/2610.00001v1", "pdfUrl": "https://arxiv.org/pdf/2610.00001v1",
+        "htmlUrl": "https://arxiv.org/html/2610.00001v1",
+        "translation": {"status": "fallback", "title": "LLM Agent paper", "abstract": "Original abstract.", "brief": ""},
+        "tags": ["LLM", "Agent"],
+        "tagging": {
+            "status": "tagged", "model": "jev-1.13.0", "rulesVersion": "daily-tags-v1", "threshold": 0.7,
+            "inputSha256": "a" * 64,
+            "scores": {"AI4S": 0, "CodingAgent": 0, "AgentOps": 0, "AgentHarness": 0, "企业Agent": 0},
+        },
+    }
+    tagging = paper["tagging"]
+    if defect == "unknown-tag": paper["tags"].append("invented")
+    elif defect == "duplicate-tag": paper["tags"].append("LLM")
+    elif defect == "unordered-tags": paper["tags"].reverse()
+    elif defect == "missing-state": del paper["tagging"]
+    elif defect == "missing-tags": del paper["tags"]
+    elif defect == "missing-field": del tagging["model"]
+    elif defect == "unknown-state": tagging["status"] = "maybe"
+    elif defect == "invalid-model": tagging["model"] = ""
+    elif defect == "invalid-version": tagging["rulesVersion"] = ""
+    elif defect == "invalid-digest": tagging["inputSha256"] = "invalid"
+    elif defect == "invalid-threshold": tagging["threshold"] = True
+    elif defect == "missing-score": del tagging["scores"]["AgentOps"]
+    elif defect == "extra-score": tagging["scores"]["unknown"] = 0
+    elif defect == "boolean-score": tagging["scores"]["AgentOps"] = True
+    elif defect == "nonfinite-score": tagging["scores"]["AgentOps"] = float("nan")
+    elif defect == "out-of-range-score": tagging["scores"]["AgentOps"] = 1.1
+    else: tagging["status"] = "fallback"
+    _, content = archive(tmp_path, papers=[paper])
+    original_index = (tmp_path / "index.json").read_bytes()
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.delenv("JEV_API_KEY", raising=False)
+    with object_service() as (origin, state):
+        configure(monkeypatch, origin)
+        assert publish(["--date", DAY, "--data-dir", str(tmp_path)]) == 1
+        assert state["objects"] == {}
+    assert collect(["--date", DAY, "--output-dir", str(tmp_path)], now=datetime.fromisoformat("2026-10-23T13:30:00+08:00")) == 1
+    assert (tmp_path / f"{DAY}.json").read_bytes() == content
+    assert (tmp_path / "index.json").read_bytes() == original_index

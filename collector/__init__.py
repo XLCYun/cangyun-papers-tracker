@@ -17,6 +17,7 @@ import xml.etree.ElementTree as ET
 from zoneinfo import ZoneInfo
 
 from .contract import DailyContractError, validate_daily
+from .tagging import tag_papers
 
 
 TIMEZONE = ZoneInfo("Asia/Shanghai")
@@ -280,6 +281,7 @@ def main(argv=None, *, now=None):
             fetched_at = moment.isoformat()
         papers = [paper for paper in papers if _matches(paper)]
         _translate(papers)
+        tag_papers(papers)
         translated = sum(paper["translation"]["status"] == "translated" for paper in papers)
         daily = {
             "schemaVersion": 1, "date": day.isoformat(), "timezone": "Asia/Shanghai",

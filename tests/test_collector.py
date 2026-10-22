@@ -7,7 +7,7 @@ import hashlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 from pathlib import Path
-from threading import Thread
+from threading import Event, Lock, Thread
 import xml.etree.ElementTree as ET
 
 import pytest
@@ -22,6 +22,9 @@ def fixture_configuration(monkeypatch):
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.delenv("OPENAI_THINKING", raising=False)
     monkeypatch.setenv("ARXIV_RETRY_DELAY_SECONDS", "0")
+    for name in ("JEV_API_KEY", "JEV_BASE_URL", "JEV_MODEL", "JEV_THRESHOLD", "JEV_RULES_VERSION", "JEV_WORKERS", "JEV_RETRY_ATTEMPTS"):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("JEV_RETRY_DELAY_SECONDS", "0")
 
 
 def rss_response(*ids):
@@ -35,6 +38,32 @@ def rss_response(*ids):
 
 def model_response(translations):
     return json.dumps({"choices": [{"message": {"content": json.dumps({"translations": translations}, ensure_ascii=False)}}]}).encode()
+
+
+def tagging_feed(*papers):
+    root = ET.fromstring(rss_response("2610.28637v1"))
+    channel = root.find("channel")
+    original = channel.find("item")
+    channel.remove(original)
+    for position, values in enumerate(papers, 1):
+        item = deepcopy(original)
+        identifier = f"2610.{position:05d}v1"
+        item.find("guid").text = "oai:arXiv.org:" + identifier
+        item.find("link").text = "https://arxiv.org/abs/" + identifier
+        item.find("title").text = values["title"]
+        item.find("description").text = "Abstract: " + values["abstract"]
+        for category in item.findall("category"):
+            item.remove(category)
+        for category in values.get("categories", ["cs.AI"]):
+            ET.SubElement(item, "category").text = category
+        channel.append(item)
+    return ET.tostring(root)
+
+
+def jev_response(scores):
+    return json.dumps({"model": "jev-1.13.0", "answers": {
+        name: {"type": "noul", "noul": value} for name, value in scores.items()
+    }}).encode()
 
 
 @contextmanager
@@ -441,3 +470,360 @@ def test_command_can_disable_provider_thinking_when_explicitly_configured(tmp_pa
     daily = json.loads((tmp_path / "2026-10-22.json").read_text())
     assert daily["papers"][0]["translation"]["title"] == "配置成功"
     assert daily["stats"]["translated"] == 1
+
+
+def test_command_adds_independent_rule_tags_without_a_jev_credential(tmp_path, monkeypatch):
+    from collector import main
+
+    feed = tagging_feed(
+        {"title": "LLM-assisted experiments", "abstract": "Scientific tooling.", "categories": ["cs.SE", "cs.AI"]},
+        {"title": "Agentic memory", "abstract": "Runtime controls."},
+        {"title": "LLMs and Agents", "abstract": "Development studies.", "categories": ["cs.SE"]},
+    )
+    with service({"/rss/cs": (200, feed)}) as origin:
+        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
+    daily = json.loads((tmp_path / "2026-10-22.json").read_text())
+    assert [paper["tags"] for paper in daily["papers"]] == [["LLM", "软件工程"], ["Agent"], ["LLM", "Agent", "软件工程"]]
+    for paper in daily["papers"]:
+        assert paper["tagging"] == {
+            "status": "fallback", "model": "jev-1.13.0", "rulesVersion": "daily-tags-v1",
+            "threshold": 0.7, "inputSha256": paper["tagging"]["inputSha256"], "scores": {},
+        }
+        assert len(paper["tagging"]["inputSha256"]) == 64
+    assert daily["stats"] == {"fetched": 3, "matched": 3, "translated": 0, "fallback": 3}
+
+
+@pytest.mark.parametrize("scores,expected", [
+    ({"ai4s": 0.1, "codingagent": 0.96, "agentops": 0.7, "agentharness": 0.69, "enterprise_agent": 0.9},
+     ["LLM", "Agent", "CodingAgent", "AgentOps", "软件工程", "企业Agent"]),
+    ({"ai4s": 0, "codingagent": 0, "agentops": 0, "agentharness": 0, "enterprise_agent": 0},
+     ["LLM", "Agent", "软件工程"]),
+    ({"ai4s": 1, "codingagent": 1, "agentops": 1, "agentharness": 1, "enterprise_agent": 1},
+     ["LLM", "Agent", "AI4S", "CodingAgent", "AgentOps", "AgentHarness", "软件工程", "企业Agent"]),
+], ids=["mixed-and-threshold", "all-negative-is-success", "all-five"])
+def test_command_adds_five_independent_jev_labels_even_when_translation_fails(tmp_path, monkeypatch, scores, expected):
+    from collector import main
+
+    submitted = []
+
+    def jev(request):
+        submitted.append(request)
+        return 200, jev_response(scores)
+
+    metadata = {"title": "LLM Agents for research", "abstract": "Original English input.", "categories": ["cs.SE"]}
+    with service({"/rss/cs": (200, tagging_feed(metadata)), "/typesafe/v1/systemone": jev,
+                  "/v1/chat/completions": (503, b"translation temporarily unavailable")}) as origin:
+        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        monkeypatch.setenv("OPENAI_API_KEY", "translation-fixture-not-a-secret")
+        monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
+        monkeypatch.setenv("JEV_API_KEY", "tagging-fixture-not-a-secret")
+        monkeypatch.setenv("JEV_BASE_URL", origin + "/typesafe/v1")
+        assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
+    daily = json.loads((tmp_path / "2026-10-22.json").read_text())
+    paper = daily["papers"][0]
+    assert paper["tags"] == expected
+    assert paper["tagging"]["status"] == "tagged"
+    assert paper["tagging"]["scores"] == {
+        "AI4S": scores["ai4s"], "CodingAgent": scores["codingagent"], "AgentOps": scores["agentops"],
+        "AgentHarness": scores["agentharness"], "企业Agent": scores["enterprise_agent"],
+    }
+    assert paper["translation"]["status"] == "fallback"
+    assert len(submitted) == 1
+    assert submitted[0]["model"] == "jev-1.13.0"
+    assert json.loads(submitted[0]["state"]) == metadata
+    assert set(submitted[0]["questions"]) == {"ai4s", "codingagent", "agentops", "agentharness", "enterprise_agent"}
+    assert all(question["type"] == "noul" and question["instructions"] for question in submitted[0]["questions"].values())
+
+
+def test_command_reuses_tagged_papers_and_only_retries_failed_tagging_without_retranslation(tmp_path, monkeypatch):
+    from collector import main
+
+    titles = ["LLM Agent first", "LLM Agent retry"]
+    translated = [{"id": f"2610.{position:05d}v1", "chinese_title": f"中文标题{position}",
+                   "chinese_summary": "成功译文。", "brief_summary": "成功总结。"} for position in (1, 2)]
+
+    def initial_jev(request):
+        if json.loads(request["state"])["title"] == titles[1]:
+            return 200, b'{"answers":{}}'
+        return 200, jev_response({"ai4s": 0, "codingagent": 0, "agentops": 0, "agentharness": 0, "enterprise_agent": 0})
+
+    with service({"/rss/cs": (200, tagging_feed(*[{"title": title, "abstract": "English input."} for title in titles])),
+                  "/typesafe/v1/systemone": initial_jev, "/v1/chat/completions": (200, model_response(translated))}) as origin:
+        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        monkeypatch.setenv("OPENAI_API_KEY", "translation-fixture-not-a-secret")
+        monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
+        monkeypatch.setenv("JEV_API_KEY", "tagging-fixture-not-a-secret")
+        monkeypatch.setenv("JEV_BASE_URL", origin + "/typesafe/v1")
+        assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
+    path = tmp_path / "2026-10-22.json"
+    before = json.loads(path.read_text())
+    assert [paper["tagging"]["status"] for paper in before["papers"]] == ["tagged", "fallback"]
+    tagging_requests, translation_requests = [], []
+
+    def retry_jev(request):
+        tagging_requests.append(json.loads(request["state"])["title"])
+        return 200, jev_response({"ai4s": 0, "codingagent": 0, "agentops": 1, "agentharness": 0, "enterprise_agent": 0})
+
+    def unexpected_translation(request):
+        translation_requests.append(request)
+        return 503, b"must reuse translations"
+
+    with service({"/rss/cs": (503, b"must not fetch current source"), "/typesafe/v1/systemone": retry_jev,
+                  "/v1/chat/completions": unexpected_translation}) as origin:
+        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
+        monkeypatch.setenv("JEV_BASE_URL", origin + "/typesafe/v1")
+        assert main(["--date", "2026-10-22", "--output-dir", str(tmp_path)],
+                    now=datetime.fromisoformat("2026-10-23T13:30:00+08:00")) == 0
+    after = json.loads(path.read_text())
+    assert tagging_requests == [titles[1]]
+    assert translation_requests == []
+    assert after["papers"][0] == before["papers"][0]
+    assert after["papers"][1]["tags"] == ["LLM", "Agent", "AgentOps"]
+    assert all(paper["tagging"]["status"] == "tagged" for paper in after["papers"])
+    assert [paper["translation"] for paper in after["papers"]] == [paper["translation"] for paper in before["papers"]]
+    assert (after["source"], after["fetchedAt"], after["stats"]) == (before["source"], before["fetchedAt"], before["stats"])
+    index = json.loads((tmp_path / "index.json").read_text())
+    assert index["updatedAt"] == "2026-10-23T13:30:00+08:00"
+    assert index["days"][0]["sha256"] == hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def test_command_retries_a_transient_jev_error_before_archiving_success(tmp_path, monkeypatch):
+    from collector import main
+
+    calls = []
+
+    def jev(request):
+        calls.append(request)
+        if len(calls) < 3:
+            return 503, b"private provider body: tagging-fixture-not-a-secret"
+        return 200, jev_response({"ai4s": 0, "codingagent": 1, "agentops": 0, "agentharness": 0, "enterprise_agent": 0})
+
+    with service({"/rss/cs": (200, rss_response("2610.28637v1")), "/typesafe/v1/systemone": jev}) as origin:
+        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        monkeypatch.setenv("JEV_API_KEY", "tagging-fixture-not-a-secret")
+        monkeypatch.setenv("JEV_BASE_URL", origin + "/typesafe/v1")
+        assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
+    daily = json.loads((tmp_path / "2026-10-22.json").read_text())
+    assert len(calls) == 3
+    assert daily["papers"][0]["tagging"]["status"] == "tagged"
+    assert daily["papers"][0]["tags"] == ["LLM", "CodingAgent"]
+
+
+@pytest.mark.parametrize("status,expected_calls", [(401, 1), (402, 1), (403, 1), (429, 3)])
+def test_command_stops_global_jev_failures_but_finishes_translation_and_safe_rule_tag_archive(tmp_path, monkeypatch, capsys, status, expected_calls):
+    from collector import main
+
+    tagging_requests, translation_requests = [], []
+
+    def jev(request):
+        tagging_requests.append(request)
+        return status, b"private provider body: tagging-fixture-not-a-secret"
+
+    def translate(request):
+        translation_requests.append(request)
+        return 200, model_response([{
+            "id": f"2610.{position:05d}v1", "chinese_title": "成功标题", "chinese_summary": "成功摘要。", "brief_summary": "成功总结。"
+        } for position in (1, 2, 3)])
+
+    with service({"/rss/cs": (200, tagging_feed(*[{"title": f"LLM Agent {position}", "abstract": "English input."} for position in (1, 2, 3)])),
+                  "/typesafe/v1/systemone": jev, "/v1/chat/completions": translate}) as origin:
+        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        monkeypatch.setenv("OPENAI_API_KEY", "translation-fixture-not-a-secret")
+        monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
+        monkeypatch.setenv("JEV_API_KEY", "tagging-fixture-not-a-secret")
+        monkeypatch.setenv("JEV_BASE_URL", origin + "/typesafe/v1")
+        assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
+    content = (tmp_path / "2026-10-22.json").read_text()
+    daily = json.loads(content)
+    assert len(tagging_requests) == expected_calls
+    assert len(translation_requests) == 1
+    assert daily["stats"] == {"fetched": 3, "matched": 3, "translated": 3, "fallback": 0}
+    assert all(paper["tags"] == ["LLM", "Agent"] and paper["tagging"]["status"] == "fallback" and paper["tagging"]["scores"] == {} for paper in daily["papers"])
+    output = capsys.readouterr()
+    assert "private provider body" not in content + output.out + output.err
+    assert "fixture-not-a-secret" not in content + output.out + output.err
+
+
+@pytest.mark.parametrize("change", ["model", "rulesVersion", "threshold", "title", "abstract", "categories"])
+def test_command_invalidates_successful_tag_cache_when_configuration_or_english_input_changes(tmp_path, monkeypatch, change):
+    from collector import main
+
+    calls = []
+
+    def jev(request):
+        calls.append(request)
+        return 200, jev_response({"ai4s": 0, "codingagent": 0.8, "agentops": 0, "agentharness": 0, "enterprise_agent": 0})
+
+    metadata = {"title": "LLM Agent original", "abstract": "Original input.", "categories": ["cs.AI"]}
+    path = tmp_path / "2026-10-22.json"
+    with service({"/rss/cs": (200, tagging_feed(metadata)), "/typesafe/v1/systemone": jev}) as origin:
+        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        monkeypatch.setenv("JEV_API_KEY", "tagging-fixture-not-a-secret")
+        monkeypatch.setenv("JEV_BASE_URL", origin + "/typesafe/v1")
+        assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
+        before = json.loads(path.read_text())
+        assert len(calls) == 1
+        assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
+        assert len(calls) == 1
+        if change in {"model", "rulesVersion", "threshold"}:
+            name, value = {"model": ("JEV_MODEL", "jev-1.14.0"), "rulesVersion": ("JEV_RULES_VERSION", "daily-tags-v2"),
+                           "threshold": ("JEV_THRESHOLD", "0.9")}[change]
+            monkeypatch.setenv(name, value)
+        else:
+            changed = deepcopy(before)
+            paper = changed["papers"][0]
+            if change == "categories":
+                paper["categories"].append("cs.SE")
+            else:
+                paper[change] += " Changed English input."
+                paper["translation"][change] = paper[change]
+            path.write_text(json.dumps(changed))
+        assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
+        assert len(calls) == 2
+        after = json.loads(path.read_text())
+        tagging = after["papers"][0]["tagging"]
+        assert tagging["status"] == "tagged"
+        if change in {"title", "abstract", "categories"}:
+            assert tagging["inputSha256"] != before["papers"][0]["tagging"]["inputSha256"]
+        elif change == "threshold":
+            assert tagging["threshold"] == 0.9
+            assert "CodingAgent" not in after["papers"][0]["tags"]
+        elif change == "model":
+            assert tagging["model"] == "jev-1.14.0" and calls[-1]["model"] == "jev-1.14.0"
+        else:
+            assert tagging["rulesVersion"] == "daily-tags-v2"
+        # Cached valid results also remain available if a later run has no API key.
+        monkeypatch.delenv("JEV_API_KEY")
+        assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
+        assert json.loads(path.read_text())["papers"] == after["papers"]
+
+
+def test_command_backfills_legacy_untagged_archive_without_fetching_or_retranslating(tmp_path, monkeypatch):
+    from collector import main
+
+    with service({"/rss/cs": (200, rss_response("2610.28637v1"))}) as origin:
+        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
+    path = tmp_path / "2026-10-22.json"
+    legacy = json.loads(path.read_text())
+    paper = legacy["papers"][0]
+    paper.pop("tags")
+    paper.pop("tagging")
+    paper["translation"] = {"status": "translated", "title": "已有标题", "abstract": "已有摘要。", "brief": "已有总结。"}
+    legacy["stats"].update(translated=1, fallback=0)
+    path.write_text(json.dumps(legacy))
+    requests = []
+
+    def jev(request):
+        requests.append(request)
+        return 200, jev_response({"ai4s": 0, "codingagent": 0, "agentops": 0, "agentharness": 0, "enterprise_agent": 0})
+
+    with service({"/rss/cs": (503, b"must not fetch"), "/v1/chat/completions": (503, b"must not translate"),
+                  "/typesafe/v1/systemone": jev}) as origin:
+        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        monkeypatch.setenv("OPENAI_API_KEY", "translation-fixture-not-a-secret")
+        monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
+        monkeypatch.setenv("JEV_API_KEY", "tagging-fixture-not-a-secret")
+        monkeypatch.setenv("JEV_BASE_URL", origin + "/typesafe/v1")
+        assert main(["--date", "2026-10-22", "--output-dir", str(tmp_path)],
+                    now=datetime.fromisoformat("2026-10-23T13:30:00+08:00")) == 0
+    daily = json.loads(path.read_text())
+    assert len(requests) == 1
+    assert daily["papers"][0]["tagging"]["status"] == "tagged"
+    assert daily["papers"][0]["tags"] == ["LLM"]
+    assert daily["papers"][0]["translation"] == legacy["papers"][0]["translation"]
+    assert (daily["source"], daily["fetchedAt"], daily["stats"]) == (legacy["source"], legacy["fetchedAt"], legacy["stats"])
+
+
+def test_command_never_implicitly_uses_translation_credentials_for_jev(tmp_path, monkeypatch):
+    from collector import main
+
+    requests = []
+
+    def unexpected_jev(request):
+        requests.append(request)
+        return 403, b"must not share implicit credentials"
+
+    with service({"/rss/cs": (200, rss_response("2610.28637v1")), "/typesafe/v1/systemone": unexpected_jev,
+                  "/v1/chat/completions": (200, model_response([{"id": "2610.28637v1", "chinese_title": "成功标题",
+                                                               "chinese_summary": "成功摘要。", "brief_summary": "成功总结。"}]))}) as origin:
+        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        monkeypatch.setenv("OPENAI_API_KEY", "translation-fixture-not-a-secret")
+        monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
+        monkeypatch.setenv("JEV_BASE_URL", origin + "/typesafe/v1")
+        assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
+    paper = json.loads((tmp_path / "2026-10-22.json").read_text())["papers"][0]
+    assert requests == []
+    assert paper["translation"]["status"] == "translated"
+    assert paper["tagging"]["status"] == "fallback"
+    assert paper["tags"] == ["LLM"]
+
+
+@pytest.mark.parametrize("defect", ["invalid-json", "missing-answer", "extra-answer", "wrong-type", "boolean", "string", "nan", "infinite", "negative", "too-large"])
+def test_command_does_not_mark_malformed_jev_responses_as_success_or_publish_provider_details(tmp_path, monkeypatch, capsys, defect):
+    from collector import main
+
+    response = json.loads(jev_response({"ai4s": 0, "codingagent": 0, "agentops": 0, "agentharness": 0, "enterprise_agent": 0}))
+    response["private"] = "private provider body: tagging-fixture-not-a-secret"
+    if defect == "missing-answer": del response["answers"]["agentops"]
+    elif defect == "extra-answer": response["answers"]["unknown"] = {"type": "noul", "noul": 1}
+    elif defect == "wrong-type": response["answers"]["agentops"]["type"] = "text"
+    elif defect != "invalid-json":
+        response["answers"]["agentops"]["noul"] = {"boolean": True, "string": "0.9", "nan": float("nan"),
+                                                    "infinite": float("inf"), "negative": -0.1, "too-large": 1.1}[defect]
+    body = b"private provider body: tagging-fixture-not-a-secret" if defect == "invalid-json" else json.dumps(response).encode()
+    calls = []
+
+    def jev(request):
+        calls.append(request)
+        return 200, body
+
+    with service({"/rss/cs": (200, rss_response("2610.28637v1")), "/typesafe/v1/systemone": jev}) as origin:
+        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        monkeypatch.setenv("JEV_API_KEY", "tagging-fixture-not-a-secret")
+        monkeypatch.setenv("JEV_BASE_URL", origin + "/typesafe/v1")
+        assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
+    content = (tmp_path / "2026-10-22.json").read_text()
+    paper = json.loads(content)["papers"][0]
+    assert len(calls) == 1
+    assert paper["tagging"]["status"] == "fallback"
+    assert paper["tagging"]["scores"] == {}
+    assert paper["tags"] == ["LLM"]
+    output = capsys.readouterr()
+    assert "private provider body" not in content + output.out + output.err
+    assert "fixture-not-a-secret" not in content + output.out + output.err
+
+
+def test_command_honors_the_jev_concurrency_limit_after_the_initial_health_request(tmp_path, monkeypatch):
+    from collector import main
+
+    lock, simultaneous = Lock(), Event()
+    state = {"active": 0, "peak": 0, "calls": 0}
+    response = jev_response({"ai4s": 0, "codingagent": 0, "agentops": 0, "agentharness": 0, "enterprise_agent": 0})
+
+    def jev(request):
+        with lock:
+            state["calls"] += 1
+            if json.loads(request["state"])["title"] == "LLM Agent 0":
+                return 200, response
+            state["active"] += 1
+            state["peak"] = max(state["peak"], state["active"])
+            if state["active"] == 2:
+                simultaneous.set()
+        simultaneous.wait(3)
+        with lock:
+            state["active"] -= 1
+        return 200, response
+
+    feed = tagging_feed(*[{"title": f"LLM Agent {position}", "abstract": "English input."} for position in range(5)])
+    with service({"/rss/cs": (200, feed), "/typesafe/v1/systemone": jev}) as origin:
+        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        monkeypatch.setenv("JEV_API_KEY", "tagging-fixture-not-a-secret")
+        monkeypatch.setenv("JEV_BASE_URL", origin + "/typesafe/v1")
+        monkeypatch.setenv("JEV_WORKERS", "2")
+        assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
+    papers = json.loads((tmp_path / "2026-10-22.json").read_text())["papers"]
+    assert state["peak"] == 2 and state["calls"] == 5
+    assert all(paper["tagging"]["status"] == "tagged" for paper in papers)

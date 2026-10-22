@@ -1,7 +1,11 @@
 """Validate the daily JSON shared by the collector, publisher and website."""
 
 from datetime import date, datetime
+import math
+import re
 from urllib.parse import urlsplit
+
+from .tagging import TAGS, valid_scores
 
 
 class DailyContractError(ValueError):
@@ -46,6 +50,23 @@ def _paper_url(value, path):
         return False
 
 
+def _validate_tagging(paper):
+    if "tags" not in paper and "tagging" not in paper:
+        return
+    tags, tagging = paper.get("tags"), paper.get("tagging")
+    _require(isinstance(tags, list) and all(isinstance(label, str) and label in TAGS for label in tags))
+    _require(tags == [label for label in TAGS if label in tags])
+    _require(isinstance(tagging, dict) and set(tagging) == {
+        "status", "model", "rulesVersion", "threshold", "inputSha256", "scores",
+    })
+    _require(tagging["status"] in {"tagged", "fallback"})
+    _require(_text(tagging["model"]) and _text(tagging["rulesVersion"]))
+    threshold = tagging["threshold"]
+    _require(type(threshold) in (int, float) and math.isfinite(threshold) and 0 <= threshold <= 1)
+    _require(isinstance(tagging["inputSha256"], str) and re.fullmatch(r"[a-f0-9]{64}", tagging["inputSha256"]))
+    _require(valid_scores(tagging["scores"]) if tagging["status"] == "tagged" else tagging["scores"] == {})
+
+
 def validate_daily(daily, requested):
     """Reject incomplete source metadata, translations and inconsistent counts."""
     _require(isinstance(daily, dict) and type(daily.get("schemaVersion")) is int and daily["schemaVersion"] == 1)
@@ -80,5 +101,6 @@ def validate_daily(daily, requested):
             _require(translation["title"] == paper["title"] and translation["abstract"] == paper["abstract"] and translation["brief"] == "")
         else:
             _require(_text(translation["brief"]))
+        _validate_tagging(paper)
         states.append(translation["status"])
     _require(stats["translated"] == states.count("translated") and stats["fallback"] == states.count("fallback"))

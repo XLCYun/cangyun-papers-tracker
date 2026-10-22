@@ -26,6 +26,12 @@ button:disabled { cursor: default; opacity: .45; }
 .daily-date select { min-height: 44px; border: 1px solid #69675d; border-radius: 2px; background: #1b1b19; color: var(--research-ink); padding: 0 36px 0 14px; font-variant-numeric: tabular-nums; }
 .daily-date select:focus-visible { outline-color: var(--research-accent); }
 .daily-current-date { color: #c9c3b5; font-size: 15px; font-variant-numeric: tabular-nums; margin: 0; text-align: right; }
+.daily-tags { display: flex; align-items: center; gap: 26px; max-width: 100%; padding: 3px 2px; border-bottom: 1px solid var(--research-line); overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; scrollbar-color: #5c5545 transparent; }
+.daily-tags button { display: inline-flex; flex-shrink: 0; align-items: baseline; gap: 7px; min-height: 44px; padding: 13px 0 11px; border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: transparent; color: #d0cbc0; font-size: 14px; white-space: nowrap; transition: color .16s, border-color .16s; }
+.daily-tags button:hover { color: #fffaf0; }
+.daily-tags button[aria-pressed="true"] { color: #fff7e7; border-bottom-color: var(--research-accent); }
+.daily-tag-count { color: #9b9485; font-size: 12px; font-variant-numeric: tabular-nums; }
+.daily-tags button[aria-pressed="true"] .daily-tag-count { color: var(--research-accent); }
 .daily-list { padding-top: 12px; min-height: 200px; }
 .daily-paper { border-bottom: 1px solid var(--research-line); }
 .daily-paper-header { display: grid; grid-template-columns: 50px minmax(0, 1fr) 40px; align-items: start; gap: 16px; width: 100%; padding: 26px 0; border: 0; background: transparent; color: inherit; text-align: left; }
@@ -34,9 +40,11 @@ button:disabled { cursor: default; opacity: .45; }
 .daily-paper-title { display: block; font-size: 26px; font-weight: 500; line-height: 1.45; overflow-wrap: anywhere; }
 .daily-paper-original { display: block; margin-top: 8px; color: #b1ab9d; font-size: 17px; font-weight: 400; line-height: 1.5; overflow-wrap: anywhere; }
 .daily-paper-brief { display: block; margin-top: 12px; color: #d3cbbb; font-size: 16px; font-weight: 400; line-height: 1.8; }
+.daily-paper-tags { display: flex; flex-wrap: wrap; gap: 6px 8px; margin-top: 13px; }
+.daily-paper-tags > span { border: 1px solid #806b43; border-radius: 1px; padding: 1px 7px; background: #d9ad5510; color: var(--research-accent); font-size: 12px; font-weight: 400; line-height: 1.5; }
 .daily-paper-meta { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; margin-top: 13px; color: #aaa391; font-size: 13px; font-weight: 400; line-height: 1.7; }
 .daily-paper-categories { display: inline-flex; flex-wrap: wrap; gap: 6px; }
-.daily-paper-categories span { color: var(--research-accent); border: 1px solid #806b43; padding: 0 6px; font-size: 12px; }
+.daily-paper-categories span { color: #b3ac9e; border: 1px solid #504d44; padding: 0 6px; font-size: 12px; }
 .daily-paper[data-expanded="true"] { border-left: 3px solid var(--research-accent); background: #1b1b18ed; margin-block: 8px; padding-inline: 22px; }
 .daily-paper[data-expanded="true"] .research-disclosure { color: var(--research-accent); border-color: #b18f51; }
 .daily-paper-details { margin-left: 66px; }
@@ -74,11 +82,16 @@ button:disabled { cursor: default; opacity: .45; }
   .daily-date { gap: 9px; font-size: 12px; }
   .daily-date select { min-height: 40px; padding-inline: 10px 24px; font-size: 14px; max-width: 150px; }
   .daily-current-date { font-size: 11px; }
+  .daily-tags { gap: 19px; }
+  .daily-tags button { padding-block: 11px 9px; font-size: 13px; gap: 5px; }
+  .daily-tag-count { font-size: 10px; }
   .daily-paper-header { grid-template-columns: 24px minmax(0, 1fr) 28px; gap: 8px; padding-block: 20px; }
   .daily-paper-number { font-size: 12px; }
   .daily-paper-title { font-size: 20px; line-height: 1.6; }
   .daily-paper-original { font-size: 14px; line-height: 1.6; }
   .daily-paper-brief { font-size: 14px; }
+  .daily-paper-tags { gap: 5px 6px; margin-top: 10px; }
+  .daily-paper-tags > span { padding-inline: 5px; font-size: 10px; }
   .daily-paper-meta { font-size: 11px; }
   .daily-paper[data-expanded="true"] { padding-inline: 12px; border-left-width: 2px; }
   .daily-paper-details { margin-left: 0; }

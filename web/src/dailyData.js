@@ -29,8 +29,11 @@ function readTags(paper) {
       !probability(tagging.threshold) || typeof tagging.inputSha256 !== "string" || !/^[a-f0-9]{64}$/.test(tagging.inputSha256) ||
       !tagging.scores || typeof tagging.scores !== "object" || Array.isArray(tagging.scores)) throw new Error("论文主题标签无效");
   const scoreTags = Object.keys(tagging.scores);
+  // v1 archives predate GUI Agent. They stay readable until explicitly retagged.
+  const requiredScores = tagging.rulesVersion === "daily-tags-v1" && !Object.hasOwn(tagging.scores, "GUI Agent")
+    ? modelTags.filter((tag) => tag !== "GUI Agent") : modelTags;
   if (tagging.status === "tagged"
-    ? scoreTags.length !== modelTags.length || !modelTags.every((tag) => Object.hasOwn(tagging.scores, tag) && probability(tagging.scores[tag]))
+    ? scoreTags.length !== requiredScores.length || !requiredScores.every((tag) => Object.hasOwn(tagging.scores, tag) && probability(tagging.scores[tag]))
     : scoreTags.length !== 0) throw new Error("论文主题分数无效");
   const ordered = dailyTags.filter((tag) => paper.tags.includes(tag));
   if (paper.tags.length !== ordered.length || paper.tags.some((tag, index) => tag !== ordered[index])) throw new Error("论文主题标签无效");

@@ -7,6 +7,10 @@ const beijingDate = () => new Intl.DateTimeFormat("en-CA", {
   timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit",
 }).format(new Date());
 
+const latestAvailableDate = (days, today) => days
+  .filter((entry) => entry.date <= today && entry.count > 0)
+  .sort((a, b) => b.date.localeCompare(a.date))[0]?.date ?? today;
+
 function DailyPaper({ paper, index, expanded, onToggle }) {
   const title = paper.translation.title;
   const titleId = `daily-${paper.id}-title`;
@@ -34,7 +38,7 @@ function DailyPaper({ paper, index, expanded, onToggle }) {
 
 export default function ArxivDaily({ footer }) {
   const [today] = useState(beijingDate);
-  const [date, setDate] = useState(today);
+  const [date, setDate] = useState(null);
   const [days, setDays] = useState([]);
   const [papers, setPapers] = useState([]);
   const [query, setQuery] = useState("");
@@ -52,7 +56,8 @@ export default function ArxivDaily({ footer }) {
     setExpandedId(null);
     loadDailyIndex(controller.signal).then(async (index) => {
       if (active) setDays(index.days);
-      const entry = index.days.find((item) => item.date === date);
+      const selectedDate = date ?? latestAvailableDate(index.days, today);
+      const entry = index.days.find((item) => item.date === selectedDate);
       const daily = entry ? await loadDailyDocument(entry, controller.signal) : { papers: [] };
       if (active) {
         setPapers(daily.papers);
@@ -60,7 +65,7 @@ export default function ArxivDaily({ footer }) {
       }
     }).catch(() => { if (active) setStatus("error"); }).finally(() => clearTimeout(timeout));
     return () => { active = false; controller.abort(); clearTimeout(timeout); };
-  }, [date, attempt]);
+  }, [date, attempt, today]);
 
   useEffect(() => { document.title = "每日 arXiv · CY Lab Research"; }, []);
   const dates = [...new Set([today, ...days.map((entry) => entry.date)])].sort().reverse();
@@ -79,7 +84,7 @@ export default function ArxivDaily({ footer }) {
         <p className="research-collection" aria-label={status === "ready" ? `显示 ${visiblePapers.length} 篇论文` : "正在读取论文数量"}><strong>{status === "ready" ? visiblePapers.length : "—"}</strong><span>篇论文</span></p>
       </section>
       <div className="daily-toolbar">
-        <label className="daily-date">日报日期<select value={date} onChange={(event) => setDate(event.target.value)}>{dates.map((value) => <option value={value} key={value}>{value}</option>)}</select></label>
+        <label className="daily-date">日报日期<select value={date ?? latestAvailableDate(days, today)} onChange={(event) => setDate(event.target.value)}>{dates.map((value) => <option value={value} key={value}>{value}</option>)}</select></label>
         <label className="research-search"><MagnifyingGlass size={20} aria-hidden="true" /><span className="research-sr-only">搜索日报论文</span><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索论文、作者、标签或分类" /></label>
         <p className="daily-current-date">LLM / Agent</p>
       </div>

@@ -61,6 +61,7 @@ def tagging_feed(*papers):
 
 
 def jev_response(scores):
+    scores = {"gui_agent": 0, **scores}
     return json.dumps({"model": "jev-1.13.0", "answers": {
         name: {"type": "noul", "noul": value} for name, value in scores.items()
     }}).encode()
@@ -487,7 +488,7 @@ def test_command_adds_independent_rule_tags_without_a_jev_credential(tmp_path, m
     assert [paper["tags"] for paper in daily["papers"]] == [["LLM", "软件工程"], ["Agent"], ["LLM", "Agent", "软件工程"]]
     for paper in daily["papers"]:
         assert paper["tagging"] == {
-            "status": "fallback", "model": "jev-1.13.0", "rulesVersion": "daily-tags-v1",
+            "status": "fallback", "model": "jev-1.13.0", "rulesVersion": "daily-tags-v2",
             "threshold": 0.7, "inputSha256": paper["tagging"]["inputSha256"], "scores": {},
         }
         assert len(paper["tagging"]["inputSha256"]) == 64
@@ -499,10 +500,14 @@ def test_command_adds_independent_rule_tags_without_a_jev_credential(tmp_path, m
      ["LLM", "Agent", "CodingAgent", "AgentOps", "软件工程", "企业Agent"]),
     ({"ai4s": 0, "codingagent": 0, "agentops": 0, "agentharness": 0, "enterprise_agent": 0},
      ["LLM", "Agent", "软件工程"]),
-    ({"ai4s": 1, "codingagent": 1, "agentops": 1, "agentharness": 1, "enterprise_agent": 1},
-     ["LLM", "Agent", "AI4S", "CodingAgent", "AgentOps", "AgentHarness", "软件工程", "企业Agent"]),
-], ids=["mixed-and-threshold", "all-negative-is-success", "all-five"])
-def test_command_adds_five_independent_jev_labels_even_when_translation_fails(tmp_path, monkeypatch, scores, expected):
+    ({"ai4s": 1, "codingagent": 1, "gui_agent": 1, "agentops": 1, "agentharness": 1, "enterprise_agent": 1},
+     ["LLM", "Agent", "AI4S", "CodingAgent", "GUI Agent", "AgentOps", "AgentHarness", "软件工程", "企业Agent"]),
+    ({"ai4s": 0, "codingagent": 0, "gui_agent": 0.7, "agentops": 0, "agentharness": 0, "enterprise_agent": 0},
+     ["LLM", "Agent", "GUI Agent", "软件工程"]),
+    ({"ai4s": 0, "codingagent": 0, "gui_agent": 0.69, "agentops": 0, "agentharness": 0, "enterprise_agent": 0},
+     ["LLM", "Agent", "软件工程"]),
+], ids=["mixed-and-threshold", "all-negative-is-success", "all-six", "gui-at-threshold", "gui-below-threshold"])
+def test_command_adds_six_independent_jev_labels_even_when_translation_fails(tmp_path, monkeypatch, scores, expected):
     from collector import main
 
     submitted = []
@@ -526,13 +531,14 @@ def test_command_adds_five_independent_jev_labels_even_when_translation_fails(tm
     assert paper["tagging"]["status"] == "tagged"
     assert paper["tagging"]["scores"] == {
         "AI4S": scores["ai4s"], "CodingAgent": scores["codingagent"], "AgentOps": scores["agentops"],
+        "GUI Agent": scores.get("gui_agent", 0),
         "AgentHarness": scores["agentharness"], "企业Agent": scores["enterprise_agent"],
     }
     assert paper["translation"]["status"] == "fallback"
     assert len(submitted) == 1
     assert submitted[0]["model"] == "jev-1.13.0"
     assert json.loads(submitted[0]["state"]) == metadata
-    assert set(submitted[0]["questions"]) == {"ai4s", "codingagent", "agentops", "agentharness", "enterprise_agent"}
+    assert set(submitted[0]["questions"]) == {"ai4s", "codingagent", "gui_agent", "agentops", "agentharness", "enterprise_agent"}
     assert all(question["type"] == "noul" and question["instructions"] for question in submitted[0]["questions"].values())
 
 
@@ -700,7 +706,7 @@ def test_command_invalidates_successful_tag_cache_when_configuration_or_english_
         assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
         assert len(calls) == 1
         if change in {"model", "rulesVersion", "threshold"}:
-            name, value = {"model": ("JEV_MODEL", "jev-1.14.0"), "rulesVersion": ("JEV_RULES_VERSION", "daily-tags-v2"),
+            name, value = {"model": ("JEV_MODEL", "jev-1.14.0"), "rulesVersion": ("JEV_RULES_VERSION", "daily-tags-v3"),
                            "threshold": ("JEV_THRESHOLD", "0.9")}[change]
             monkeypatch.setenv(name, value)
         else:
@@ -725,7 +731,7 @@ def test_command_invalidates_successful_tag_cache_when_configuration_or_english_
         elif change == "model":
             assert tagging["model"] == "jev-1.14.0" and calls[-1]["model"] == "jev-1.14.0"
         else:
-            assert tagging["rulesVersion"] == "daily-tags-v2"
+            assert tagging["rulesVersion"] == "daily-tags-v3"
         # Cached valid results also remain available if a later run has no API key.
         monkeypatch.delenv("JEV_API_KEY")
         assert main(["--output-dir", str(tmp_path)], now=NOW) == 0

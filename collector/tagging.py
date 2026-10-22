@@ -14,18 +14,21 @@ from urllib.request import Request, urlopen
 
 
 TAGS = tuple(json.loads((Path(__file__).parents[1] / "shared/daily-tags.json").read_text()))
-SEMANTIC_TAGS = ("AI4S", "CodingAgent", "AgentOps", "AgentHarness", "企业Agent")
+SEMANTIC_TAGS = ("AI4S", "CodingAgent", "GUI Agent", "AgentOps", "AgentHarness", "企业Agent")
+LEGACY_SEMANTIC_TAGS = tuple(label for label in SEMANTIC_TAGS if label != "GUI Agent")
 QUESTIONS = {
     "ai4s": ("AI4S", "Is using AI to conduct, assist, or advance scientific research a main focus? Include scientific modeling, simulation, scientific data analysis, experiment design and automated experiments in any scientific discipline. Exclude generic AI methods with only speculative scientific applications."),
     "codingagent": ("CodingAgent", "Is a coding agent or directly related large-language-model software development research a main focus? Include code generation/completion, repair, debugging, test generation, refactoring, review, and related models, datasets or evaluations. Do not require a particular agent architecture or the word agent. Merely implementing an unrelated method in code is insufficient."),
+    "gui_agent": ("GUI Agent", "Is an agent that perceives and operates a graphical user interface a main research subject? Include web/browser, desktop/computer-use and mobile agents that interact through screenshots, DOM or UI elements, mouse, keyboard or touch, plus their training, datasets and evaluations. Exclude API-only agents, generic coding agents without GUI interaction, and generating or designing interfaces without an agent operating them."),
     "agentops": ("AgentOps", "Is operating or maintaining agent systems a main focus? Include deployment, observability, monitoring, logs/traces, fault diagnosis, root-cause analysis, runtime evaluation, reliability, performance, cost and production operations. A generic agent benchmark alone is insufficient."),
     "agentharness": ("AgentHarness", "Is infrastructure or a runtime mechanism supporting agent execution a main focus? Include context organization, memory, tool integration, execution loops, scheduling and runtime control. Merely using an agent framework is insufficient."),
     "enterprise_agent": ("企业Agent", "Is an agent carrying out concrete enterprise business tasks, or their evaluation, a main focus? Include office work, customer support/sales, finance, ERP/CRM, supply chain, business operations and company simulations. Corporate affiliation, sponsorship, or a speculative enterprise application alone is insufficient."),
 }
 
 
-def valid_scores(scores):
-    return (isinstance(scores, dict) and set(scores) == set(SEMANTIC_TAGS)
+def valid_scores(scores, *, allow_legacy=False):
+    return (isinstance(scores, dict) and (set(scores) == set(SEMANTIC_TAGS)
+            or (allow_legacy and set(scores) == set(LEGACY_SEMANTIC_TAGS)))
             and all(type(value) in (int, float) and math.isfinite(value) and 0 <= value <= 1
                     for value in scores.values()))
 
@@ -101,7 +104,7 @@ def _request_with_retries(paper, key, model, attempts, delay, stopped):
 def tag_papers(papers):
     key = os.environ.get("JEV_API_KEY", "")
     model = os.environ.get("JEV_MODEL", "jev-1.13.0")
-    rules_version = os.environ.get("JEV_RULES_VERSION", "daily-tags-v1")
+    rules_version = os.environ.get("JEV_RULES_VERSION", "daily-tags-v2")
     threshold = float(os.environ.get("JEV_THRESHOLD", "0.7"))
     attempts = int(os.environ.get("JEV_RETRY_ATTEMPTS", "3"))
     delay = float(os.environ.get("JEV_RETRY_DELAY_SECONDS", "2"))

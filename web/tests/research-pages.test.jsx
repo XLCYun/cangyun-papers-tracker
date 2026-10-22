@@ -110,24 +110,42 @@ test.each([
   expect(screen.queryAllByRole("article")).toHaveLength(0);
 });
 
-test("date selection shows archived days while missing today and a valid zero day stay empty without notices", async () => {
+test("missing today defaults to the latest nonempty archive and manual empty dates remain selected", async () => {
   const user = userEvent.setup();
   vi.useFakeTimers({ toFake: ["Date"] });
   vi.setSystemTime(new Date("2026-10-21T17:30:00Z"));
-  serve({ "2026-10-21": day("2026-10-21"), "2026-10-20": day("2026-10-20", []) });
+  serve({ "2026-10-21": day("2026-10-21", []), "2026-10-20": day("2026-10-20") });
   openDaily();
-  await screen.findByRole("option", { name: "2026-10-21" });
-  await waitFor(() => expect(screen.queryByRole("status")).not.toBeInTheDocument());
-  expect(screen.getByLabelText("日报日期")).toHaveValue("2026-10-22");
-  expect(screen.getByLabelText("显示 0 篇论文")).toBeVisible();
-  expect(screen.queryAllByRole("article")).toHaveLength(0);
-  await user.selectOptions(screen.getByLabelText("日报日期"), "2026-10-21");
   expect(await screen.findByText("实用智能体评测")).toBeVisible();
-  await user.selectOptions(screen.getByLabelText("日报日期"), "2026-10-20");
+  expect(screen.getByLabelText("日报日期")).toHaveValue("2026-10-20");
+  await user.selectOptions(screen.getByLabelText("日报日期"), "2026-10-21");
   await waitFor(() => expect(screen.getByLabelText("显示 0 篇论文")).toBeVisible());
+  expect(screen.getByLabelText("日报日期")).toHaveValue("2026-10-21");
+  await user.selectOptions(screen.getByLabelText("日报日期"), "2026-10-22");
+  await waitFor(() => expect(screen.getByLabelText("显示 0 篇论文")).toBeVisible());
+  expect(screen.getByLabelText("日报日期")).toHaveValue("2026-10-22");
   expect(screen.queryAllByRole("article")).toHaveLength(0);
   expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   expect(screen.queryByText(/暂无|未发布|没有论文|最近一期|更新中/)).not.toBeInTheDocument();
+});
+
+test("an archived zero-paper today defaults to the latest nonempty day", async () => {
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(new Date("2026-10-22T05:30:00Z"));
+  serve({ "2026-10-22": day("2026-10-22", []), "2026-10-21": day("2026-10-21") });
+  openDaily();
+  expect(await screen.findByText("实用智能体评测")).toBeVisible();
+  expect(screen.getByLabelText("日报日期")).toHaveValue("2026-10-21");
+});
+
+test("no nonempty archives keeps today's empty date without notices", async () => {
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(new Date("2026-10-22T05:30:00Z"));
+  serve({ "2026-10-21": day("2026-10-21", []) });
+  openDaily();
+  await waitFor(() => expect(screen.getByLabelText("显示 0 篇论文")).toBeVisible());
+  expect(screen.getByLabelText("日报日期")).toHaveValue("2026-10-22");
+  expect(screen.queryByRole("alert")).not.toBeInTheDocument();
 });
 
 test("translation fallback displays the original title and abstract with no translation failure notice", async () => {

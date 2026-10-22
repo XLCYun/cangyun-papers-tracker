@@ -64,7 +64,8 @@ def _validate_tagging(paper, *, allow_stale_tags):
     threshold = tagging["threshold"]
     _require(type(threshold) in (int, float) and math.isfinite(threshold) and 0 <= threshold <= 1)
     _require(isinstance(tagging["inputSha256"], str) and re.fullmatch(r"[a-f0-9]{64}", tagging["inputSha256"]))
-    _require(valid_scores(tagging["scores"]) if tagging["status"] == "tagged" else tagging["scores"] == {})
+    _require(valid_scores(tagging["scores"], allow_legacy=tagging["rulesVersion"] == "daily-tags-v1")
+             if tagging["status"] == "tagged" else tagging["scores"] == {})
     if not allow_stale_tags:
         _require(tags == derive_tags(paper, tagging["scores"], threshold))
 

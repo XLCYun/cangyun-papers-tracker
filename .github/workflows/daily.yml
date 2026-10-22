@@ -1,0 +1,150 @@
+name: Daily arXiv
+
+on:
+  schedule:
+    - cron: '30 5 * * *' # 13:30 Asia/Shanghai, which does not observe DST.
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Optional archived daily date (YYYY-MM-DD); blank means Beijing today'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: arxiv-daily
+  cancel-in-progress: false
+
+env:
+  TZ: Asia/Shanghai
+  UV_PYTHON: '3.12'
+
+jobs:
+  collect:
+    if: github.repository == 'XLCYun/cangyun-papers-tracker' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    outputs:
+      date: ${{ steps.date.outputs.date }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@18d369b23da25a81e9458561248e1aafff6a70fa # v10.3.1
+      - run: uv sync --locked --group dev
+      - name: Verify the collector and publisher boundaries
+        run: uv run --locked python -m pytest
+      - name: Resolve Beijing daily date
+        id: date
+        env:
+          REQUESTED_DATE: ${{ inputs.date }}
+        run: |
+          python - <<'PY'
+          from datetime import date, datetime
+          import os
+          import re
+          from zoneinfo import ZoneInfo
+          value = os.environ['REQUESTED_DATE'] or datetime.now(ZoneInfo('Asia/Shanghai')).date().isoformat()
+          if not re.fullmatch(r'\d{4}-\d{2}-\d{2}', value) or date.fromisoformat(value).isoformat() != value:
+              raise SystemExit('Use a valid YYYY-MM-DD daily date.')
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write(f'date={value}\n')
+          print(f'Daily date: {value} (Asia/Shanghai)')
+          PY
+      - name: Collect and translate the official announcement batch
+        id: collect
+        env:
+          DAILY_DATE: ${{ steps.date.outputs.date }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_BASE_URL: ${{ vars.OPENAI_BASE_URL || 'https://api.openai.com/v1' }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL || 'gpt-4o-mini' }}
+          OPENAI_THINKING: ${{ vars.OPENAI_THINKING }}
+          TRANSLATION_BATCH_SIZE: ${{ vars.TRANSLATION_BATCH_SIZE || '10' }}
+          TRANSLATION_WORKERS: ${{ vars.TRANSLATION_WORKERS || '3' }}
+        run: uv run --locked python -m collector --date "$DAILY_DATE" --output-dir data/arxiv-daily
+      - name: Validate the complete Git backup
+        env:
+          DAILY_DATE: ${{ steps.date.outputs.date }}
+        run: uv run --locked python -m collector.publish --date "$DAILY_DATE" --data-dir data/arxiv-daily --check
+      - name: Record translation and fallback counts
+        if: always() && steps.collect.outcome == 'success'
+        env:
+          DAILY_DATE: ${{ steps.date.outputs.date }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          day = os.environ['DAILY_DATE']
+          stats = json.loads(Path(f'data/arxiv-daily/{day}.json').read_text())['stats']
+          message = f"{day}: fetched={stats['fetched']}, matched={stats['matched']}, translated={stats['translated']}, fallback={stats['fallback']}"
+          print(message)
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+              summary.write(f'## arXiv daily {day}\n\n')
+              summary.write('| Fetched | Matched | Translated | English fallback |\n| --- | --- | --- | --- |\n')
+              summary.write(f"| {stats['fetched']} | {stats['matched']} | {stats['translated']} | {stats['fallback']} |\n\n")
+          if stats['fallback']:
+              print(f"::warning::{stats['fallback']} paper(s) use English fallback. Successful translations remain reusable; sanitized HTTP status diagnostics appear in the collection step.")
+          PY
+      - name: Keep only the validated public JSON backup
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: arxiv-daily-${{ github.run_id }}
+          path: data/arxiv-daily/*.json
+          if-no-files-found: error
+          retention-days: 14
+          overwrite: true
+
+  publish:
+    needs: collect
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@18d369b23da25a81e9458561248e1aafff6a70fa # v10.3.1
+      - run: uv sync --locked
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: arxiv-daily-${{ github.run_id }}
+          path: data/arxiv-daily
+      - name: Validate downloaded JSON before committing
+        env:
+          DAILY_DATE: ${{ needs.collect.outputs.date }}
+        run: uv run --locked python -m collector.publish --date "$DAILY_DATE" --data-dir data/arxiv-daily --check
+      - name: Save the day and index in Git before OSS publication
+        env:
+          DAILY_DATE: ${{ needs.collect.outputs.date }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- "data/arxiv-daily/$DAILY_DATE.json" data/arxiv-daily/index.json
+          if ! git diff --cached --quiet; then
+            git commit -m "data: archive arXiv daily $DAILY_DATE"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+      - name: Publish and anonymously verify OSS JSON
+        env:
+          DAILY_DATE: ${{ needs.collect.outputs.date }}
+          OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
+          OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+          OSS_BUCKET: ${{ vars.OSS_BUCKET }}
+          OSS_ENDPOINT: ${{ vars.OSS_ENDPOINT }}
+          OSS_PREFIX: ${{ vars.OSS_PREFIX }}
+          OSS_PUBLIC_BASE_URL: ${{ vars.OSS_PUBLIC_BASE_URL }}
+        run: uv run --locked python -m collector.publish --date "$DAILY_DATE" --data-dir data/arxiv-daily
+      - name: Record publication result
+        if: always()
+        env:
+          PUBLICATION_STATUS: ${{ job.status }}
+          DAILY_DATE: ${{ needs.collect.outputs.date }}
+        run: |
+          printf '\n## Publication %s\n\nResult: %s.\n\nThe collection artifact retains only public daily JSON for 14 days. A successful Git backup precedes OSS publication.\n' "$DAILY_DATE" "$PUBLICATION_STATUS" >> "$GITHUB_STEP_SUMMARY"

@@ -15,18 +15,19 @@ PREFIX = "research/arxiv-daily"
 DAY = "2026-10-22"
 
 
-def archive(data_dir, day=DAY):
+def archive(data_dir, day=DAY, *, papers=()):
+    translated = sum(paper.get("translation", {}).get("status") == "translated" for paper in papers)
     daily = {
         "schemaVersion": 1, "date": day, "timezone": "Asia/Shanghai",
         "fetchedAt": f"{day}T13:30:00+08:00",
         "source": {"url": "https://rss.arxiv.org/rss/cs", "updatedAt": f"{day}T00:00:00-04:00"},
-        "stats": {"fetched": 0, "matched": 0, "translated": 0, "fallback": 0},
-        "papers": [],
+        "stats": {"fetched": len(papers), "matched": len(papers), "translated": translated, "fallback": len(papers) - translated},
+        "papers": list(papers),
     }
     content = (json.dumps(daily, indent=2) + "\n").encode()
     (data_dir / f"{day}.json").write_bytes(content)
     digest = hashlib.sha256(content).hexdigest()
-    entry = {"date": day, "count": 0, "sha256": digest, "file": f"{day}/{digest}.json"}
+    entry = {"date": day, "count": len(papers), "sha256": digest, "file": f"{day}/{digest}.json"}
     index_path = data_dir / "index.json"
     index = json.loads(index_path.read_text()) if index_path.exists() else {"schemaVersion": 1, "days": []}
     index["updatedAt"] = daily["fetchedAt"]
@@ -231,6 +232,39 @@ def test_check_command_validates_json_without_cloud_configuration_or_network(tmp
     monkeypatch.delenv("OSS_ACCESS_KEY_ID", raising=False)
     monkeypatch.delenv("OSS_ACCESS_KEY_SECRET", raising=False)
     assert main(["--date", DAY, "--data-dir", str(tmp_path), "--check"]) == 0
+
+
+@pytest.mark.parametrize("field", [
+    ("id",), ("title",), ("abstract",), ("authors",), ("affiliations",), ("categories",),
+    ("primaryCategory",), ("publishedAt",), ("updatedAt",), ("announceType",),
+    ("absUrl",), ("pdfUrl",), ("htmlUrl",), ("translation", "status"),
+    ("translation", "title"), ("translation", "abstract"), ("translation", "brief"),
+])
+def test_commands_reject_incomplete_paper_without_changing_the_archive(tmp_path, monkeypatch, field):
+    from collector import main as collect
+    from collector.publish import main
+    from datetime import datetime
+
+    paper = {
+        "id": "2610.00001v2", "title": "Example Agent paper", "abstract": "Original abstract.",
+        "authors": ["Example Author"], "affiliations": [], "categories": ["cs.AI"], "primaryCategory": "cs.AI",
+        "publishedAt": "2026-10-22T00:00:00-04:00", "updatedAt": None, "announceType": "replace",
+        "absUrl": "https://arxiv.org/abs/2610.00001v2", "pdfUrl": "https://arxiv.org/pdf/2610.00001v2",
+        "htmlUrl": "https://arxiv.org/html/2610.00001v2",
+        "translation": {"status": "fallback", "title": "Example Agent paper", "abstract": "Original abstract.", "brief": ""},
+    }
+    parent = paper if len(field) == 1 else paper[field[0]]
+    del parent[field[-1]]
+    # Build a matching index so failure must come from the document contract, not its hash.
+    _, content = archive(tmp_path, papers=[paper])
+    previous_index = (tmp_path / "index.json").read_bytes()
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.delenv("OSS_ACCESS_KEY_ID", raising=False)
+    monkeypatch.delenv("OSS_ACCESS_KEY_SECRET", raising=False)
+    assert main(["--date", DAY, "--data-dir", str(tmp_path), "--check"]) == 1
+    assert collect(["--date", DAY, "--output-dir", str(tmp_path)], now=datetime.fromisoformat("2026-10-23T13:30:00+08:00")) == 1
+    assert (tmp_path / f"{DAY}.json").read_bytes() == content
+    assert (tmp_path / "index.json").read_bytes() == previous_index
 
 
 def test_command_does_not_publish_a_daily_file_whose_translation_statistics_disagree(tmp_path, monkeypatch):

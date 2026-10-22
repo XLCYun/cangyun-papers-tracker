@@ -1,6 +1,6 @@
 # CY Lab Research
 
-这里定义 CY Lab 研究站点的业务用语。主站桌面产品的发布用语仍见 `CONTEXT.md`。
+这里定义 CY Lab 研究站点的业务用语。仓库职责见 `CONTEXT.md`。
 
 ## Language
 

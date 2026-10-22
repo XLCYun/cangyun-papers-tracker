@@ -167,6 +167,9 @@ def test_command_replays_archived_day_without_fetching_current_feed_or_retransla
 
     daily = json.loads((tmp_path / "2026-10-22.json").read_text())
     assert daily["source"]["url"] != origin + "/rss/cs"
+    assert daily["fetchedAt"] == "2026-10-22T13:30:00+08:00"
+    assert daily["source"]["updatedAt"] == "2026-10-22T00:00:00-04:00"
+    assert json.loads((tmp_path / "index.json").read_text())["updatedAt"] == "2026-10-23T13:30:00+08:00"
     assert [(paper["translation"]["status"], paper["translation"]["title"]) for paper in daily["papers"]] == [("translated", "已成功标题"), ("translated", "补译标题")]
     assert daily["stats"] == {"fetched": 2, "matched": 2, "translated": 2, "fallback": 0}
 
@@ -287,7 +290,7 @@ def test_permanent_source_failure_keeps_existing_index_and_logs_only_safe_status
     assert "private upstream response" not in error
 
 
-@pytest.mark.parametrize("defect", ["wrong-date", "wrong-schema", "unknown-translation-state"])
+@pytest.mark.parametrize("defect", ["wrong-date", "wrong-schema", "unknown-translation-state", "missing-translation-title"])
 def test_command_does_not_overwrite_an_invalid_archived_source(tmp_path, monkeypatch, defect):
     from collector import main
 
@@ -300,8 +303,10 @@ def test_command_does_not_overwrite_an_invalid_archived_source(tmp_path, monkeyp
         daily["date"] = "2026-10-21"
     elif defect == "wrong-schema":
         daily["schemaVersion"] = 99
-    else:
+    elif defect == "unknown-translation-state":
         daily["papers"][0]["translation"]["status"] = "unknown"
+    else:
+        del daily["papers"][0]["translation"]["title"]
     original = json.dumps(daily).encode()
     path.write_bytes(original)
     index = (tmp_path / "index.json").read_bytes()

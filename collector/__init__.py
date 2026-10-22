@@ -43,7 +43,12 @@ class CollectorError(Exception):
 
 def _matches(paper):
     text = paper["title"] + "\n" + paper["abstract"]
-    return bool(ENABLED_CATEGORIES.intersection(paper["categories"]) and TOPIC.search(text) and not EXCLUDE.search(text))
+    return bool(
+        paper["announceType"] == "new"
+        and ENABLED_CATEGORIES.intersection(paper["categories"])
+        and TOPIC.search(text)
+        and not EXCLUDE.search(text)
+    )
 
 
 def _merge_announcements(papers):
@@ -273,7 +278,7 @@ def main(argv=None, *, now=None):
                 raise CollectorError("The feed announcement batch does not match the requested daily date.")
             fetched = len(papers)
             fetched_at = moment.isoformat()
-            papers = [paper for paper in papers if _matches(paper)]
+        papers = [paper for paper in papers if _matches(paper)]
         _translate(papers)
         translated = sum(paper["translation"]["status"] == "translated" for paper in papers)
         daily = {

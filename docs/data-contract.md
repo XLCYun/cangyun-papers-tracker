@@ -19,7 +19,7 @@ Git 路径为 `data/arxiv-daily/YYYY-MM-DD.json`。对象的最小形状如下�
   "stats": { "fetched": 1, "matched": 1, "translated": 1, "fallback": 0 },
   "papers": [
     {
-      "id": "2610.00001v2",
+      "id": "2610.00001v1",
       "title": "Example Agent paper",
       "abstract": "Original abstract.",
       "authors": ["Example Author"],
@@ -28,10 +28,10 @@ Git 路径为 `data/arxiv-daily/YYYY-MM-DD.json`。对象的最小形状如下�
       "primaryCategory": "cs.AI",
       "publishedAt": "2026-10-22T00:00:00-04:00",
       "updatedAt": null,
-      "announceType": "replace",
-      "absUrl": "https://arxiv.org/abs/2610.00001v2",
-      "pdfUrl": "https://arxiv.org/pdf/2610.00001v2",
-      "htmlUrl": "https://arxiv.org/html/2610.00001v2",
+      "announceType": "new",
+      "absUrl": "https://arxiv.org/abs/2610.00001v1",
+      "pdfUrl": "https://arxiv.org/pdf/2610.00001v1",
+      "htmlUrl": "https://arxiv.org/html/2610.00001v1",
       "translation": {
         "status": "translated",
         "title": "示例 Agent 论文",
@@ -44,9 +44,10 @@ Git 路径为 `data/arxiv-daily/YYYY-MM-DD.json`。对象的最小形状如下�
 ```
 
 - `id` 为来源给出的 arXiv ID；有版本后缀就保留，不做跨日排除。
+- 当前日报只保留 `announceType=new` 的条目，翻译前排除其余公告类型。结构校验仍接受四种合法类型，以便读取旧归档后重新筛选。
 - 未提供的机构使用 `[]`，未提供的更新时间使用 `null`，不推测补造。`publishedAt` 按来源含义保存，不用于猜日报日期。
 - 翻译状态只有 `translated` 和 `fallback`。回退时 `translation.title` 与 `translation.abstract` 使用英文，`brief` 为 `""`。上游错误的完整响应和凭证不写入公开 JSON。
-- `stats.matched === papers.length`，`translated + fallback === matched`。
+- `stats.fetched` 为完整来源批次的去重条目数；`stats.matched === papers.length` 为筛选后展示数量，`translated + fallback === matched`。
 - 同日重跑可以读取已有每日文件复用成功译文；缺失的历史日期不得用当前 feed 改写成历史数据。
 - 重跑归档保留原始 `source` 和 `fetchedAt`，索引的 `updatedAt` 记录本次归档更新时间。采集器在重写前和发布器在上传前使用同一校验器检查必填元数据、翻译字段与统计；无效归档不会被改写或发布。
 

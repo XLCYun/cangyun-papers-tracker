@@ -1,7 +1,9 @@
 """Exercise the supported collector command against external HTTP fixtures."""
 
 from contextlib import contextmanager
+from copy import deepcopy
 from datetime import datetime
+import hashlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 from pathlib import Path
@@ -103,20 +105,89 @@ def test_command_archives_official_metadata_and_english_fallback(tmp_path, monke
     assert len(index["days"][0]["sha256"]) == 64
 
 
-def test_command_keeps_all_revision_types_but_applies_original_topic_and_category_rules(tmp_path, monkeypatch):
+def test_command_keeps_only_new_before_translation_and_applies_original_topic_and_category_rules(tmp_path, monkeypatch):
     from collector import main
 
-    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
-    with service({"/rss/cs": (200, (FIXTURES / "rss-selected.xml").read_bytes())}) as origin:
+    submitted = []
+
+    def model(request):
+        papers = json.loads(request["messages"][1]["content"].split("论文资料：\n", 1)[1])
+        submitted.extend(paper["id"] for paper in papers)
+        return 503, b"fixture translation unavailable"
+
+    with service({"/rss/cs": (200, (FIXTURES / "rss-selected.xml").read_bytes()), "/v1/chat/completions": model}) as origin:
         monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        monkeypatch.setenv("OPENAI_API_KEY", "fixture-not-a-secret")
+        monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
         assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
 
     daily = json.loads((tmp_path / "2026-10-22.json").read_text())
     assert [(paper["id"], paper["announceType"]) for paper in daily["papers"]] == [
-        ("2610.28637v1", "new"), ("2609.00755v1", "cross"),
-        ("2106.06060v5", "replace"), ("2608.15900v2", "replace-cross"),
+        ("2610.28637v1", "new"),
     ]
-    assert daily["stats"] == {"fetched": 7, "matched": 4, "translated": 0, "fallback": 4}
+    assert submitted == ["2610.28637v1"]
+    assert daily["stats"] == {"fetched": 7, "matched": 1, "translated": 0, "fallback": 1}
+
+
+def test_command_archives_zero_when_only_other_announcement_types_match(tmp_path, monkeypatch):
+    from collector import main
+
+    with service({"/rss/cs": (200, rss_response("2609.00755v1", "2106.06060v5", "2608.15900v2"))}) as origin:
+        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
+    daily = json.loads((tmp_path / "2026-10-22.json").read_text())
+    assert daily["papers"] == []
+    assert daily["stats"] == {"fetched": 3, "matched": 0, "translated": 0, "fallback": 0}
+    assert json.loads((tmp_path / "index.json").read_text())["days"][0]["count"] == 0
+
+
+def test_command_refilters_legacy_archive_without_retranslating_or_fetching_source(tmp_path, monkeypatch):
+    from collector import main
+
+    with service({"/rss/cs": (200, rss_response("2610.28637v1"))}) as origin:
+        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
+
+    path = tmp_path / "2026-10-22.json"
+    legacy = json.loads(path.read_text())
+    kept = legacy["papers"][0]
+    kept["translation"] = {"status": "translated", "title": "已成功标题", "abstract": "已成功摘要。", "brief": "已成功总结。"}
+    expected = deepcopy(kept)
+    for identifier, kind in [("2610.00002v1", "cross"), ("2610.00003v2", "replace"), ("2610.00004v2", "replace-cross")]:
+        removed = deepcopy(kept)
+        removed.update(id=identifier, announceType=kind,
+                       absUrl=f"https://arxiv.org/abs/{identifier}", pdfUrl=f"https://arxiv.org/pdf/{identifier}", htmlUrl=f"https://arxiv.org/html/{identifier}")
+        removed["translation"] = {"status": "fallback", "title": removed["title"], "abstract": removed["abstract"], "brief": ""}
+        legacy["papers"].append(removed)
+    legacy["stats"] = {"fetched": 4, "matched": 4, "translated": 1, "fallback": 3}
+    content = (json.dumps(legacy, ensure_ascii=False, indent=2) + "\n").encode()
+    path.write_bytes(content)
+    index_path = tmp_path / "index.json"
+    index = json.loads(index_path.read_text())
+    digest = hashlib.sha256(content).hexdigest()
+    index["days"][0].update(count=4, sha256=digest, file=f"2026-10-22/{digest}.json")
+    index_path.write_text(json.dumps(index) + "\n")
+
+    requests = []
+
+    def unexpected_translation(request):
+        requests.append(request)
+        return 503, b"translation should not be called"
+
+    with service({"/rss/cs": (503, b"source should not be fetched"), "/v1/chat/completions": unexpected_translation}) as origin:
+        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        monkeypatch.setenv("OPENAI_API_KEY", "fixture-not-a-secret")
+        monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
+        assert main(["--date", "2026-10-22", "--output-dir", str(tmp_path)], now=NOW) == 0
+
+    daily = json.loads(path.read_text())
+    assert daily["papers"] == [expected]
+    assert daily["source"] == legacy["source"]
+    assert daily["fetchedAt"] == legacy["fetchedAt"]
+    assert daily["stats"] == {"fetched": 4, "matched": 1, "translated": 1, "fallback": 0}
+    assert requests == []
+    entry = json.loads(index_path.read_text())["days"][0]
+    assert entry["count"] == 1 and entry["sha256"] == hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def test_command_publishes_compatible_model_translation_without_losing_originals(tmp_path, monkeypatch):
@@ -147,8 +218,12 @@ def test_command_replays_archived_day_without_fetching_current_feed_or_retransla
     from collector import main
 
     first_translation = {"id": "2610.28637v1", "chinese_title": "已成功标题", "chinese_summary": "已成功摘要。", "brief_summary": "已成功总结。"}
-    retry_translation = {"id": "2106.06060v5", "chinese_title": "补译标题", "chinese_summary": "补译摘要。", "brief_summary": "补译总结。"}
-    with service({"/rss/cs": (200, rss_response("2610.28637v1", "2106.06060v5")), "/v1/chat/completions": (200, model_response([first_translation]))}) as origin:
+    retry_translation = {"id": "2610.29003v1", "chinese_title": "补译标题", "chinese_summary": "补译摘要。", "brief_summary": "补译总结。"}
+    feed = ET.fromstring(rss_response("2610.28637v1", "2610.29003v1"))
+    for item in feed.find("channel").findall("item"):
+        if item.findtext("guid").endswith("2610.29003v1"):
+            item.find("category").text = "cs.LG"
+    with service({"/rss/cs": (200, ET.tostring(feed)), "/v1/chat/completions": (200, model_response([first_translation]))}) as origin:
         monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
         monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
         monkeypatch.setenv("OPENAI_API_KEY", "fixture-not-a-secret")
@@ -156,7 +231,7 @@ def test_command_replays_archived_day_without_fetching_current_feed_or_retransla
 
     def retry_model(request):
         submitted = json.loads(request["messages"][1]["content"].split("论文资料：\n", 1)[1])
-        if [paper["id"] for paper in submitted] != ["2106.06060v5"]:
+        if [paper["id"] for paper in submitted] != ["2610.29003v1"]:
             return 400, b"unexpected repeat translation"
         return 200, model_response([retry_translation])
 

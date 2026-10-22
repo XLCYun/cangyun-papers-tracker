@@ -31,7 +31,8 @@ uv run --locked python -m pytest tests/test_collector.py
 
 - 仅从官方 RSS 公告取批次，保留来源批次时间和生成时间，不把提交日期当公告日。
 - 沿用旧项目的 40 类配置，其中 31 类启用；匹配原文标题和摘要中的 `\bllm|\bagent`，忽略大小写，并保留 `robot` 排除规则。
-- 保留 `new`、`cross`、`replace`、`replace-cross`。只合并本批次重复的完整版本 ID，不跨日期排除，不把 v1 和 v2 合并。
+- 只保留 `announceType=new`，在翻译前排除 `cross`、`replace` 和 `replace-cross`；同日归档重跑也会重新筛选并复用成功译文。按公告类型筛选，不按版本后缀判断；只合并本批次重复的完整版本 ID，不跨日期排除，不把 v1 和 v2 合并。
+- `stats.fetched` 保留完整来源批次的去重条目数，`stats.matched` 为通过公告类型、分类和专题筛选后实际展示的论文数。
 - RSS 未保证首分类就是主分类，`primaryCategory` 留空。未提供的机构为 `[]`、更新时间为 `null`，不下载 PDF 补元数据。
 - 整个 CS feed 达到 2,000 条时，改为依次读取启用分类并合并；任何单分类仍达到限制，或分类批次发生变化，就失败并保留已有归档。
 - 只有有效且批次日期正确的空来源才写零篇。HTTP 错误、无效 XML、挑战网页、畸形条目或旧批次均不写空日报。

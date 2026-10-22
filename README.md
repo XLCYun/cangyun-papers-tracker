@@ -1,6 +1,6 @@
 # Cangyun Papers Tracker
 
-CY Lab 的研究站点，汇集每日 arXiv LLM 与 Agent 论文，以及企业 Agent Benchmark 时间线。
+CY Lab 的研究站点，汇集每日 arXiv 首次发布（`new`）的 LLM 与 Agent 论文，以及企业 Agent Benchmark 时间线。
 
 线上站点为 <https://research.cyunlab.com>，提供[每日 arXiv](https://research.cyunlab.com/arxiv-daily) 和[企业 Agent Benchmark](https://research.cyunlab.com/enterprise-agent-benchmark)。需求见 [实现规格](docs/spec.md)，采集与页面共用的接口见 [数据约定](docs/data-contract.md)。
 

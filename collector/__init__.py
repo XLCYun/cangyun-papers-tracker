@@ -16,6 +16,8 @@ from urllib.request import Request, urlopen
 import xml.etree.ElementTree as ET
 from zoneinfo import ZoneInfo
 
+from .contract import DailyContractError, validate_daily
+
 
 TIMEZONE = ZoneInfo("Asia/Shanghai")
 RSS_URL = "https://rss.arxiv.org/rss/cs"
@@ -234,7 +236,7 @@ def _atomic_write(path, content):
             temporary.unlink(missing_ok=True)
 
 
-def _save(daily, output_dir):
+def _save(daily, output_dir, *, updated_at):
     path = output_dir / f"{daily['date']}.json"
     index_path = output_dir / "index.json"
     index = json.loads(index_path.read_text()) if index_path.exists() else {"schemaVersion": 1, "updatedAt": None, "days": []}
@@ -242,7 +244,7 @@ def _save(daily, output_dir):
     digest = hashlib.sha256(content).hexdigest()
     entry = {"date": daily["date"], "count": len(daily["papers"]), "sha256": digest, "file": f"{daily['date']}/{digest}.json"}
     index["days"] = sorted([day for day in index["days"] if day["date"] != daily["date"]] + [entry], key=lambda day: day["date"], reverse=True)
-    index["updatedAt"] = daily["fetchedAt"]
+    index["updatedAt"] = updated_at
     _atomic_write(path, content)
     _atomic_write(index_path, _encode(index))
 
@@ -260,11 +262,9 @@ def main(argv=None, *, now=None):
         archive = args.output_dir / f"{day.isoformat()}.json"
         if archive.exists():
             previous = json.loads(archive.read_text())
-            if (previous.get("schemaVersion") != 1 or previous.get("date") != day.isoformat()
-                    or previous.get("timezone") != "Asia/Shanghai"
-                    or any(paper["translation"]["status"] not in {"translated", "fallback"} for paper in previous["papers"])):
-                raise CollectorError("The archived source does not match the daily JSON contract.")
+            validate_daily(previous, day.isoformat())
             source, papers, fetched = previous["source"], previous["papers"], previous["stats"]["fetched"]
+            fetched_at = previous["fetchedAt"]
         else:
             if day != moment.date():
                 raise CollectorError("No archived source snapshot exists for that date; historical backfill is disabled.")
@@ -272,19 +272,21 @@ def main(argv=None, *, now=None):
             if datetime.fromisoformat(source["updatedAt"]).date() != day:
                 raise CollectorError("The feed announcement batch does not match the requested daily date.")
             fetched = len(papers)
+            fetched_at = moment.isoformat()
             papers = [paper for paper in papers if _matches(paper)]
         _translate(papers)
         translated = sum(paper["translation"]["status"] == "translated" for paper in papers)
         daily = {
             "schemaVersion": 1, "date": day.isoformat(), "timezone": "Asia/Shanghai",
-            "fetchedAt": moment.isoformat(), "source": source,
+            "fetchedAt": fetched_at, "source": source,
             "stats": {"fetched": fetched, "matched": len(papers), "translated": translated, "fallback": len(papers) - translated},
             "papers": papers,
         }
-        _save(daily, args.output_dir)
+        validate_daily(daily, day.isoformat())
+        _save(daily, args.output_dir, updated_at=moment.isoformat())
     except Exception as error:
         code = getattr(error, "code", None)
-        detail = str(error) if isinstance(error, CollectorError) else (f"HTTP {code}" if code else type(error).__name__)
+        detail = str(error) if isinstance(error, (CollectorError, DailyContractError)) else (f"HTTP {code}" if code else type(error).__name__)
         print(f"Collector failed: {detail}; archived data was not published.", file=sys.stderr)
         return 1
     print(f"Archived {day.isoformat()}: {len(papers)} papers")

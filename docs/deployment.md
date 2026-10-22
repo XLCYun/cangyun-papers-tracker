@@ -36,7 +36,8 @@ python3 scripts/deploy-site.py deploy --host "$RESEARCH_HOST" --release "$RESEAR
    certbot certonly --webroot -w /var/www/letsencrypt --cert-name research.cyunlab.com -d research.cyunlab.com --non-interactive
    ```
 
-5. 将 `research-https.conf` 替换到新站的 `sites-available` 文件，再次 `nginx -t`，成功后 reload。模板使用研究站独立证书，复用服务器已有的 Certbot TLS 参数文件。确认自动续期 timer 正常，续期配置仍使用 `/var/www/letsencrypt`。
+5. 将 `research-https.conf` 替换到新站的 `sites-available` 文件，再次 `nginx -t`，成功后 reload。模板使用研究站独立证书，复用服务器已有的 Certbot TLS 参数文件。
+6. 将 `deploy/certbot/reload-research-nginx.sh` 以 `0755` 权限安装至 `/etc/letsencrypt/renewal-hooks/deploy/reload-research-nginx.sh`。先用 `sh -n` 检查脚本语法。该钩子只在 `RENEWED_LINEAGE` 为 `/etc/letsencrypt/live/research.cyunlab.com` 时执行 `nginx -t`，检查成功才 reload Nginx；其他证书续期不执行操作。确认自动续期 timer 正常，研究站证书的续期配置仍使用 `/var/www/letsencrypt`。
 
 HTTPS 模板保留 HTTP ACME 路径，其余 HTTP 请求跳到研究站 HTTPS。三个页面路径都由 SPA 处理；入口 HTML 重新验证缓存，带内容哈希的资源长期缓存，缺失的资源返回 404。
 

@@ -14,6 +14,8 @@ from uuid import uuid4
 
 import oss2
 
+from .contract import DailyContractError, validate_daily
+
 
 PREFIX = "research/arxiv-daily"
 DAY_CACHE = "public, max-age=31536000, immutable"
@@ -105,19 +107,11 @@ def _archives(data_dir, requested):
             raise PublishError("An index reference has an invalid date, hash or object path.")
         content = (data_dir / f"{day}.json").read_bytes()
         daily = json.loads(content)
-        if (daily.get("schemaVersion") != 1 or daily.get("date") != day or daily.get("timezone") != "Asia/Shanghai"
-                or not isinstance(daily.get("papers"), list) or type(entry["count"]) is not int
-                or entry["count"] != len(daily["papers"])):
+        validate_daily(daily, day)
+        if type(entry["count"]) is not int or entry["count"] != len(daily["papers"]):
             raise PublishError("A daily JSON does not match the date, schema or paper count in its index.")
         if hashlib.sha256(content).hexdigest() != digest:
             raise PublishError("A daily JSON does not match its index hash.")
-        stats = daily["stats"]
-        states = [paper["translation"]["status"] for paper in daily["papers"]]
-        if (any(state not in {"translated", "fallback"} for state in states)
-                or any(type(stats.get(name)) is not int or stats[name] < 0 for name in ("fetched", "matched", "translated", "fallback"))
-                or stats["fetched"] < len(states) or stats["matched"] != len(states)
-                or stats["translated"] != states.count("translated") or stats["fallback"] != states.count("fallback")):
-            raise PublishError("A daily JSON has inconsistent paper or translation statistics.")
         if not content.endswith(b"\n") or not index_content.endswith(b"\n"):
             raise PublishError("Archived JSON files must end with a newline.")
         archives.append((entry, content))
@@ -151,7 +145,7 @@ def main(argv=None):
         _publish_index(bucket, base, index_content)
     except Exception as error:
         status = getattr(error, "status", None) or getattr(error, "code", None)
-        detail = str(error) if isinstance(error, PublishError) else (f"HTTP {status}" if isinstance(status, int) else type(error).__name__)
+        detail = str(error) if isinstance(error, (PublishError, DailyContractError)) else (f"HTTP {status}" if isinstance(status, int) else type(error).__name__)
         print(f"Publisher failed: {detail}.", file=sys.stderr)
         return 1
     print(f"Published and publicly verified {args.date.isoformat()}.")

@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+.venv/
+node_modules/
+dist/
+.worktrees/
+output/
+__pycache__/
+*.py[cod]
+*.log
+**/*.pdf
+**/library/
+.DS_Store

@@ -6,6 +6,8 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import json
 import os
 from pathlib import Path
+import shutil
+import stat
 import subprocess
 import sys
 from threading import Thread
@@ -34,10 +36,16 @@ def release_cli(tmp_path):
     rsync = transport / "rsync"
     rsync.write_text(
         "#!/usr/bin/env python3\n"
-        "import os, pathlib, shutil, sys\n"
+        "import os, pathlib, shutil, subprocess, sys\n"
         "source = pathlib.Path(sys.argv[-2])\n"
         "destination = pathlib.Path(sys.argv[-1].split(':', 1)[1])\n"
-        "shutil.copytree(source, destination, dirs_exist_ok=True)\n"
+        "if os.getenv('TEST_SYSTEM_RSYNC'):\n"
+        "    system_env = {**os.environ, 'PATH': os.environ['PATH'].split(os.pathsep, 1)[1]}\n"
+        "    transfer = subprocess.run([os.environ['TEST_SYSTEM_RSYNC'], *sys.argv[1:-1], str(destination)], env=system_env)\n"
+        "    if transfer.returncode:\n"
+        "        raise SystemExit(transfer.returncode)\n"
+        "else:\n"
+        "    shutil.copytree(source, destination, dirs_exist_ok=True)\n"
         "if os.getenv('FAKE_RSYNC_TAMPER'):\n"
         "    (destination / 'index.html').write_text('corrupted transfer')\n"
     )
@@ -99,6 +107,27 @@ def test_deploy_makes_verified_static_build_available_over_http(tmp_path, releas
     with serve(base / "current") as url:
         assert get(url) == "<!doctype html><title>first</title>"
         assert get(f"{url}/assets/app.js") == "console.log('first');\n"
+
+
+@pytest.mark.skipif(shutil.which("rsync") is None, reason="system rsync is not installed")
+def test_deploy_with_system_rsync_serves_a_readable_static_release(tmp_path, release_cli):
+    invoke, base = release_cli
+    dist = build(tmp_path, "readable")
+    dist.chmod(0o700)
+    (dist / "index.html").chmod(0o600)
+    (dist / "assets").chmod(0o700)
+    (dist / "assets" / "app.js").chmod(0o700)
+
+    result = invoke(dist=dist, TEST_SYSTEM_RSYNC=shutil.which("rsync"))
+
+    assert result.returncode == 0, result.stderr
+    with serve(base / "current") as url:
+        assert get(url) == "<!doctype html><title>readable</title>"
+        assert get(f"{url}/assets/app.js") == "console.log('readable');\n"
+    assert stat.S_IMODE((base / "current" / "index.html").stat().st_mode) == 0o644
+    assert stat.S_IMODE((base / "current").stat().st_mode) == 0o755
+    assert stat.S_IMODE((base / "current" / "assets").stat().st_mode) == 0o755
+    assert stat.S_IMODE((base / "current" / "assets" / "app.js").stat().st_mode) == 0o644
 
 
 def test_corrupted_transfer_never_replaces_the_served_release(tmp_path, release_cli):

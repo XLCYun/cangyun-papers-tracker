@@ -54,7 +54,7 @@ jobs:
               output.write(f'date={value}\n')
           print(f'Daily date: {value} (Asia/Shanghai)')
           PY
-      - name: Collect and translate the official announcement batch
+      - name: Collect, translate, and tag the official announcement batch
         id: collect
         env:
           DAILY_DATE: ${{ steps.date.outputs.date }}
@@ -64,12 +64,20 @@ jobs:
           OPENAI_THINKING: ${{ vars.OPENAI_THINKING }}
           TRANSLATION_BATCH_SIZE: ${{ vars.TRANSLATION_BATCH_SIZE || '10' }}
           TRANSLATION_WORKERS: ${{ vars.TRANSLATION_WORKERS || '3' }}
+          JEV_API_KEY: ${{ secrets.JEV_API_KEY || secrets.OPENAI_API_KEY }}
+          JEV_BASE_URL: ${{ vars.JEV_BASE_URL || 'https://www.dmxapi.cn/typesafe/v1' }}
+          JEV_MODEL: ${{ vars.JEV_MODEL || 'jev-1.13.0' }}
+          JEV_THRESHOLD: ${{ vars.JEV_THRESHOLD || '0.7' }}
+          JEV_WORKERS: ${{ vars.JEV_WORKERS || '3' }}
+          JEV_RULES_VERSION: ${{ vars.JEV_RULES_VERSION || 'daily-tags-v1' }}
+          JEV_RETRY_ATTEMPTS: ${{ vars.JEV_RETRY_ATTEMPTS || '3' }}
+          JEV_RETRY_DELAY_SECONDS: ${{ vars.JEV_RETRY_DELAY_SECONDS || '2' }}
         run: uv run --locked python -m collector --date "$DAILY_DATE" --output-dir data/arxiv-daily
       - name: Validate the complete Git backup
         env:
           DAILY_DATE: ${{ steps.date.outputs.date }}
         run: uv run --locked python -m collector.publish --date "$DAILY_DATE" --data-dir data/arxiv-daily --check
-      - name: Record translation and fallback counts
+      - name: Record translation and tagging counts
         if: always() && steps.collect.outcome == 'success'
         env:
           DAILY_DATE: ${{ steps.date.outputs.date }}
@@ -79,15 +87,26 @@ jobs:
           import os
           from pathlib import Path
           day = os.environ['DAILY_DATE']
-          stats = json.loads(Path(f'data/arxiv-daily/{day}.json').read_text())['stats']
+          daily = json.loads(Path(f'data/arxiv-daily/{day}.json').read_text())
+          stats = daily['stats']
+          tagging_statuses = [paper.get('tagging', {}).get('status') for paper in daily['papers']]
+          tagged = tagging_statuses.count('tagged')
+          tagging_fallback = tagging_statuses.count('fallback')
+          untagged = tagging_statuses.count(None)
           message = f"{day}: fetched={stats['fetched']}, matched={stats['matched']}, translated={stats['translated']}, fallback={stats['fallback']}"
-          print(message)
+          print(f'{message}, tagged={tagged}, tagging_fallback={tagging_fallback}, untagged={untagged}')
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
               summary.write(f'## arXiv daily {day}\n\n')
               summary.write('| Fetched | Matched | Translated | English fallback |\n| --- | --- | --- | --- |\n')
               summary.write(f"| {stats['fetched']} | {stats['matched']} | {stats['translated']} | {stats['fallback']} |\n\n")
+              summary.write('| Jev tagged | Rule tags only | Not yet tagged (legacy) |\n| --- | --- | --- |\n')
+              summary.write(f'| {tagged} | {tagging_fallback} | {untagged} |\n\n')
           if stats['fallback']:
               print(f"::warning::{stats['fallback']} paper(s) use English fallback. Successful translations remain reusable; sanitized HTTP status diagnostics appear in the collection step.")
+          if tagging_fallback:
+              print(f'::warning::{tagging_fallback} paper(s) retain rule tags only. Successful Jev results remain reusable; rerun to retry failed tagging.')
+          if untagged:
+              print(f'::warning::{untagged} legacy paper(s) have no saved tagging result. Replay the archived day to add tags.')
           PY
       - name: Keep only the validated public JSON backup
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

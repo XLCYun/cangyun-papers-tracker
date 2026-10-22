@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowUpRight, MagnifyingGlass, Minus, Plus } from "@phosphor-icons/react";
 import { loadDailyDocument, loadDailyIndex } from "./dailyData.js";
+import dailyTags from "../../shared/daily-tags.json";
 
 const beijingDate = () => new Intl.DateTimeFormat("en-CA", {
   timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit",
@@ -16,7 +17,8 @@ function DailyPaper({ paper, index, expanded, onToggle }) {
       <span><span className="daily-paper-title" id={titleId}>{title}</span>
         {title !== paper.title && <span className="daily-paper-original" lang="en">{paper.title}</span>}
         {paper.translation.brief && <span className="daily-paper-brief">{paper.translation.brief}</span>}
-        <span className="daily-paper-meta"><span>{paper.authors.join(", ")}</span><span className="daily-paper-categories">{paper.categories.map((category) => <span key={category}>{category}</span>)}</span></span>
+        <span className="daily-paper-tags" aria-label="主题标签">{paper.tags.map((tag) => <span key={tag}>{tag}</span>)}</span>
+        <span className="daily-paper-meta"><span>{paper.authors.join(", ")}</span><span className="daily-paper-categories" aria-label="arXiv 分类">{paper.categories.map((category) => <span key={category}>{category}</span>)}</span></span>
       </span><span className="research-disclosure" aria-hidden="true">{expanded ? <Minus size={19} /> : <Plus size={19} />}</span>
     </button></h2>
     <div className="daily-paper-details" role="region" aria-labelledby={titleId} id={detailsId} hidden={!expanded}>
@@ -36,6 +38,7 @@ export default function ArxivDaily({ footer }) {
   const [days, setDays] = useState([]);
   const [papers, setPapers] = useState([]);
   const [query, setQuery] = useState("");
+  const [selectedTag, setSelectedTag] = useState("全部");
   const [status, setStatus] = useState("loading");
   const [expandedId, setExpandedId] = useState(null);
   const [attempt, setAttempt] = useState(0);
@@ -63,8 +66,9 @@ export default function ArxivDaily({ footer }) {
   const dates = [...new Set([today, ...days.map((entry) => entry.date)])].sort().reverse();
   const terms = query.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
   const visiblePapers = papers.filter((paper) => {
+    if (selectedTag !== "全部" && !paper.tags.includes(selectedTag)) return false;
     const text = [paper.title, paper.abstract, paper.translation.title, paper.translation.abstract,
-      paper.translation.brief, ...paper.authors, ...paper.affiliations, ...paper.categories].join(" ").toLocaleLowerCase();
+      paper.translation.brief, ...paper.authors, ...paper.affiliations, ...paper.categories, ...paper.tags].join(" ").toLocaleLowerCase();
     return terms.every((term) => text.includes(term));
   });
   return <div className="research-page">
@@ -76,8 +80,17 @@ export default function ArxivDaily({ footer }) {
       </section>
       <div className="daily-toolbar">
         <label className="daily-date">日报日期<select value={date} onChange={(event) => setDate(event.target.value)}>{dates.map((value) => <option value={value} key={value}>{value}</option>)}</select></label>
-        <label className="research-search"><MagnifyingGlass size={20} aria-hidden="true" /><span className="research-sr-only">搜索日报论文</span><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索论文、作者或分类" /></label>
+        <label className="research-search"><MagnifyingGlass size={20} aria-hidden="true" /><span className="research-sr-only">搜索日报论文</span><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索论文、作者、标签或分类" /></label>
         <p className="daily-current-date">LLM / Agent</p>
+      </div>
+      <div className="daily-tags" role="group" aria-label="按主题标签筛选">
+        {["全部", ...dailyTags].map((tag) => {
+          const count = tag === "全部" ? papers.length : papers.filter((paper) => paper.tags.includes(tag)).length;
+          return <button type="button" key={tag} aria-pressed={selectedTag === tag}
+            aria-label={`${tag} ${count} 篇`} onClick={() => setSelectedTag(tag)}>
+            <span>{tag}</span><span className="daily-tag-count">{count}</span>
+          </button>;
+        })}
       </div>
       <div className="daily-list">
         {status === "loading" && <p className="daily-load" role="status">正在读取论文…</p>}

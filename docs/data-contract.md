@@ -84,7 +84,8 @@ Git 路径为 `data/arxiv-daily/YYYY-MM-DD.json`。对象的最小形状如下�
 - `model`、`rulesVersion`、`threshold`、`inputSha256` 用于判断是否可以复用；同一输入及配置的成功结果不重复调用，失败项可重试。显式更改模型、规则版本、阈值或原文输入会使缓存失效。
 - 打标状态与 `translation.status` 独立；不改变原有 `stats` 口径。标签数据随每日文件字节参与索引哈希。
 - 网页读取旧日报时可据英文标题、摘要和分类推导三个规则标签，不猜测五个模型标签；带标签的新日报须校验固定标签及打标字段，畸形数据继续走原有读取错误处理。
-- Jev 使用独立环境配置 `JEV_API_KEY`、`JEV_BASE_URL`、`JEV_MODEL`、`JEV_THRESHOLD`、`JEV_WORKERS`。默认基地址为 `https://www.dmxapi.cn/typesafe/v1`，请求 `/systemone`；默认模型 `jev-1.13.0`、阈值 `0.7`。GitHub Actions 将现有 DMXAPI Secret 显式注入 `JEV_API_KEY`，采集器不隐式挪用翻译凭证。未配置 Jev 密钥时仍可生成带规则标签的有效日报。
+- Jev 使用独立环境配置 `JEV_API_KEY`、`JEV_BASE_URL`、`JEV_MODEL`、`JEV_THRESHOLD`、`JEV_WORKERS`。默认基地址为 `https://www.dmxapi.cn/typesafe/v1`，请求 `/systemone`；默认模型 `jev-1.13.0`、阈值 `0.7`、并发 `3`。GitHub Actions 优先使用专用 `JEV_API_KEY` Secret，未设置时将现有 DMXAPI `OPENAI_API_KEY` Secret 显式注入；采集器不隐式挪用翻译凭证。未配置 Jev 密钥时仍可生成带规则标签的有效日报。
+- `JEV_RULES_VERSION` 默认 `daily-tags-v1`；规则变更时显式升级版本以触发重打标。暂时性请求错误由 `JEV_RETRY_ATTEMPTS`（默认 `3`）和 `JEV_RETRY_DELAY_SECONDS`（默认 `2`，指数退避）限制；认证或权限失败不逐篇重复重试。
 
 ## 日期索引
 

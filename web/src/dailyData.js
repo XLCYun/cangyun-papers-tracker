@@ -1,6 +1,40 @@
+import dailyTags from "../../shared/daily-tags.json";
+
 const defaultRoot = import.meta.env.MODE === "development"
   ? "/daily-data/"
   : "https://updates.cyunlab.com/research/arxiv-daily/";
+
+function ruleTags(paper) {
+  const text = `${paper.title}\n${paper.abstract}`;
+  // Python's source rules use Unicode word boundaries and deliberately allow suffixes.
+  return [
+    ...(/(?:^|[^\p{L}\p{N}_])llm/iu.test(text) ? ["LLM"] : []),
+    ...(/(?:^|[^\p{L}\p{N}_])agent/iu.test(text) ? ["Agent"] : []),
+    ...(paper.categories.includes("cs.SE") ? ["软件工程"] : []),
+  ];
+}
+
+const modelTags = dailyTags.filter((tag) => !["LLM", "Agent", "软件工程"].includes(tag));
+const probability = (value) => typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 1;
+const nonempty = (value) => typeof value === "string" && value.trim();
+
+function readTags(paper) {
+  const rules = ruleTags(paper);
+  if (!Object.hasOwn(paper, "tags") && !Object.hasOwn(paper, "tagging")) return rules;
+  const tagging = paper.tagging;
+  if (!Array.isArray(paper.tags) || !tagging || typeof tagging !== "object" || Array.isArray(tagging) ||
+      !["tagged", "fallback"].includes(tagging.status) || !nonempty(tagging.model) || !nonempty(tagging.rulesVersion) ||
+      !probability(tagging.threshold) || typeof tagging.inputSha256 !== "string" || !/^[a-f0-9]{64}$/.test(tagging.inputSha256) ||
+      !tagging.scores || typeof tagging.scores !== "object" || Array.isArray(tagging.scores)) throw new Error("论文主题标签无效");
+  const scoreTags = Object.keys(tagging.scores);
+  if (tagging.status === "tagged"
+    ? scoreTags.length !== modelTags.length || !modelTags.every((tag) => Object.hasOwn(tagging.scores, tag) && probability(tagging.scores[tag]))
+    : scoreTags.length !== 0) throw new Error("论文主题分数无效");
+  const expected = dailyTags.filter((tag) => rules.includes(tag) ||
+    (tagging.status === "tagged" && modelTags.includes(tag) && tagging.scores[tag] >= tagging.threshold));
+  if (paper.tags.length !== expected.length || paper.tags.some((tag, index) => tag !== expected[index])) throw new Error("论文主题标签与判定不符");
+  return paper.tags;
+}
 
 function dataRoot() {
   const configured = import.meta.env.VITE_DAILY_DATA_BASE_URL || defaultRoot;
@@ -62,5 +96,6 @@ export async function loadDailyDocument(entry, signal) {
     }
   }
   if (daily.papers.filter((paper) => paper.translation.status === "translated").length !== stats.translated) throw new Error("日报统计无效");
+  daily.papers = daily.papers.map((paper) => ({ ...paper, tags: readTags(paper) }));
   return daily;
 }

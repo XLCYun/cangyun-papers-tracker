@@ -66,7 +66,7 @@ function PaperEntry({ paper, expanded, onToggle }) {
               <div><dt>作者</dt><dd lang="en">{paper.authors.join(", ")}</dd></div>
               {sourceOnly
                 ? <div><dt>中文译文</dt><dd>{paper.publicationNote}</dd></div>
-                : <div><dt>中文范围</dt><dd>{paper.translationScope}。由 CY Lab 自动翻译并重新排版。</dd></div>}
+                : <div><dt>中文范围</dt><dd>{paper.translationScope}。自动翻译并重新排版。</dd></div>}
               <div><dt>引用</dt><dd lang="en">{paper.citation}</dd></div>
               <div><dt>许可</dt><dd><a href={paper.licenseUrl} {...external}>{paper.license}<ArrowUpRight size={12} aria-hidden="true" /></a></dd></div>
             </dl>
@@ -97,7 +97,7 @@ export default function EnterpriseResearch({ footer }) {
   const years = groupPapersByYear(visiblePapers);
 
   useEffect(() => {
-    document.title = "企业 Agent Benchmark · CY Lab Research";
+    document.title = "企业 Agent Benchmark · Research";
     document.documentElement.lang = "zh-CN";
     const meta = document.querySelector('meta[name="theme-color"]');
     const previous = meta?.getAttribute("content");

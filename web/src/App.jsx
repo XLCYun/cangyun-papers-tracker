@@ -11,7 +11,7 @@ const EnterpriseResearch = lazy(() => import("./EnterpriseResearch.jsx"));
 function ResearchHome() {
   return <div className="research-page">
     <main className="research-container research-main hub-main">
-      <h1 className="hub-title">CY Lab <span>Research</span></h1>
+      <h1 className="hub-title"><span>Research</span></h1>
       <p className="hub-description">追踪每日论文，整理企业智能体评测。</p>
       <nav className="hub-entries" aria-label="研究专题">
         <a className="hub-entry" href="/arxiv-daily"><span className="hub-entry-number">01</span><div><h2>每日 arXiv</h2><p>LLM 与 Agent 论文，每日更新。</p></div><ArrowUpRight aria-hidden="true" /></a>

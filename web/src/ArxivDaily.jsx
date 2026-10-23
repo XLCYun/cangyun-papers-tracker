@@ -69,7 +69,7 @@ export default function ArxivDaily({ footer }) {
     return () => { active = false; controller.abort(); clearTimeout(timeout); };
   }, [date, attempt, today]);
 
-  useEffect(() => { document.title = "每日 arXiv · CY Lab Research"; }, []);
+  useEffect(() => { document.title = "每日 arXiv · Research"; }, []);
   const dates = [...new Set([today, ...days.map((entry) => entry.date)])].sort().reverse();
   const terms = query.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
   const visiblePapers = papers.filter((paper) => {

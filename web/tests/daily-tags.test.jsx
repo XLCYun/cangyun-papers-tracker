@@ -63,7 +63,7 @@ test("daily topic controls show daily counts and switch one selected tag at a ti
   for (const tag of ["AI4S", "CodingAgent", "AgentOps", "AgentHarness", "软件工程", "企业Agent"]) {
     expect(within(filters).getByRole("button", { name: `${tag} 1 篇` })).toBeVisible();
   }
-  expect(within(filters).getByRole("button", { name: "GUI Agent 0 篇" })).toBeVisible();
+  expect(within(filters).getByRole("button", { name: "GUI/Web Agent 0 篇" })).toBeVisible();
   await user.click(within(filters).getByRole("button", { name: "CodingAgent 1 篇" }));
   expect(screen.getAllByRole("article")).toHaveLength(1);
   expect(screen.getByRole("article", { name: "编程助手" })).toBeVisible();
@@ -143,7 +143,7 @@ test("tag metadata accepts non-whitespace text according to the publisher contra
   expect(screen.queryByRole("alert")).not.toBeInTheDocument();
 });
 
-test.each([0.7, 0.69])("GUI Agent filters and card labels follow the threshold while v1 archives remain readable: %s", async (score) => {
+test.each([0.7, 0.69])("GUI/Web Agent filters, labels and search reuse archived GUI Agent scores: %s", async (score) => {
   const user = userEvent.setup();
   const gui = { ...paper, id: "2610.00004v1", title: "GUI Agent for desktop tasks",
     translation: { ...paper.translation, title: "桌面操作智能体" },
@@ -153,10 +153,12 @@ test.each([0.7, 0.69])("GUI Agent filters and card labels follow the threshold w
   expect(await screen.findByRole("article", { name: "编程助手" })).toBeVisible();
   const card = screen.getByRole("article", { name: "桌面操作智能体" });
   const labels = within(card).getByLabelText("主题标签");
-  expect(labels.textContent.includes("GUI Agent")).toBe(score >= 0.7);
-  const filter = screen.getByRole("button", { name: `GUI Agent ${score >= 0.7 ? 1 : 0} 篇` });
+  expect(labels.textContent.includes("GUI/Web Agent")).toBe(score >= 0.7);
+  const filter = screen.getByRole("button", { name: `GUI/Web Agent ${score >= 0.7 ? 1 : 0} 篇` });
   await user.click(filter);
   expect(filter).toHaveAttribute("aria-pressed", "true");
+  expect(screen.queryAllByRole("article")).toHaveLength(score >= 0.7 ? 1 : 0);
+  await user.type(screen.getByRole("searchbox", { name: "搜索日报论文" }), "GUI/Web Agent");
   expect(screen.queryAllByRole("article")).toHaveLength(score >= 0.7 ? 1 : 0);
 });
 

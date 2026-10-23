@@ -4,10 +4,12 @@
 
 2026-10-23 补充澄清：CodingAgent 以编程 Agent 为主，相关的大模型编程研究适当放宽，不以特定 Agent 架构或论文是否自称 Agent 为硬门槛。
 
+2026-10-23 展示名称调整：GUI Agent 改为 GUI/Web Agent，体现其覆盖网页智能体及相关训练、数据和评测。筛选栏、卡片与搜索使用新名称；JSON 保留 `GUI Agent` 标识，沿用现有评分、阈值与打标缓存。
+
 ## 已确认
 
 - 保持现有入选范围，只处理 `new`，仍须满足当前启用分区、英文标题或摘要的 LLM/Agent 匹配规则及 robot 排除规则；增加标签不扩大抓取范围。
-- 当前固定九个标签：LLM、Agent、AI4S、CodingAgent、GUI Agent、AgentOps、AgentHarness、软件工程、企业Agent。
+- 当前固定九个标签：LLM、Agent、AI4S、CodingAgent、GUI/Web Agent、AgentOps、AgentHarness、软件工程、企业Agent。
 - 一篇论文可以有多个标签，不要求互斥。
 - LLM、Agent 沿用关键词规则，软件工程依据 `cs.SE`；其余六个标签由 TypeSafe Jev 判断，通过现有 DMXAPI 接入，翻译继续使用 `glm-5.3-flash`。
 - 打标只读取英文标题、摘要和来源分类，不读取 PDF，不依赖中文翻译是否成功。
@@ -33,7 +35,7 @@
 | 软件工程 | 来源分类规则 | arXiv 分类包含 `cs.SE` |
 | AI4S | Jev | 利用 AI 开展科学研究、辅助科研过程或推动科学发现，不限于某个学科或必须使用 Agent；包括科学建模、计算仿真、科学数据分析、实验设计和自动实验等 |
 | CodingAgent | Jev | 以编程 Agent 为主，覆盖与其直接相关的大模型代码生成和软件开发研究；包括代码生成、补全、修复、调试、测试生成、重构、审查，以及相关模型、数据和评测，不要求特定 Agent 架构或论文必须自称 Agent |
-| GUI Agent | Jev | 网页、桌面和手机等图形界面的操作智能体及其训练、数据和评测，涵盖基于截图、DOM 或 UI 元素的操作；仅 API 调用、无 GUI 操作的普通编程研究和单纯界面生成不算 |
+| GUI/Web Agent | Jev | 网页、桌面和手机界面的操作智能体及其训练、数据和评测，涵盖基于截图、DOM、UI 元素或文本化页面的网页交互；仅 API 调用、无界面操作的普通编程研究和单纯界面生成不算 |
 | AgentOps | Jev | Agent 系统的部署、可观测性、监控、日志与链路追踪、故障诊断、根因定位、运行评测、可靠性、性能、成本及生产运维 |
 | AgentHarness | Jev | 支撑 Agent 执行的上下文组织、记忆、工具接入、执行循环、调度与运行控制 |
 | 企业Agent | Jev | Agent 执行办公、客服销售、财务、ERP/CRM、供应链、企业经营与经营模拟等具体业务任务及相关评测 |

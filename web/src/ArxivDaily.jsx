@@ -3,6 +3,8 @@ import { ArrowLeft, ArrowUpRight, MagnifyingGlass, Minus, Plus } from "@phosphor
 import { loadDailyDocument, loadDailyIndex } from "./dailyData.js";
 import dailyTags from "../../shared/daily-tags.json";
 
+const tagLabel = (tag) => tag === "GUI Agent" ? "GUI/Web Agent" : tag;
+
 const beijingDate = () => new Intl.DateTimeFormat("en-CA", {
   timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit",
 }).format(new Date());
@@ -21,7 +23,7 @@ function DailyPaper({ paper, index, expanded, onToggle }) {
       <span><span className="daily-paper-title" id={titleId}>{title}</span>
         {title !== paper.title && <span className="daily-paper-original" lang="en">{paper.title}</span>}
         {paper.translation.brief && <span className="daily-paper-brief">{paper.translation.brief}</span>}
-        <span className="daily-paper-tags" aria-label="主题标签">{paper.tags.map((tag) => <span key={tag}>{tag}</span>)}</span>
+        <span className="daily-paper-tags" aria-label="主题标签">{paper.tags.map((tag) => <span key={tag}>{tagLabel(tag)}</span>)}</span>
         <span className="daily-paper-meta"><span>{paper.authors.join(", ")}</span><span className="daily-paper-categories" aria-label="arXiv 分类">{paper.categories.map((category) => <span key={category}>{category}</span>)}</span></span>
       </span><span className="research-disclosure" aria-hidden="true">{expanded ? <Minus size={19} /> : <Plus size={19} />}</span>
     </button></h2>
@@ -73,7 +75,8 @@ export default function ArxivDaily({ footer }) {
   const visiblePapers = papers.filter((paper) => {
     if (selectedTag !== "全部" && !paper.tags.includes(selectedTag)) return false;
     const text = [paper.title, paper.abstract, paper.translation.title, paper.translation.abstract,
-      paper.translation.brief, ...paper.authors, ...paper.affiliations, ...paper.categories, ...paper.tags].join(" ").toLocaleLowerCase();
+      paper.translation.brief, ...paper.authors, ...paper.affiliations, ...paper.categories,
+      ...paper.tags, ...paper.tags.map(tagLabel)].join(" ").toLocaleLowerCase();
     return terms.every((term) => text.includes(term));
   });
   return <div className="research-page">
@@ -92,8 +95,8 @@ export default function ArxivDaily({ footer }) {
         {["全部", ...dailyTags].map((tag) => {
           const count = tag === "全部" ? papers.length : papers.filter((paper) => paper.tags.includes(tag)).length;
           return <button type="button" key={tag} aria-pressed={selectedTag === tag}
-            aria-label={`${tag} ${count} 篇`} onClick={() => setSelectedTag(tag)}>
-            <span>{tag}</span><span className="daily-tag-count">{count}</span>
+            aria-label={`${tagLabel(tag)} ${count} 篇`} onClick={() => setSelectedTag(tag)}>
+            <span>{tagLabel(tag)}</span><span className="daily-tag-count">{count}</span>
           </button>;
         })}
       </div>

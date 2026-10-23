@@ -53,7 +53,7 @@ Git 路径为 `data/arxiv-daily/YYYY-MM-DD.json`。对象的最小形状如下�
 
 ## 日报主题标签
 
-标签方案见 [每日 arXiv 主题标签方案](plans/arxiv-daily-tags.md)。九个标签的唯一名称与展示顺序维护在 `shared/daily-tags.json`，Python 和网页共用。`schemaVersion` 保持为 1，以下字段是向后兼容的扩展：旧日报可同时缺少 `tags` 和 `tagging`，新采集及补标签后两者必须同时存在。
+标签方案见 [每日 arXiv 主题标签方案](plans/arxiv-daily-tags.md)。九个标签的唯一标识与展示顺序维护在 `shared/daily-tags.json`，Python 和网页共用。`GUI Agent` 在网页显示为 `GUI/Web Agent`；JSON 标识、评分、规则版本与缓存保持原样，改名不触发模型请求。`schemaVersion` 保持为 1，以下字段是向后兼容的扩展：旧日报可同时缺少 `tags` 和 `tagging`，新采集及补标签后两者必须同时存在。
 
 每篇论文新增：
 

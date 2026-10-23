@@ -86,8 +86,22 @@ def validate_base(value, *, github=False):
 def read_token(path):
     try:
         info = path.stat()
-        if path.is_symlink() or not stat.S_ISREG(info.st_mode) or info.st_mode & 0o077:
-            raise TriggerError("Credential must be a private regular file (0400 or 0600).")
+        managed_directory = os.environ.get("CREDENTIALS_DIRECTORY")
+        managed = (
+            managed_directory
+            and path.name == "github-token"
+            and path.parent.resolve() == Path(managed_directory).resolve()
+        )
+        allowed_modes = {0o400, 0o600}
+        if managed:
+            # systemd can grant the service read access through an ACL, whose
+            # read-only mask appears as 0440 while the file remains root-owned.
+            allowed_modes.add(0o440)
+        if (
+            path.is_symlink() or not stat.S_ISREG(info.st_mode)
+            or stat.S_IMODE(info.st_mode) not in allowed_modes
+        ):
+            raise TriggerError("Credential must be private or a systemd-managed read-only file.")
         with path.open() as credential:
             token = credential.read(1025).strip()
     except OSError:

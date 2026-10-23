@@ -22,9 +22,11 @@ ECS 负责计时、检查和调用 GitHub 的 `workflow_dispatch`；采集、翻
 
 Actions 写权限也能管理该仓库的运行，例如取消运行；它不是仅对一个工作流授予的独立“触发权限”。仓库限制和权限选择需要在生成页面核对。公开仓库的只读访问属于 GitHub 细粒度 Token 的固有行为。
 
-Token 只写入 ECS 的 `/etc/cangyun-papers-trigger/github-token`，目录为 root `0700`，文件为 root `0600`，不要写入 shell 历史、仓库、网页、命令参数或日志。触发器拒绝 classic Token 和组/其他用户可读的凭证文件。
+Token 只写入 ECS 的 `/etc/cangyun-papers-trigger/github-token`，目录为 root `0700`，文件为 root `0600`，不要写入 shell 历史、仓库、网页、命令参数或日志。触发器拒绝 classic Token；普通路径的凭证文件仅接受 `0400` 或 `0600`。
 
 服务通过 systemd `LoadCredential` 将凭证以只读文件交给临时非特权用户，运行状态保存在独立的 `/var/lib/cangyun-papers-trigger`。翻译和 OSS 密钥继续保留在 GitHub Secrets，ECS 触发器不需要这些密钥。
+
+systemd 的运行时凭证副本可能通过 ACL 授权，权限掩码显示为 `0440`。触发器只在 systemd 提供的 `CREDENTIALS_DIRECTORY` 内接受这种只读副本；ECS 上的原始凭证仍保持 root `0600`，普通路径的组可读文件仍会被拒绝。
 
 ## 安装与验收
 

@@ -4,6 +4,7 @@ import fcntl
 import hashlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -70,7 +71,7 @@ def trigger(tmp_path):
     directory = tmp_path / "state"
     base = f"http://127.0.0.1:{server.server_port}"
 
-    def invoke(*extra, now="2026-10-23T13:30:00+08:00"):
+    def invoke(*extra, now="2026-10-23T13:30:00+08:00", env=None):
         return subprocess.run(
             [
                 sys.executable, str(CLI),
@@ -80,6 +81,7 @@ def trigger(tmp_path):
             ],
             capture_output=True,
             text=True,
+            env={**os.environ, **(env or {})},
         )
 
     state.update(invoke=invoke, token_file=token_file, directory=directory)
@@ -256,4 +258,16 @@ def test_systemd_dynamic_user_state_directory_symlink_is_supported(trigger):
     trigger["directory"].symlink_to(private, target_is_directory=True)
     result = trigger["invoke"]()
     assert result.returncode == 0, result.stderr
+    assert len(posts(trigger)) == 1
+
+
+def test_systemd_credential_acl_read_mask_is_supported_only_in_credential_directory(trigger):
+    trigger["token_file"].chmod(0o440)
+    rejected = trigger["invoke"]()
+    assert rejected.returncode == 1
+    assert posts(trigger) == []
+    accepted = trigger["invoke"](env={
+        "CREDENTIALS_DIRECTORY": str(trigger["token_file"].parent),
+    })
+    assert accepted.returncode == 0, accepted.stderr
     assert len(posts(trigger)) == 1

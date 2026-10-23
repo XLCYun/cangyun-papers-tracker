@@ -23,7 +23,7 @@ uv run --locked python -m collector.publish --date 2026-10-22 --data-dir data/ar
 | `OPENAI_BASE_URL`、`OPENAI_MODEL`、`OPENAI_THINKING` | Repository variables | 翻译接口；`OPENAI_THINKING=disabled` 会禁用提供商推理参数 |
 | `JEV_API_KEY` | 可选 GitHub Secret | Jev 专用密钥；配置后优先使用，否则采集步骤显式使用现有 `OPENAI_API_KEY` Secret |
 | `JEV_BASE_URL`、`JEV_MODEL`、`JEV_THRESHOLD`、`JEV_WORKERS` | Repository variables，可选 | 默认分别为 `https://www.dmxapi.cn/typesafe/v1`、`jev-1.13.0`、`0.7`、`3`；Jev 请求 `/systemone`，独立于翻译接口 |
-| `JEV_RULES_VERSION`、`JEV_RETRY_ATTEMPTS`、`JEV_RETRY_DELAY_SECONDS` | Repository variables，可选 | 默认分别为 `daily-tags-v1`、`3`、`2`；重试间隔单位为秒 |
+| `JEV_RULES_VERSION`、`JEV_RETRY_ATTEMPTS`、`JEV_RETRY_DELAY_SECONDS` | Repository variables，可选 | 默认分别为 `daily-tags-v3`、`3`、`2`；重试间隔单位为秒 |
 
 两个模型密钥只注入采集步骤，不进入发布 job、网页构建或 Artifact。翻译可用不代表 token 已获得 Jev 权限；遇到 Jev 403 时检查该 token 的模型及专用接口权限，必要时设置独立的 `JEV_API_KEY` Secret。不要把密钥写入仓库变量、日报或日志。
 

@@ -6,6 +6,10 @@
 
 2026-10-23 展示名称调整：GUI Agent 改为 GUI/Web Agent，体现其覆盖网页智能体及相关训练、数据和评测。筛选栏、卡片与搜索使用新名称；JSON 保留 `GUI Agent` 标识，沿用现有评分、阈值与打标缓存。
 
+2026-10-23 提示词同步：Jev 的 GUI/Web Agent 定义明确包含 DOM、文本化页面交互和相关训练、数据集及评测，规则版本升级为 `daily-tags-v3`。后续采集及显式补跑使用新定义，已归档结果继续按原版本读取。标签问题沿用公共的来源不可信、按主要研究对象判断两条指令，定义正文为：
+
+> Is GUI/Web Agent research a main focus? Include agents operating web, desktop or mobile interfaces via screenshots, DOM, UI elements or text-based page representations, plus related training, datasets and evaluations. Exclude API-only agents, unrelated coding research and interface generation without agent interaction.
+
 ## 已确认
 
 - 保持现有入选范围，只处理 `new`，仍须满足当前启用分区、英文标题或摘要的 LLM/Agent 匹配规则及 robot 排除规则；增加标签不扩大抓取范围。

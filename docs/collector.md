@@ -26,7 +26,7 @@ uv run --locked python -m pytest tests/test_collector.py
 | `JEV_MODEL` | `jev-1.13.0` | 固定 Jev 模型版本 |
 | `JEV_THRESHOLD` | `0.7` | 六个模型标签的概率阈值 |
 | `JEV_WORKERS` | `3` | 并发 Jev 请求数，每篇论文一个请求 |
-| `JEV_RULES_VERSION` | `daily-tags-v2` | 标签规则版本，用于判断已有成功结果是否可复用 |
+| `JEV_RULES_VERSION` | `daily-tags-v3` | 标签规则版本，用于判断已有成功结果是否可复用；v3 明确 GUI/Web Agent 包含 DOM、文本化页面交互及相关训练和评测 |
 | `JEV_RETRY_ATTEMPTS` | `3` | Jev 暂时性错误的最大尝试次数 |
 | `JEV_RETRY_DELAY_SECONDS` | `2` | Jev 重试初始间隔，后续指数增加 |
 | `ARXIV_FEED_URL` | `https://rss.arxiv.org/rss/cs` | 官方整个 CS 公告源；本地测试可替换 HTTP 地址 |

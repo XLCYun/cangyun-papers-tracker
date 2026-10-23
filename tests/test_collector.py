@@ -488,7 +488,7 @@ def test_command_adds_independent_rule_tags_without_a_jev_credential(tmp_path, m
     assert [paper["tags"] for paper in daily["papers"]] == [["LLM", "软件工程"], ["Agent"], ["LLM", "Agent", "软件工程"]]
     for paper in daily["papers"]:
         assert paper["tagging"] == {
-            "status": "fallback", "model": "jev-1.13.0", "rulesVersion": "daily-tags-v2",
+            "status": "fallback", "model": "jev-1.13.0", "rulesVersion": "daily-tags-v3",
             "threshold": 0.7, "inputSha256": paper["tagging"]["inputSha256"], "scores": {},
         }
         assert len(paper["tagging"]["inputSha256"]) == 64
@@ -700,13 +700,17 @@ def test_command_invalidates_successful_tag_cache_when_configuration_or_english_
         monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
         monkeypatch.setenv("JEV_API_KEY", "tagging-fixture-not-a-secret")
         monkeypatch.setenv("JEV_BASE_URL", origin + "/typesafe/v1")
+        if change == "rulesVersion":
+            monkeypatch.setenv("JEV_RULES_VERSION", "daily-tags-v2")
         assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
         before = json.loads(path.read_text())
         assert len(calls) == 1
         assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
         assert len(calls) == 1
-        if change in {"model", "rulesVersion", "threshold"}:
-            name, value = {"model": ("JEV_MODEL", "jev-1.14.0"), "rulesVersion": ("JEV_RULES_VERSION", "daily-tags-v3"),
+        if change == "rulesVersion":
+            monkeypatch.delenv("JEV_RULES_VERSION")
+        elif change in {"model", "threshold"}:
+            name, value = {"model": ("JEV_MODEL", "jev-1.14.0"),
                            "threshold": ("JEV_THRESHOLD", "0.9")}[change]
             monkeypatch.setenv(name, value)
         else:
@@ -731,6 +735,7 @@ def test_command_invalidates_successful_tag_cache_when_configuration_or_english_
         elif change == "model":
             assert tagging["model"] == "jev-1.14.0" and calls[-1]["model"] == "jev-1.14.0"
         else:
+            assert before["papers"][0]["tagging"]["rulesVersion"] == "daily-tags-v2"
             assert tagging["rulesVersion"] == "daily-tags-v3"
         # Cached valid results also remain available if a later run has no API key.
         monkeypatch.delenv("JEV_API_KEY")

@@ -8,4 +8,6 @@ CY Lab 的研究站点，汇集每日 arXiv 首次发布（`new`）的 LLM 与 A
 
 日报提供 LLM、Agent、AI4S、CodingAgent、GUI/Web Agent、AgentOps、AgentHarness、软件工程、企业Agent 九个主题标签，可结合日期和搜索筛选。LLM、Agent 和软件工程由规则判断，其余标签由 Jev 判断；中文翻译和打标分别记录状态，失败项重跑补齐。配置见 [采集器说明](docs/collector.md)，标签范围见 [标签方案](docs/plans/arxiv-daily-tags.md)。
 
+研究站与官网共用 `cyunlab.com` 站点的百度统计 ID，在公共 HTML 入口异步加载官方脚本；可在受访域名报告中分别查看两个站点。只在 `cyunlab.com`、`www.cyunlab.com` 和 `research.cyunlab.com` 加载，本地开发与其他预览域名不上报。当前接入基础访问统计，未添加页内点击事件。
+
 代码使用 MIT 许可证；论文文件及字体保留各自许可。日报仅归档 JSON，不保存 PDF。

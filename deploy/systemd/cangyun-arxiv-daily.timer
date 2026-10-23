@@ -1,0 +1,13 @@
+[Unit]
+Description=Check the CY Lab daily arXiv publication from 13:30 Beijing time
+
+[Timer]
+OnCalendar=*-*-* 13:30,45:00 Asia/Shanghai
+OnCalendar=*-*-* 14..20:00/15:00 Asia/Shanghai
+AccuracySec=1s
+RandomizedDelaySec=0
+Persistent=true
+Unit=cangyun-arxiv-daily.service
+
+[Install]
+WantedBy=timers.target

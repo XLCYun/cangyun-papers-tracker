@@ -1,0 +1,23 @@
+[Unit]
+Description=Trigger the CY Lab daily arXiv GitHub workflow
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+DynamicUser=yes
+StateDirectory=cangyun-papers-trigger
+StateDirectoryMode=0700
+LoadCredential=github-token:/etc/cangyun-papers-trigger/github-token
+ExecStart=/usr/bin/python3 /opt/cangyun-papers-trigger/trigger-arxiv-daily.py
+TimeoutStartSec=120
+UMask=0077
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_INET AF_INET6
+

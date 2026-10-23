@@ -4,7 +4,7 @@
 
 线上站点为 <https://research.cyunlab.com>，提供[每日 arXiv](https://research.cyunlab.com/arxiv-daily) 和[企业 Agent Benchmark](https://research.cyunlab.com/enterprise-agent-benchmark)。需求见 [实现规格](docs/spec.md)，采集与页面共用的接口见 [数据约定](docs/data-contract.md)。
 
-每日采集由 GitHub Actions 在北京时间 13:30 运行，完整 JSON 先提交到 Git，再上传 OSS。配置与失败恢复见 [日报发布说明](docs/publication.md)，网页发布见 [部署说明](docs/deployment.md)。每日 JSON 保存在 `data/arxiv-daily/`，人工精选目录维护在 `web/src/data/enterprise-papers.json`。
+每日采集由 ECS 在北京时间 13:30 触发 GitHub Actions，完整 JSON 先提交到 Git，再上传 OSS。GitHub cron 已撤除；ECS 定时检查发布结果，失败时有限重试。配置见 [ECS 触发器](docs/ecs-trigger.md)，采集与失败恢复见 [日报发布说明](docs/publication.md)，网页发布见 [部署说明](docs/deployment.md)。每日 JSON 保存在 `data/arxiv-daily/`，人工精选目录维护在 `web/src/data/enterprise-papers.json`。
 
 日报提供 LLM、Agent、AI4S、CodingAgent、GUI/Web Agent、AgentOps、AgentHarness、软件工程、企业Agent 九个主题标签，可结合日期和搜索筛选。LLM、Agent 和软件工程由规则判断，其余标签由 Jev 判断；中文翻译和打标分别记录状态，失败项重跑补齐。配置见 [采集器说明](docs/collector.md)，标签范围见 [标签方案](docs/plans/arxiv-daily-tags.md)。
 

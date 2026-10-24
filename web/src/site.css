@@ -33,6 +33,12 @@ button:disabled { cursor: default; opacity: .45; }
 .daily-tag-count { color: #9b9485; font-size: 12px; font-variant-numeric: tabular-nums; }
 .daily-tags button[aria-pressed="true"] .daily-tag-count { color: var(--research-accent); }
 .daily-list { padding-top: 12px; min-height: 200px; }
+.daily-empty { display: flex; flex-direction: column; align-items: center; padding: 64px 20px 72px; }
+.daily-empty > svg { width: 68px; height: 68px; padding: 16px; border: 1px solid #6b5b3e; border-radius: 50%; background: #ddb26608; }
+.daily-empty h2 { margin: 22px 0 12px; color: var(--research-ink); font-size: 26px; }
+.daily-empty p { max-width: 520px; margin: 0; line-height: 1.9; }
+.daily-empty .daily-weekend-note { margin-top: 8px; color: var(--research-muted); font-size: 14px; }
+.daily-empty button { margin-top: 24px; }
 .daily-paper { border-bottom: 1px solid var(--research-line); }
 .daily-paper-header { display: grid; grid-template-columns: 50px minmax(0, 1fr) 40px; align-items: start; gap: 16px; width: 100%; padding: 26px 0; border: 0; background: transparent; color: inherit; text-align: left; }
 .daily-paper-number { padding-top: 5px; color: var(--research-accent); font-size: 17px; font-weight: 400; font-variant-numeric: tabular-nums; }
@@ -85,6 +91,10 @@ button:disabled { cursor: default; opacity: .45; }
   .daily-tags { column-gap: 19px; }
   .daily-tags button { padding-block: 11px 9px; font-size: 13px; gap: 5px; }
   .daily-tag-count { font-size: 10px; }
+  .daily-empty { padding: 44px 8px 52px; }
+  .daily-empty h2 { font-size: 22px; }
+  .daily-empty p { font-size: 14px; }
+  .daily-empty .daily-weekend-note { max-width: 310px; font-size: 12px; }
   .daily-paper-header { grid-template-columns: 24px minmax(0, 1fr) 28px; gap: 8px; padding-block: 20px; }
   .daily-paper-number { font-size: 12px; }
   .daily-paper-title { font-size: 20px; line-height: 1.6; }

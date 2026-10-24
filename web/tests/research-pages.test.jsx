@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, test, vi } from "vitest";
 import App from "../src/App.jsx";
@@ -81,6 +81,11 @@ test("daily search matches Chinese summaries, English titles, authors and classi
   await user.clear(search);
   await user.type(search, "nothing-matches");
   expect(screen.queryAllByRole("article")).toHaveLength(0);
+  expect(screen.getByRole("heading", { name: "没有找到相关论文" })).toBeVisible();
+  expect(screen.queryByText(/周六、周日/)).not.toBeInTheDocument();
+  await user.click(screen.getByRole("button", { name: "清除筛选" }));
+  expect(search).toHaveValue("");
+  expect(screen.getAllByRole("article")).toHaveLength(2);
 });
 
 test("a failed JSON request offers retry and never appears as a successful zero-paper day", async () => {
@@ -90,6 +95,7 @@ test("a failed JSON request offers retry and never appears as a successful zero-
   vi.stubGlobal("fetch", vi.fn(async () => new Response("Unavailable", { status: 503 })));
   openDaily();
   expect(await screen.findByRole("alert")).toHaveTextContent("暂时无法读取日报");
+  expect(screen.queryByText(/周六、周日/)).not.toBeInTheDocument();
   serve({ "2026-10-22": day("2026-10-22") });
   await user.click(screen.getByRole("button", { name: "重试" }));
   expect(await screen.findByText("实用智能体评测")).toBeVisible();
@@ -110,41 +116,55 @@ test.each([
   expect(screen.queryAllByRole("article")).toHaveLength(0);
 });
 
-test("missing today defaults to the latest nonempty archive and manual empty dates remain selected", async () => {
+test("missing today stays selected and offers the latest archived papers", async () => {
   const user = userEvent.setup();
   vi.useFakeTimers({ toFake: ["Date"] });
   vi.setSystemTime(new Date("2026-10-21T17:30:00Z"));
   serve({ "2026-10-21": day("2026-10-21", []), "2026-10-20": day("2026-10-20") });
   openDaily();
+  expect(await screen.findByRole("heading", { name: "今天的日报尚未更新" })).toBeVisible();
+  expect(screen.getByLabelText("日报日期")).toHaveValue("2026-10-22");
+  expect(screen.getByLabelText("该日期暂无日报")).toBeVisible();
+  expect(screen.queryAllByRole("article")).toHaveLength(0);
+  await user.click(screen.getByRole("button", { name: "查看最近一期" }));
   expect(await screen.findByText("实用智能体评测")).toBeVisible();
   expect(screen.getByLabelText("日报日期")).toHaveValue("2026-10-20");
   await user.selectOptions(screen.getByLabelText("日报日期"), "2026-10-21");
-  await waitFor(() => expect(screen.getByLabelText("显示 0 篇论文")).toBeVisible());
+  expect(await screen.findByRole("heading", { name: "当天暂无论文" })).toBeVisible();
+  expect(screen.getByLabelText("显示 0 篇论文")).toBeVisible();
   expect(screen.getByLabelText("日报日期")).toHaveValue("2026-10-21");
   await user.selectOptions(screen.getByLabelText("日报日期"), "2026-10-22");
-  await waitFor(() => expect(screen.getByLabelText("显示 0 篇论文")).toBeVisible());
+  expect(await screen.findByRole("heading", { name: "今天的日报尚未更新" })).toBeVisible();
   expect(screen.getByLabelText("日报日期")).toHaveValue("2026-10-22");
   expect(screen.queryAllByRole("article")).toHaveLength(0);
   expect(screen.queryByRole("alert")).not.toBeInTheDocument();
-  expect(screen.queryByText(/暂无|未发布|没有论文|最近一期|更新中/)).not.toBeInTheDocument();
 });
 
-test("an archived zero-paper today defaults to the latest nonempty day", async () => {
+test("an archived zero-paper today shows an empty state and weekend note instead of older papers", async () => {
+  const user = userEvent.setup();
   vi.useFakeTimers({ toFake: ["Date"] });
-  vi.setSystemTime(new Date("2026-10-22T05:30:00Z"));
-  serve({ "2026-10-22": day("2026-10-22", []), "2026-10-21": day("2026-10-21") });
+  vi.setSystemTime(new Date("2026-10-24T05:30:00Z"));
+  serve({ "2026-10-24": day("2026-10-24", []), "2026-10-23": day("2026-10-23") });
   openDaily();
+  expect(await screen.findByRole("heading", { name: "今天暂无论文" })).toBeVisible();
+  expect(screen.getByLabelText("日报日期")).toHaveValue("2026-10-24");
+  expect(screen.getByLabelText("显示 0 篇论文")).toBeVisible();
+  expect(screen.getByText("按北京时间，arXiv 通常在周六、周日不发布新论文，周一恢复更新。")).toBeVisible();
+  expect(screen.queryByText("实用智能体评测")).not.toBeInTheDocument();
+  await user.click(screen.getByRole("button", { name: "查看最近一期" }));
   expect(await screen.findByText("实用智能体评测")).toBeVisible();
-  expect(screen.getByLabelText("日报日期")).toHaveValue("2026-10-21");
+  expect(screen.getByLabelText("日报日期")).toHaveValue("2026-10-23");
+  expect(screen.queryByText(/周六、周日/)).not.toBeInTheDocument();
 });
 
-test("no nonempty archives keeps today's empty date without notices", async () => {
+test("an empty archive has no previous-issue action when no papers have been published", async () => {
   vi.useFakeTimers({ toFake: ["Date"] });
   vi.setSystemTime(new Date("2026-10-22T05:30:00Z"));
-  serve({ "2026-10-21": day("2026-10-21", []) });
+  serve({ "2026-10-22": day("2026-10-22", []) });
   openDaily();
-  await waitFor(() => expect(screen.getByLabelText("显示 0 篇论文")).toBeVisible());
+  expect(await screen.findByRole("heading", { name: "今天暂无论文" })).toBeVisible();
   expect(screen.getByLabelText("日报日期")).toHaveValue("2026-10-22");
+  expect(screen.queryByRole("button", { name: "查看最近一期" })).not.toBeInTheDocument();
   expect(screen.queryByRole("alert")).not.toBeInTheDocument();
 });
 

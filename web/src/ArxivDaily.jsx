@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, ArrowUpRight, MagnifyingGlass, Minus, Plus } from "@phosphor-icons/react";
+import { ArrowLeft, ArrowUpRight, CalendarBlank, MagnifyingGlass, Minus, Plus } from "@phosphor-icons/react";
 import { loadDailyDocument, loadDailyIndex } from "./dailyData.js";
 import dailyTags from "../../shared/daily-tags.json";
 
@@ -11,7 +11,7 @@ const beijingDate = () => new Intl.DateTimeFormat("en-CA", {
 
 const latestAvailableDate = (days, today) => days
   .filter((entry) => entry.date <= today && entry.count > 0)
-  .sort((a, b) => b.date.localeCompare(a.date))[0]?.date ?? today;
+  .sort((a, b) => b.date.localeCompare(a.date))[0]?.date;
 
 function DailyPaper({ paper, index, expanded, onToggle }) {
   const title = paper.translation.title;
@@ -40,7 +40,7 @@ function DailyPaper({ paper, index, expanded, onToggle }) {
 
 export default function ArxivDaily({ footer }) {
   const [today] = useState(beijingDate);
-  const [date, setDate] = useState(null);
+  const [date, setDate] = useState(today);
   const [days, setDays] = useState([]);
   const [papers, setPapers] = useState([]);
   const [query, setQuery] = useState("");
@@ -58,8 +58,7 @@ export default function ArxivDaily({ footer }) {
     setExpandedId(null);
     loadDailyIndex(controller.signal).then(async (index) => {
       if (active) setDays(index.days);
-      const selectedDate = date ?? latestAvailableDate(index.days, today);
-      const entry = index.days.find((item) => item.date === selectedDate);
+      const entry = index.days.find((item) => item.date === date);
       const daily = entry ? await loadDailyDocument(entry, controller.signal) : { papers: [] };
       if (active) {
         setPapers(daily.papers);
@@ -67,10 +66,13 @@ export default function ArxivDaily({ footer }) {
       }
     }).catch(() => { if (active) setStatus("error"); }).finally(() => clearTimeout(timeout));
     return () => { active = false; controller.abort(); clearTimeout(timeout); };
-  }, [date, attempt, today]);
+  }, [date, attempt]);
 
   useEffect(() => { document.title = "每日 arXiv · Research"; }, []);
   const dates = [...new Set([today, ...days.map((entry) => entry.date)])].sort().reverse();
+  const hasArchive = days.some((entry) => entry.date === date);
+  const latestDate = latestAvailableDate(days, today);
+  const countReady = status === "ready" && hasArchive;
   const terms = query.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
   const visiblePapers = papers.filter((paper) => {
     if (selectedTag !== "全部" && !paper.tags.includes(selectedTag)) return false;
@@ -84,10 +86,10 @@ export default function ArxivDaily({ footer }) {
       <a className="daily-back" href="/"><ArrowLeft size={14} aria-hidden="true" />研究首页</a>
       <section className="research-intro daily-intro" aria-labelledby="daily-title">
         <h1 id="daily-title">每日 arXiv</h1>
-        <p className="research-collection" aria-label={status === "ready" ? `显示 ${visiblePapers.length} 篇论文` : "正在读取论文数量"}><strong>{status === "ready" ? visiblePapers.length : "—"}</strong><span>篇论文</span></p>
+        <p className="research-collection" aria-label={countReady ? `显示 ${visiblePapers.length} 篇论文` : status === "ready" ? "该日期暂无日报" : "正在读取论文数量"}><strong>{countReady ? visiblePapers.length : "—"}</strong><span>篇论文</span></p>
       </section>
       <div className="daily-toolbar">
-        <label className="daily-date">日报日期<select value={date ?? latestAvailableDate(days, today)} onChange={(event) => setDate(event.target.value)}>{dates.map((value) => <option value={value} key={value}>{value}</option>)}</select></label>
+        <label className="daily-date">日报日期<select value={date} onChange={(event) => setDate(event.target.value)}>{dates.map((value) => <option value={value} key={value}>{value}</option>)}</select></label>
         <label className="research-search"><MagnifyingGlass size={20} aria-hidden="true" /><span className="research-sr-only">搜索日报论文</span><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索论文、作者、标签或分类" /></label>
         <p className="daily-current-date">LLM / Agent</p>
       </div>
@@ -103,6 +105,19 @@ export default function ArxivDaily({ footer }) {
       <div className="daily-list">
         {status === "loading" && <p className="daily-load" role="status">正在读取论文…</p>}
         {status === "error" && <div className="daily-error" role="alert"><p>暂时无法读取日报。</p><button type="button" onClick={() => setAttempt((value) => value + 1)}>重试</button></div>}
+        {status === "ready" && papers.length === 0 && <div className="research-empty daily-empty" role="status">
+          <CalendarBlank size={34} weight="light" aria-hidden="true" />
+          <h2>{hasArchive ? date === today ? "今天暂无论文" : "当天暂无论文" : date === today ? "今天的日报尚未更新" : "当天暂无日报"}</h2>
+          <p>可以切换日期，查看往日论文。</p>
+          <p className="daily-weekend-note">按北京时间，arXiv 通常在周六、周日不发布新论文，周一恢复更新。</p>
+          {latestDate && latestDate !== date && <button type="button" onClick={() => { setDate(latestDate); setQuery(""); setSelectedTag("全部"); }}>查看最近一期</button>}
+        </div>}
+        {status === "ready" && papers.length > 0 && visiblePapers.length === 0 && <div className="research-empty" role="status">
+          <MagnifyingGlass size={28} aria-hidden="true" />
+          <h2>没有找到相关论文</h2>
+          <p>试试其他关键词，或查看全部标签。</p>
+          <button type="button" onClick={() => { setQuery(""); setSelectedTag("全部"); }}>清除筛选</button>
+        </div>}
         {status === "ready" && visiblePapers.map((paper, index) => <DailyPaper paper={paper} index={index} key={paper.id} expanded={expandedId === paper.id} onToggle={() => setExpandedId((current) => current === paper.id ? null : paper.id)} />)}
       </div>
     </main>

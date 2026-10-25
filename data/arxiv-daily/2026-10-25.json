@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-25",
+  "timezone": "Asia/Shanghai",
+  "fetchedAt": "2026-10-25T13:31:23.171829+08:00",
+  "source": {
+    "url": "https://rss.arxiv.org/rss/cs",
+    "updatedAt": "2026-10-25T00:00:00-04:00",
+    "generatedAt": "2026-10-25T04:00:00+00:00"
+  },
+  "stats": {
+    "fetched": 0,
+    "matched": 0,
+    "translated": 0,
+    "fallback": 0
+  },
+  "papers": []
+}

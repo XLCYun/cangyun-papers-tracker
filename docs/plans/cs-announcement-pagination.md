@@ -112,11 +112,13 @@ Actions 的 collect 步骤直接使用采集器退出码；返回非零时，依
 
 ## 实现任务图与兼容约定
 
-任务 A：CS 总区分页来源与 CLI 接入，删除 RSS 和分类补抓，扩展 Python 公共数据校验。
+总工单：[#13](https://github.com/XLCYun/cangyun-papers-tracker/issues/13)。
 
-任务 B：在 A 合并后加入前七天去重、正常周末零篇和同日重跑规则。
+任务 A（[#14](https://github.com/XLCYun/cangyun-papers-tracker/issues/14)）：CS 总区分页来源与 CLI 接入，删除 RSS 和分类补抓，扩展 Python 公共数据校验。
 
-任务 C：与 A 并行完成页面对新来源格式的兼容、Actions 诊断、操作文档；其最终验证依赖 A、B 合并。集成后统一执行两轴代码审查并修正问题。
+任务 B（[#16](https://github.com/XLCYun/cangyun-papers-tracker/issues/16)）：在 A 合并后加入前七天去重、正常周末零篇和同日重跑规则。
+
+任务 C（[#15](https://github.com/XLCYun/cangyun-papers-tracker/issues/15)）：与 A 并行完成页面对新来源格式的兼容、Actions 诊断、操作文档；其最终验证依赖 A、B 合并。集成后统一执行两轴代码审查并修正问题。
 
 沿用用户已确认的采集命令 → JSON、页面 → JSON、发布 → HTTP 三类公开验证边界。自动化测试使用本地来源、模型和 OSS 固定响应，不调用付费模型、不校对译文。保留所有已归档每日文件及其字节。
 

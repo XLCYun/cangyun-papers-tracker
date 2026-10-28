@@ -1,0 +1,128 @@
+[
+  {
+    "id": "2610.28636v1",
+    "title": "RESEARCHHUB: A Personalized Literature Discovery System for Biomedical Preprints",
+    "abstract": "We present ResearchHub, an interactive system for personalized literature discovery over biomedical preprints. Given a researcher profile or a free-form query, ResearchHub retrieves relevant papers from a domain-specific MedRxiv corpus and helps users move beyond near-duplicate recommendations through controllable novelty, diversity, and curriculum ordering. At the core of the system is prism, a bi-encoder retriever adapted to biomedical preprints using GPT-4o-generated natural language queries and a hybrid Multiple Negatives Ranking plus MarginMSE objective with cross-encoder soft labels. On 44,937 MedRxiv papers from 2023--2025, prism outperforms strong off-the-shelf dense retrievers, improving Recall@10 over SPECTER2-Search by 12.4 percentage points. ResearchHub further supports frontier retrieval based on a user's reading history, DPP-based diversity re-ranking, Local Intrinsic Dimensionality ordering from mainstream to specialized papers, and lightweight attribution cards for result explanation. The full pipeline runs with low latency, making the system suitable",
+    "authors": [
+      "Viswonathan Manoranjan",
+      "Taeyoon Kim",
+      "Nicholas Do",
+      "Sang Woo Kim",
+      "Dawei Li",
+      "Zhen Tan",
+      "Tianlong Chen",
+      "Yunmei Liu"
+    ],
+    "categories": [
+      "cs.IR",
+      "cs.CL"
+    ],
+    "type": "new"
+  },
+  {
+    "id": "2610.28637v1",
+    "title": "To Keep or Not to Keep: Learning KV Cache Retention in Disaggregated LLM Serving Systems",
+    "abstract": "Disaggregated \\textsc{LLM} serving separates prefill and decode across node pools, placing a network fabric between \\textsc{KV}-cache computation and consumption. This breaks a key assumption of classical cache policies: a miss no longer incurs only local recomputation, but also network transfer to the decode node. Likewise, admitting a block to the global cache requires an additional transfer, so poor retention decisions waste both memory and bandwidth. We present \\textbf{KVLearn}, a learning-based framework for cost-aware \\textsc{KV}-cache retention in disaggregated serving. KVLearn includes: (i) a lightweight Prefix Reuse Predictor (\\textsc{PRP}) that estimates reuse probability from structural and temporal prefix features without modifying model weights; (ii) a Cost-Aware Retention Score (\\textsc{CARS}) that converts reuse probability into keep/admit decisions using recomputation, transfer, and storage costs; and (iii) an Adaptive Threshold Controller (\\textsc{ATC}) that adjusts admission thresholds online from observed hit rates and memory pressure. We integrate KVLearn into a globally disaggregated serving topology and evaluate it on text and multimodal workloads, including large image/video-derived \\textsc{KV} blocks with heterogeneous reuse patterns. KVLearn reduces end-to-end time-to-first-token by up to 56% versus No-Cache, 38% versus LRU-Pool, and 33% versus Mooncake-style baselines, while cutting inter-node \\textsc{KV} transfer volume by up to 53% versus LRU-Pool. On MM-Session, throughput remains within ${\\sim}5%$ of oracle. Code is available at https://github.com/FastLM/KVLearn.",
+    "authors": [
+      "Dong Liu",
+      "Yanxuan Yu",
+      "Eric Jiang",
+      "Shu Wang",
+      "Ying Nian Wu"
+    ],
+    "categories": [
+      "cs.LG",
+      "cs.DC"
+    ],
+    "type": "new"
+  },
+  {
+    "id": "2610.28955v1",
+    "title": "SLoSa: Small, Low-Power, and Safe Foundation Models for Robotic Task Planning",
+    "abstract": "Safe robotic task planning requires planners that can reliably achieve task goals while satisfying safety constraints. Classical planners search over explicit symbolic task representations and can provide formal guarantees with respect to encoded safety constraints, but require rigid input formats. Their computational cost also increases rapidly with the search space. In contrast, large language models (LLMs) offer flexible task interfaces and strong generalization capabilities, but they are large, power-hungry, and pre-trained with little robot-specific safety data and knowledge. Thus, they can be difficult to deploy locally on robotic systems with limited resources. To address these limitations, we present SLoSa, a neuro-symbolic compression and fine-tuning framework for training foundation-model-based robotic task planners with Small size, Low power demand, and Safety awareness. The framework first constructs a safety-aware dataset using classical planners, an advanced teacher LLM, and formal verifiers, followed by two training stages: supervised fine-tuning and reinforcement learning (RL) fine-tuning guided by a verification-based reward machine to enforce safety alignment. We evaluate SLoSa across four Planning Domain Definition Language (PDDL) domains, two household simulation environments, local edge platforms, and a desktop robotic arm. Across the PDDL tasks, verifier-guided post-training raises the success rate of compact 4B-14B planners to 70.5-76.0%, while INT4 deployment on a Jetson Orin requires 17.85-26.41 W of average power. Results in household simulators and on the physical robot further demonstrate the applicability of SLoSa across diverse robotic task settings.",
+    "authors": [
+      "Weizhe Xu",
+      "Jialiang Fan",
+      "Essien Taylor",
+      "Zijun Wang",
+      "Russell Joseph",
+      "Fanxin Kong"
+    ],
+    "categories": [
+      "cs.RO",
+      "cs.AI",
+      "cs.LO"
+    ],
+    "type": "new"
+  },
+  {
+    "id": "2610.29003v1",
+    "title": "T-DIG: Text-Conditioned Diversity for Image Generation",
+    "abstract": "Text-to-image (T2I) platforms typically return several images per prompt so users can explore different visual interpretations and choose one that matches their intent. However, T2I models are usually optimized for single-image quality which comes at a cost of multi-image diversity, limiting this exploration. Diversity is also contextual: one user wants variations in background, while another wants them in artistic style, and the same user may later want variations in clothing. The generated images should differ along whatever axis the user cares about. In this paper, we introduce T-DIG, a text-conditioned diversity framework for image generation and editing. T-DIG is an iterative framework comprising multiple modules that lets users type prompts, inspect default generations, request variations using natural language, and continue refining outputs until they're satisfied. At its core, T-DIG uses an LLM policy that produces K axis-conditioned prompts or edit instructions for a frozen generator or editor. We train this policy with GRPO using a text-conditioned diversity reward and alignment penalties. Because the image generator remains frozen, T-DIG applies to open-weight, distilled, and proprietary models. We also release the first dataset for text-conditioned prompt diversity in image generation, with the training and validation splits built from human-written axes and a test set drawn from real user interactions with T-DIG. T-DIG far exceeds baselines in improving text-conditioned diversity, while preserving base-prompt alignment across a variety of metrics and human judgements. We show that user-directed diversity exploration can be added to a wide range of image generation models, open and closed, without the need to access their weights. Website: https://image-study.org/t-dig/",
+    "authors": [
+      "Simran Khanuja",
+      "Rohit Gandikota",
+      "Gaurav Parmar",
+      "Graham Neubig"
+    ],
+    "categories": [
+      "cs.CV"
+    ],
+    "type": "new"
+  },
+  {
+    "id": "2609.00755v1",
+    "title": "S^3martCirc: Self-supervised Smart Circuit Discovery",
+    "abstract": "Large Language Models (LLMs) have demonstrated remarkable performance across diverse tasks, from text summarization to question answering. Despite these capabilities, their black-box nature obscures internal decision-making processes. Mechanistic interpretability (MI) aims to address this by reverse-engineering neural networks into human-understandable algorithms. Current MI approaches for LLMs typically follow a two-stage paradigm: first identifying important components (circuit discovery), where components are typically individual nodes such as an attention head or feedforward neuron, and second determining the role they play in a certain task (functional interpretation). However, this sequential approach overlooks a fundamental insight: a component's importance and its functional role are inherently codependent. Unifying these stages presents two key challenges: (1) functional roles are often tied to specific nodes or components, limiting generalization, and (2) their identification relies on subjective interpretation rather than quantifiable metrics. To address these challenges, we propose S^3martCirc (Self-supervised Smart Circuit Discovery), a unified framework that simultaneously discovers circuits and interprets functionality. S^3martCirc abstracts node behavior into two general computational roles that generalize across tasks and defines a quantitative metric for assigning them, enabling importance and functional role to be discovered jointly rather than in sequence. Extensive experiments show that our framework outperforms existing methods in circuit discovery.",
+    "authors": [
+      "Wendy Zheng",
+      "Yinhan He",
+      "Liang Wu",
+      "Jundong Li"
+    ],
+    "categories": [
+      "cs.AI",
+      "cs.LG"
+    ],
+    "type": "cross"
+  },
+  {
+    "id": "2106.06060v5",
+    "title": "AI-driven Prices for Externalities and Sustainability in Production Markets",
+    "abstract": "Traditional competitive markets do not account for negative externalities; indirect costs that some participants impose on others, such as the cost of over-appropriating a common-pool resource (which diminishes future stock, and thus harvest, for everyone). Quantifying appropriate interventions to market prices has proven to be quite challenging. We propose a practical approach to computing market prices and allocations via a deep reinforcement learning policymaker agent, operating in an environment of other learning agents. Our policymaker allows us to tune the prices with regard to diverse objectives such as sustainability and resource wastefulness, fairness, buyers' and sellers' welfare, etc. As a highlight of our findings, our policymaker is significantly more successful in maintaining resource sustainability, compared to the market equilibrium outcome, in scarce resource environments.",
+    "authors": [
+      "Panayiotis Danassis",
+      "Aris Filos-Ratsikas",
+      "Haipeng Chen",
+      "Milind Tambe",
+      "Boi Faltings"
+    ],
+    "categories": [
+      "cs.MA",
+      "cs.AI",
+      "cs.GT"
+    ],
+    "type": "replace"
+  },
+  {
+    "id": "2608.15900v2",
+    "title": "Crystal-structure design by agentic AI in a language of motifs",
+    "abstract": "Data-driven materials discovery interpolates more reliably than it extrapolates and seldom reveals new structure types. We present MatEvolve, an agentic-AI framework that designs crystals in an interpretable \\emph{language of motifs}, in which each crystal is written as a \\emph{motif profile} that describes the recurring geometric patterns---the \\emph{motifs}---composing the crystal. The motif profile serves not merely as a description of a material but as the medium for material design: the agent edits the profile with a stated rationale and constructs a crystal from the modified one; the most promising candidates are then validated by first-principles calculations. MatEvolve is built on the state-of-the-art language model Claude Fable~5 without fine-tuning. It is applied to the design of rare-earth-lean permanent-magnet compounds and finds novel (meta)stable crystals that are both new structural prototypes and magnet compounds; under an equal validation budget, it does so an order of magnitude more often than generative models. Beyond design, analyzing the human-readable profiles of the discovered crystals reveals their structure--property relationships.",
+    "authors": [
+      "Dinh-Khiet Le",
+      "Minh-Quyet Ha",
+      "Hong-Phuc Vu-Dinh",
+      "Viet-Cuong Nguyen",
+      "Huan Tran",
+      "Truyen Tran",
+      "Takashi Miyake",
+      "Hiori Kino",
+      "Hieu-Chi Dam"
+    ],
+    "categories": [
+      "cond-mat.mtrl-sci",
+      "cs.LG"
+    ],
+    "type": "replace"
+  }
+]

@@ -14,6 +14,7 @@ from urllib.request import Request, urlopen
 LIST_URL = "https://arxiv.org/list/cs/new"
 PAGE_SIZE = 2000
 IDENTIFIER = re.compile(r"(?:\d{4}\.\d{4,5}|[a-z-]+(?:\.[A-Z]{2})?/\d{7})(?:v[1-9]\d*)?")
+CATEGORY_CODE = re.compile(r"\(([a-z-]+(?:\.[A-Za-z-]+)?)\)")
 
 
 class AnnouncementError(Exception):
@@ -113,8 +114,8 @@ def _entry(term, definition, kind):
     abstract = _text(_one(definition.find("p", "mathjax")))
     authors = [_text(author) for author in _one(definition.find(class_name="list-authors")).find("a")]
     subjects = _one(definition.find(class_name="list-subjects"))
-    categories = re.findall(r"\(([a-z-]+(?:\.[A-Z]{2})?)\)", _text(subjects))
-    primary = re.findall(r"\(([a-z-]+(?:\.[A-Z]{2})?)\)", _text(_one(subjects.find(class_name="primary-subject"))))
+    categories = CATEGORY_CODE.findall(_text(subjects))
+    primary = CATEGORY_CODE.findall(_text(_one(subjects.find(class_name="primary-subject"))))
     if not title or not abstract or not authors or not all(authors) or not categories or len(primary) != 1 or primary[0] not in categories:
         raise AnnouncementError("A new announcement is missing its title, abstract, authors or categories.")
     pdf = _one(anchor for anchor in term.find("a") if anchor.attrs.get("title") == "Download PDF")

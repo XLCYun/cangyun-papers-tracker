@@ -43,6 +43,24 @@ def test_command_reads_listing_and_preserves_unknown_timestamps(tmp_path, monkey
     assert daily["stats"]["duplicates"] == 0
 
 
+@pytest.mark.parametrize("categories", [
+    ["cs.LG", "physics.ao-ph", "physics.flu-dyn", "physics.med-ph", "cond-mat.mtrl-sci", "astro-ph.IM", "hep-th"],
+    ["physics.ao-ph", "cs.LG", "cond-mat.mtrl-sci"],
+])
+def test_command_preserves_full_primary_and_secondary_category_codes(tmp_path, monkeypatch, categories):
+    from collector import main
+
+    papers = selected_entries("2610.28637v1")
+    papers[0]["categories"] = categories
+    with service({LIST_PATH: (200, listing_page(papers))}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
+        assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
+
+    daily = json.loads((tmp_path / "2026-10-22.json").read_text())
+    assert daily["papers"][0]["categories"] == categories
+    assert daily["papers"][0]["primaryCategory"] == categories[0]
+
+
 def test_command_pages_all_sections_when_new_papers_span_the_page_limit(tmp_path, monkeypatch):
     from collector import main
 

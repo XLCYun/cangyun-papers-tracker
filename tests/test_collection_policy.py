@@ -1,6 +1,7 @@
 """Verify daily admission and normal weekend outcomes through public commands."""
 
 from datetime import datetime
+import hashlib
 import json
 import os
 
@@ -124,6 +125,30 @@ def test_duplicate_filtering_precedes_models_and_replay_reuses_successes(tmp_pat
             assert main(["--date", "2026-10-22", "--output-dir", str(tmp_path)], now=clock) == 0
     assert replay_requests == []
     assert (tmp_path / "2026-10-22.json").read_bytes() == completed
+
+
+@pytest.mark.parametrize("duplicates", [None, 0, 2])
+def test_legacy_replay_preserves_optional_duplicate_statistics(tmp_path, monkeypatch, duplicates):
+    from collector import main
+    from collector.publish import main as publish
+
+    archive(tmp_path)
+    path = tmp_path / "2026-10-22.json"
+    expected = json.loads(path.read_text())
+    if duplicates is not None:
+        expected["stats"].update(fetched=duplicates, duplicates=duplicates)
+    path.write_text(json.dumps(expected, indent=2) + "\n")
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    index_path = tmp_path / "index.json"
+    index = json.loads(index_path.read_text())
+    index["days"][0].update(sha256=digest, file=f"2026-10-22/{digest}.json")
+    index_path.write_text(json.dumps(index, indent=2) + "\n")
+    assert publish(["--date", "2026-10-22", "--data-dir", str(tmp_path), "--check"]) == 0
+
+    monkeypatch.setenv("ARXIV_LIST_URL", "invalid-but-unused")
+    assert main(["--date", "2026-10-22", "--output-dir", str(tmp_path)], now=NOW) == 0
+    assert json.loads(path.read_text()) == expected
+    assert publish(["--date", "2026-10-22", "--data-dir", str(tmp_path), "--check"]) == 0
 
 
 def test_all_recent_duplicates_fail_without_models_or_index_changes(tmp_path, monkeypatch, capsys):

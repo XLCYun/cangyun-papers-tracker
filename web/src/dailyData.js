@@ -58,6 +58,35 @@ function validDate(value) {
     Number.isFinite(Date.parse(value)) && new Date(value).toISOString().slice(0, 10) === value;
 }
 
+function validateSource(daily) {
+  const { source, stats } = daily;
+  // Archived RSS documents predate source kinds and retain their reading contract.
+  if (!source || !Object.hasOwn(source, "kind")) return;
+  const url = new URL(source.url);
+  if (!["cs-announcement-list", "announcement-schedule"].includes(source.kind) ||
+      !["https:", "http:"].includes(url.protocol) || url.username || url.password || source.updatedAt !== null) {
+    throw new Error("日报来源无效");
+  }
+  if (source.kind === "announcement-schedule") {
+    if (![0, 6].includes(new Date(`${daily.date}T00:00:00Z`).getUTCDay()) || source.reason !== "weekend" ||
+        daily.papers.length !== 0 ||
+        !["fetched", "matched", "translated", "fallback", "duplicates"].every((field) => stats[field] === 0)) {
+      throw new Error("日报排期无效");
+    }
+  }
+  if (source.kind === "cs-announcement-list") {
+    const counts = source.counts;
+    const fields = ["total", "new", "cross", "replace"];
+    const nonnegativeInteger = (value) => Number.isInteger(value) && value >= 0;
+    if (source.announcementDate !== daily.date || !counts || typeof counts !== "object" || Array.isArray(counts) ||
+        Object.keys(counts).length !== fields.length || !fields.every((field) => nonnegativeInteger(counts[field])) ||
+        counts.total !== counts.new + counts.cross + counts.replace || counts.total < 1 || stats.fetched !== counts.total ||
+        !nonnegativeInteger(stats.duplicates) || stats.matched + stats.duplicates > counts.new) {
+      throw new Error("日报公告批次无效");
+    }
+  }
+}
+
 async function readJson(file, signal) {
   const response = await fetch(new URL(file, dataRoot()).href, {
     signal, credentials: "omit", cache: file === "index.json" ? "no-cache" : "default",
@@ -88,6 +117,8 @@ export async function loadDailyDocument(entry, signal) {
       ![stats.fetched, stats.matched, stats.translated, stats.fallback].every((count) => Number.isInteger(count) && count >= 0) ||
       stats.matched !== daily.papers.length || stats.fetched < stats.matched ||
       stats.translated + stats.fallback !== stats.matched) throw new Error("日报内容无效");
+  validateSource(daily);
+  const fromListing = daily.source?.kind === "cs-announcement-list";
   const ids = new Set();
   for (const paper of daily.papers) {
     if (!paper || typeof paper.id !== "string" || !paper.id.trim() || ids.has(paper.id) ||
@@ -96,12 +127,19 @@ export async function loadDailyDocument(entry, signal) {
         !["translated", "fallback"].includes(paper.translation?.status) ||
         ![paper.translation.title, paper.translation.abstract].every((value) => typeof value === "string" && value.trim()) ||
         typeof paper.translation.brief !== "string") throw new Error("论文内容无效");
+    if (fromListing && (paper.announceType !== "new" || paper.publishedAt !== null || paper.updatedAt !== null)) {
+      throw new Error("论文公告元数据无效");
+    }
     ids.add(paper.id);
     for (const [field, path] of [["absUrl", "abs"], ["pdfUrl", "pdf"], ["htmlUrl", "html"]]) {
-      if (field !== "absUrl" && paper[field] == null) continue;
+      if (fromListing ? field === "htmlUrl" && paper[field] === null : field !== "absUrl" && paper[field] == null) continue;
       const url = new URL(paper[field]);
       if (url.protocol !== "https:" || url.hostname !== "arxiv.org" || url.username || url.password ||
           !url.pathname.startsWith(`/${path}/`)) throw new Error("论文原文链接无效");
+      if (fromListing && (url.origin !== "https://arxiv.org" || url.search || url.hash ||
+          url.pathname.slice(path.length + 2).replace(/v[1-9]\d*$/, "") !== paper.id.replace(/v[1-9]\d*$/, ""))) {
+        throw new Error("论文原文链接与编号不符");
+      }
     }
   }
   if (daily.papers.filter((paper) => paper.translation.status === "translated").length !== stats.translated) throw new Error("日报统计无效");

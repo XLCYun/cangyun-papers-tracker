@@ -4,7 +4,7 @@
 
 ## 每日文件
 
-Git 路径为 `data/arxiv-daily/YYYY-MM-DD.json`。对象的最小形状如下；空日仍包含相同字段，`papers` 为 `[]`，统计为零。
+Git 路径为 `data/arxiv-daily/YYYY-MM-DD.json`。新公告页归档的主要字段如下，主题标签字段见下一节；旧 RSS 归档继续可读。周末零篇与筛选后零篇的来源依据分别记录，不能用空响应或旧批次生成零篇日报。
 
 ```json
 {
@@ -13,25 +13,28 @@ Git 路径为 `data/arxiv-daily/YYYY-MM-DD.json`。对象的最小形状如下�
   "timezone": "Asia/Shanghai",
   "fetchedAt": "2026-10-22T13:30:00+08:00",
   "source": {
-    "url": "https://rss.arxiv.org/rss/cs",
-    "updatedAt": "2026-10-22T00:00:00-04:00"
+    "kind": "cs-announcement-list",
+    "url": "https://arxiv.org/list/cs/new",
+    "announcementDate": "2026-10-22",
+    "updatedAt": null,
+    "counts": { "total": 1, "new": 1, "cross": 0, "replace": 0 }
   },
-  "stats": { "fetched": 1, "matched": 1, "translated": 1, "fallback": 0 },
+  "stats": { "fetched": 1, "matched": 1, "translated": 1, "fallback": 0, "duplicates": 0 },
   "papers": [
     {
-      "id": "2610.00001v1",
+      "id": "2610.00001",
       "title": "Example Agent paper",
       "abstract": "Original abstract.",
       "authors": ["Example Author"],
       "affiliations": [],
       "categories": ["cs.AI"],
       "primaryCategory": "cs.AI",
-      "publishedAt": "2026-10-22T00:00:00-04:00",
+      "publishedAt": null,
       "updatedAt": null,
       "announceType": "new",
-      "absUrl": "https://arxiv.org/abs/2610.00001v1",
-      "pdfUrl": "https://arxiv.org/pdf/2610.00001v1",
-      "htmlUrl": "https://arxiv.org/html/2610.00001v1",
+      "absUrl": "https://arxiv.org/abs/2610.00001",
+      "pdfUrl": "https://arxiv.org/pdf/2610.00001",
+      "htmlUrl": null,
       "translation": {
         "status": "translated",
         "title": "示例 Agent 论文",
@@ -43,13 +46,33 @@ Git 路径为 `data/arxiv-daily/YYYY-MM-DD.json`。对象的最小形状如下�
 }
 ```
 
-- `id` 为来源给出的 arXiv ID；有版本后缀就保留，不做跨日排除。
-- 当前日报只保留 `announceType=new` 的条目，翻译前排除其余公告类型。结构校验仍接受四种合法类型，以便读取旧归档后重新筛选。
-- 未提供的机构使用 `[]`，未提供的更新时间使用 `null`，不推测补造。`publishedAt` 按来源含义保存，不用于猜日报日期。
+- `id` 为来源给出的 arXiv ID；有版本后缀就保留，没有则不补 `v1`。历史去重使用去掉版本后缀的基础 ID，只与目标日期前七个自然日的已存归档比较；同日重跑不与自身去重。
+- 新公告页归档只允许 `announceType=new`。旧 RSS 归档的结构校验仍接受 `new`、`cross`、`replace`、`replace-cross` 四种合法类型，以便读取后重新筛选。
+- 未提供的机构使用 `[]`。新公告页未给出精确时间，因此论文 `publishedAt`、`updatedAt` 和来源 `updatedAt` 均为 `null`；公告日期使用 `source.announcementDate`。旧 RSS 的时间戳按原来源含义保留，不用于猜日报日期。
+- 原文链接使用官方 `https://arxiv.org` 地址，`absUrl`、`pdfUrl` 对应当前论文 ID。新公告页的 `htmlUrl` 仅在页面提供时保存，可带页面给出的版本号；没有链接时为 `null`，不构造一个可能不存在的 HTML 地址。
 - 翻译状态只有 `translated` 和 `fallback`。回退时 `translation.title` 与 `translation.abstract` 使用英文，`brief` 为 `""`。上游错误的完整响应和凭证不写入公开 JSON。
-- `stats.fetched` 为完整来源批次的去重条目数；`stats.matched === papers.length` 为筛选后展示数量，`translated + fallback === matched`。
-- 同日重跑可以读取已有每日文件复用成功译文；缺失的历史日期不得用当前 feed 改写成历史数据。
-- 重跑归档保留原始 `source` 和 `fetchedAt`，索引的 `updatedAt` 记录本次归档更新时间。采集器在重写前和发布器在上传前使用同一校验器检查必填元数据、翻译字段与统计；无效归档不会被改写或发布。
+- `stats.fetched` 为完整来源批次的条目数；`stats.matched === papers.length` 为专题筛选与历史去重后的展示数量，`translated + fallback === matched`。新归档的 `duplicates` 为前七天已收录、在模型调用前剔除的候选数，必须是非负整数。旧归档可缺少此字段，读取和操作摘要将其视为 0，不为此改写旧文件。
+- 同日重跑可以读取已有每日文件复用成功译文；缺失的历史日期不得用当前公告改写成历史数据。
+- 重跑归档保留原始 `source`、`fetchedAt` 和已有的 `stats.duplicates`，索引的 `updatedAt` 记录本次归档更新时间。采集器在重写前和发布器在上传前使用同一校验器检查必填元数据、翻译字段与统计；无效归档不会被改写或发布。
+
+### 来源类型与零篇依据
+
+- `cs-announcement-list`：`announcementDate` 为有效日期并等于日报日期；`counts` 恰好包含 `total`、`new`、`cross`、`replace` 四个非负整数，后三项之和等于非零 `total`。`stats.fetched === counts.total`，`stats.matched + stats.duplicates <= counts.new`。完整公告有条目但专题筛选无命中时，`papers` 可以为空，`fetched` 仍为实际公告总数。
+- `announcement-schedule`：只用于北京时间周六、周日的正常停更。来源 `url` 为官方公告排期，`reason` 为 `weekend`，`updatedAt` 为 `null`；论文数组为空，`fetched`、`matched`、`translated`、`fallback`、`duplicates` 五项均为 0。该类型没有当日公告日期或分节计数，不声称抓到了空批次。
+- 无 `kind` 的旧来源：保留原 `url`、带时区的 `updatedAt` 及可选 `generatedAt`。不要求迁移旧来源，也不重建历史文件。
+
+新来源 `url` 必须为不含用户名和密码的 HTTP(S) 地址，本地测试可替换为回环服务。Python 采集/发布校验和页面读取均检查新来源的日期、计数、零篇依据与缺失时间；不认识的显式 `kind` 或不一致的新格式走原有错误处理，不静默当成旧 RSS。
+
+周末的来源示例：
+
+```json
+{
+  "kind": "announcement-schedule",
+  "url": "https://info.arxiv.org/help/availability.html#announcement-schedule",
+  "reason": "weekend",
+  "updatedAt": null
+}
+```
 
 ## 日报主题标签
 

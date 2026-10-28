@@ -8,4 +8,6 @@
 
 日报提供 LLM、Agent、AI4S、CodingAgent、GUI/Web Agent、AgentOps、AgentHarness、软件工程、企业Agent 九个主题标签，可结合日期和搜索筛选。LLM、Agent 和软件工程由规则判断，其余标签由 Jev 判断；中文翻译和打标分别记录状态，失败项重跑补齐。配置见 [采集器说明](docs/collector.md)，标签范围见 [标签方案](docs/plans/arxiv-daily-tags.md)。
 
+采集器分页读取官方 CS 总区公告，覆盖全部 CS 分类，在核对公告日期与完整性后筛选 `new`、LLM / Agent 关键词并排除 `robot`。翻译和打标前只与前 7 个自然日的本地归档去重；北京时间周末按正常排期成功发布 0 篇。非周末来源过期、不完整或候选全部重复时失败，不发布当天数据。本轮只调整后续采集，已有日报不重建；完整方案见 [CS 总区分页采集](docs/plans/cs-announcement-pagination.md)。
+
 代码使用 MIT 许可证；论文文件及字体保留各自许可。日报仅归档 JSON，不保存 PDF。

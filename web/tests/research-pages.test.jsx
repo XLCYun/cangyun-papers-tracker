@@ -19,6 +19,18 @@ function day(date, papers = [paper]) {
     source: { url: "https://rss.arxiv.org/rss/cs", updatedAt: `${date}T00:00:00-04:00` },
     stats: { fetched: papers.length, matched: papers.length, translated, fallback: papers.length - translated }, papers };
 }
+function listingDay(date, papers = [{ ...paper, announceType: "new", publishedAt: null, htmlUrl: null }]) {
+  return { ...day(date, papers),
+    source: { kind: "cs-announcement-list", url: "https://arxiv.org/list/cs/new", updatedAt: null,
+      announcementDate: date, counts: { total: 3, new: 2, cross: 1, replace: 0 } },
+    stats: { ...day(date, papers).stats, fetched: 3, duplicates: 0 } };
+}
+function weekendDay(date) {
+  return { ...day(date, []),
+    source: { kind: "announcement-schedule", url: "https://info.arxiv.org/help/availability.html#announcement-schedule",
+      updatedAt: null, reason: "weekend" },
+    stats: { fetched: 0, matched: 0, translated: 0, fallback: 0, duplicates: 0 } };
+}
 function serve(days) {
   const entries = Object.entries(days).sort(([a], [b]) => b.localeCompare(a));
   vi.stubGlobal("fetch", vi.fn(async (url) => {
@@ -42,6 +54,146 @@ test("daily defaults to today's Beijing date and shows that day's JSON papers", 
   expect(screen.getByLabelText("日报日期")).toHaveValue("2026-10-22");
   expect(screen.getByText("A practical agent benchmark")).toBeVisible();
   expect(screen.getByText("在企业任务中检验智能体。")).toBeVisible();
+});
+
+test("a listing from an older announcement date is a read error instead of today's papers", async () => {
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(new Date("2026-10-28T05:30:00Z"));
+  const stale = listingDay("2026-10-28");
+  stale.source.announcementDate = "2026-10-27";
+  serve({ "2026-10-28": stale });
+  openDaily();
+  expect(await screen.findByRole("alert")).toHaveTextContent("暂时无法读取日报");
+  expect(screen.queryAllByRole("article")).toHaveLength(0);
+});
+
+test.each([
+  ["missing section", { total: 3, new: 2, cross: 1 }, { fetched: 3, duplicates: 0 }],
+  ["inconsistent sections", { total: 4, new: 2, cross: 1, replace: 0 }, { fetched: 4, duplicates: 0 }],
+  ["unexpected section", { total: 3, new: 2, cross: 1, replace: 0, other: 0 }, { fetched: 3, duplicates: 0 }],
+  ["negative section", { total: 3, new: 3, cross: 1, replace: -1 }, { fetched: 3, duplicates: 0 }],
+  ["fractional section", { total: 3, new: 2.5, cross: 0.5, replace: 0 }, { fetched: 3, duplicates: 0 }],
+  ["fetched count mismatch", { total: 3, new: 2, cross: 1, replace: 0 }, { fetched: 2, duplicates: 0 }],
+  ["negative duplicates", { total: 3, new: 2, cross: 1, replace: 0 }, { fetched: 3, duplicates: -1 }],
+  ["missing duplicates", { total: 3, new: 2, cross: 1, replace: 0 }, { fetched: 3, duplicates: undefined }],
+  ["more candidates than new announcements", { total: 3, new: 2, cross: 1, replace: 0 }, { fetched: 3, duplicates: 2 }],
+])("invalid CS batch counts show a read error: %s", async (_name, counts, stats) => {
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(new Date("2026-10-28T05:30:00Z"));
+  const invalid = listingDay("2026-10-28");
+  invalid.source.counts = counts;
+  Object.assign(invalid.stats, stats);
+  serve({ "2026-10-28": invalid });
+  openDaily();
+  expect(await screen.findByRole("alert")).toHaveTextContent("暂时无法读取日报");
+  expect(screen.queryAllByRole("article")).toHaveLength(0);
+});
+
+test("a weekday cannot be presented as a scheduled weekend zero-paper day", async () => {
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(new Date("2026-10-28T05:30:00Z"));
+  serve({ "2026-10-28": weekendDay("2026-10-28") });
+  openDaily();
+  expect(await screen.findByRole("alert")).toHaveTextContent("暂时无法读取日报");
+  expect(screen.queryByRole("heading", { name: "今天暂无论文" })).not.toBeInTheDocument();
+});
+
+test.each(["2026-10-24", "2026-10-25"])("normal weekend provenance shows a successful empty day: %s", async (date) => {
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(new Date(`${date}T05:30:00Z`));
+  serve({ [date]: weekendDay(date), "2026-10-23": day("2026-10-23") });
+  openDaily();
+  expect(await screen.findByRole("heading", { name: "今天暂无论文" })).toBeVisible();
+  expect(screen.getByLabelText("显示 0 篇论文")).toBeVisible();
+  expect(screen.getByText(/按北京时间，arXiv 通常在周六、周日不发布新论文/)).toBeVisible();
+  expect(screen.getByRole("button", { name: "查看最近一期" })).toBeVisible();
+  expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+});
+
+test.each([
+  ["unexpected reason", (daily) => { daily.source.reason = "holiday"; }],
+  ["invented source timestamp", (daily) => { daily.source.updatedAt = "2026-10-24T00:00:00+08:00"; }],
+  ["fetched announcements", (daily) => { daily.stats.fetched = 1; }],
+  ["removed duplicates", (daily) => { daily.stats.duplicates = 1; }],
+  ["missing duplicate count", (daily) => { delete daily.stats.duplicates; }],
+  ["nonempty papers", (daily) => { daily.papers = [paper]; Object.assign(daily.stats, { fetched: 1, matched: 1, translated: 1 }); }],
+])("invalid weekend provenance is an error, not a successful empty day: %s", async (_name, alter) => {
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(new Date("2026-10-24T05:30:00Z"));
+  const invalid = weekendDay("2026-10-24");
+  alter(invalid);
+  serve({ "2026-10-24": invalid });
+  openDaily();
+  expect(await screen.findByRole("alert")).toHaveTextContent("暂时无法读取日报");
+  expect(screen.queryByRole("heading", { name: "今天暂无论文" })).not.toBeInTheDocument();
+});
+
+test.each([
+  ["unknown source kind", (daily) => { daily.source.kind = "unknown"; }],
+  ["null source kind", (daily) => { daily.source.kind = null; }],
+  ["non-HTTP source", (daily) => { daily.source.url = "file:///list/cs/new"; }],
+  ["source with credentials", (daily) => { daily.source.url = "https://user:secret@arxiv.org/list/cs/new"; }],
+  ["invented source update time", (daily) => { daily.source.updatedAt = "2026-10-28T00:00:00+08:00"; }],
+  ["invented submission time", (daily) => { daily.papers[0].publishedAt = "2026-10-28T00:00:00+08:00"; }],
+  ["missing update-time field", (daily) => { delete daily.papers[0].updatedAt; }],
+  ["replacement item", (daily) => { daily.papers[0].announceType = "replace"; }],
+  ["empty source batch", (daily) => {
+    daily.papers = [];
+    daily.source.counts = { total: 0, new: 0, cross: 0, replace: 0 };
+    daily.stats = { fetched: 0, matched: 0, translated: 0, fallback: 0, duplicates: 0 };
+  }],
+])("malformed listing provenance cannot be displayed as a valid daily: %s", async (_name, alter) => {
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(new Date("2026-10-28T05:30:00Z"));
+  const invalid = listingDay("2026-10-28");
+  alter(invalid);
+  serve({ "2026-10-28": invalid });
+  openDaily();
+  expect(await screen.findByRole("alert")).toHaveTextContent("暂时无法读取日报");
+  expect(screen.queryAllByRole("article")).toHaveLength(0);
+});
+
+test("CS listing papers with unknown timestamps and no HTML link retain normal reading controls", async () => {
+  const user = userEvent.setup();
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(new Date("2026-10-28T05:30:00Z"));
+  serve({ "2026-10-28": listingDay("2026-10-28") });
+  openDaily();
+  await user.click(await screen.findByRole("button", { name: "展开 实用智能体评测 的论文详情" }));
+  const details = screen.getByRole("region", { name: "实用智能体评测" });
+  expect(within(details).getByText("完整中文摘要。")).toBeVisible();
+  expect(within(details).getByRole("link", { name: "arXiv" })).toHaveAttribute("href", paper.absUrl);
+  expect(within(details).getByRole("link", { name: "PDF" })).toHaveAttribute("href", paper.pdfUrl);
+  expect(within(details).queryByRole("link", { name: "HTML" })).not.toBeInTheDocument();
+  expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+});
+
+test.each([
+  ["absUrl", "https://arxiv.org/abs/2610.99999"],
+  ["pdfUrl", "https://arxiv.org/pdf/2610.99999"],
+  ["pdfUrl", null],
+  ["htmlUrl", "https://arxiv.org/html/2610.99999v1"],
+  ["htmlUrl", undefined],
+  ["pdfUrl", "https://arxiv.org:444/pdf/2610.00001v2"],
+])("a new listing cannot send readers to another paper or a missing required link: %s %s", async (field, value) => {
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(new Date("2026-10-28T05:30:00Z"));
+  const invalid = listingDay("2026-10-28");
+  invalid.papers[0][field] = value;
+  serve({ "2026-10-28": invalid });
+  openDaily();
+  expect(await screen.findByRole("alert")).toHaveTextContent("暂时无法读取日报");
+  expect(screen.queryAllByRole("article")).toHaveLength(0);
+});
+
+test("a complete announcement batch with no topic matches remains a successful zero-paper day", async () => {
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(new Date("2026-10-28T05:30:00Z"));
+  serve({ "2026-10-28": listingDay("2026-10-28", []) });
+  openDaily();
+  expect(await screen.findByRole("heading", { name: "今天暂无论文" })).toBeVisible();
+  expect(screen.getByLabelText("显示 0 篇论文")).toBeVisible();
+  expect(screen.queryByRole("alert")).not.toBeInTheDocument();
 });
 
 test("opening a daily paper shows complete bilingual abstracts and original links", async () => {

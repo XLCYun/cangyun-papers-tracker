@@ -50,6 +50,27 @@ def _paper_url(value, path):
         return False
 
 
+def _validate_source(source, requested, stats, papers):
+    _require(isinstance(source, dict) and _source_url(source.get("url")))
+    if "kind" not in source:
+        _require(_timestamp(source.get("updatedAt")))
+        _require("generatedAt" not in source or _timestamp(source["generatedAt"]))
+        return
+    _require(source.get("kind") in {"cs-announcement-list", "announcement-schedule"})
+    _require("updatedAt" in source and source["updatedAt"] is None)
+    _require(type(stats.get("duplicates")) is int and stats["duplicates"] >= 0)
+    if source["kind"] == "announcement-schedule":
+        _require(source.get("reason") == "weekend" and date.fromisoformat(requested).weekday() >= 5)
+        _require(not papers and all(stats[name] == 0 for name in ("fetched", "matched", "translated", "fallback", "duplicates")))
+        return
+    _require(source.get("announcementDate") == requested)
+    counts = source.get("counts")
+    _require(isinstance(counts, dict) and set(counts) == {"total", "new", "cross", "replace"})
+    _require(all(type(value) is int and value >= 0 for value in counts.values()))
+    _require(counts["total"] > 0 and counts["total"] == counts["new"] + counts["cross"] + counts["replace"])
+    _require(stats["fetched"] == counts["total"] and stats["matched"] + stats["duplicates"] <= counts["new"])
+
+
 def _validate_tagging(paper, *, allow_stale_tags):
     if "tags" not in paper and "tagging" not in paper:
         return
@@ -80,12 +101,12 @@ def validate_daily(daily, requested, *, allow_stale_tags=False):
         raise DailyContractError("The daily JSON date is invalid.") from None
     _require(daily.get("timezone") == "Asia/Shanghai" and _timestamp(daily.get("fetchedAt")))
     source = daily.get("source")
-    _require(isinstance(source, dict) and _source_url(source.get("url")) and _timestamp(source.get("updatedAt")))
-    _require("generatedAt" not in source or _timestamp(source["generatedAt"]))
     papers, stats = daily.get("papers"), daily.get("stats")
     _require(isinstance(papers, list) and isinstance(stats, dict))
     _require(all(type(stats.get(name)) is int and stats[name] >= 0 for name in ("fetched", "matched", "translated", "fallback")))
     _require(stats["matched"] == len(papers) and stats["fetched"] >= len(papers))
+    _validate_source(source, requested, stats, papers)
+    listing = source.get("kind") == "cs-announcement-list"
     identifiers, states = set(), []
     for paper in papers:
         _require(isinstance(paper, dict) and _text(paper.get("id")) and paper["id"] not in identifiers)
@@ -93,10 +114,21 @@ def validate_daily(daily, requested, *, allow_stale_tags=False):
         _require(all(_text(paper.get(field)) for field in ("title", "abstract")))
         _require(all(isinstance(paper.get(field), list) and all(_text(value) for value in paper[field])
                      for field in ("authors", "affiliations", "categories")))
-        _require(isinstance(paper.get("primaryCategory"), str) and _timestamp(paper.get("publishedAt")))
+        _require(isinstance(paper.get("primaryCategory"), str) and "publishedAt" in paper)
+        _require(paper["publishedAt"] is None if listing else _timestamp(paper["publishedAt"]))
         _require("updatedAt" in paper and (paper["updatedAt"] is None or _timestamp(paper["updatedAt"])))
         _require(paper.get("announceType") in {"new", "cross", "replace", "replace-cross"})
-        _require(all(_paper_url(paper.get(field), path) for field, path in (("absUrl", "abs"), ("pdfUrl", "pdf"), ("htmlUrl", "html"))))
+        if listing:
+            _require(paper["updatedAt"] is None and paper["announceType"] == "new")
+        _require(all(_paper_url(paper.get(field), path) for field, path in (("absUrl", "abs"), ("pdfUrl", "pdf"))))
+        _require("htmlUrl" in paper and ((listing and paper["htmlUrl"] is None) or _paper_url(paper["htmlUrl"], "html")))
+        if listing:
+            base_id = re.sub(r"v[1-9]\d*$", "", paper["id"])
+            for field, kind in (("absUrl", "abs"), ("pdfUrl", "pdf"), ("htmlUrl", "html")):
+                if paper[field] is not None:
+                    link = urlsplit(paper[field])
+                    _require(not link.query and not link.fragment)
+                    _require(re.sub(r"v[1-9]\d*$", "", link.path.removeprefix(f"/{kind}/")) == base_id)
         translation = paper.get("translation")
         _require(isinstance(translation, dict) and translation.get("status") in {"translated", "fallback"})
         _require(all(_text(translation.get(field)) for field in ("title", "abstract")) and isinstance(translation.get("brief"), str))

@@ -205,7 +205,7 @@ def main(argv=None, *, now=None):
             "stats": {"fetched": fetched, "matched": len(papers), "translated": translated, "fallback": len(papers) - translated},
             "papers": papers,
         }
-        if source.get("kind"):
+        if source.get("kind") or (replaying and "duplicates" in previous["stats"]):
             daily["stats"]["duplicates"] = duplicates
         validate_daily(daily, day.isoformat())
         _save(daily, args.output_dir, updated_at=moment.isoformat())

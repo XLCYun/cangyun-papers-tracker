@@ -2,7 +2,7 @@
 
 import argparse
 from concurrent.futures import ThreadPoolExecutor
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 import hashlib
 import json
 import os
@@ -42,6 +42,25 @@ def _matches(paper):
         and TOPIC.search(text)
         and not EXCLUDE.search(text)
     )
+
+
+def _base_arxiv_id(identifier):
+    return re.sub(r"v[1-9]\d*$", "", identifier)
+
+
+def _recent_ids(output_dir, day):
+    identifiers = set()
+    for offset in range(1, 8):
+        previous_day = (day - timedelta(days=offset)).isoformat()
+        path = output_dir / f"{previous_day}.json"
+        try:
+            content = path.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            continue
+        previous = json.loads(content)
+        validate_daily(previous, previous_day, allow_stale_tags=True)
+        identifiers.update(_base_arxiv_id(paper["id"]) for paper in previous["papers"])
+    return identifiers
 
 
 def _translate_batch(papers, key):
@@ -146,7 +165,8 @@ def main(argv=None, *, now=None):
     source_url = os.environ.get("ARXIV_LIST_URL", LIST_URL)
     try:
         archive = args.output_dir / f"{day.isoformat()}.json"
-        if archive.exists():
+        replaying = archive.exists()
+        if replaying:
             previous = json.loads(archive.read_text())
             validate_daily(previous, day.isoformat(), allow_stale_tags=True)
             source, papers, fetched = previous["source"], previous["papers"], previous["stats"]["fetched"]
@@ -155,13 +175,29 @@ def main(argv=None, *, now=None):
         else:
             if day != moment.date():
                 raise CollectorError("No archived source snapshot exists for that date; historical backfill is disabled.")
-            source, papers = collect_announcements(source_url, day)
-            fetched = source["counts"]["total"]
+            if day.weekday() >= 5:
+                source = {
+                    "kind": "announcement-schedule",
+                    "url": "https://info.arxiv.org/help/availability.html#announcement-schedule",
+                    "reason": "weekend", "updatedAt": None,
+                }
+                papers, fetched = [], 0
+            else:
+                source, papers = collect_announcements(source_url, day)
+                fetched = source["counts"]["total"]
             fetched_at = moment.isoformat()
             duplicates = 0
         papers = [paper for paper in papers if _matches(paper)]
-        _translate(papers)
-        tag_papers(papers)
+        if not replaying and day.weekday() < 5:
+            seen = _recent_ids(args.output_dir, day)
+            remaining = [paper for paper in papers if _base_arxiv_id(paper["id"]) not in seen]
+            duplicates = len(papers) - len(remaining)
+            if papers and not remaining:
+                raise CollectorError("All matching papers were already archived in the preceding seven days.")
+            papers = remaining
+        if papers:
+            _translate(papers)
+            tag_papers(papers)
         translated = sum(paper["translation"]["status"] == "translated" for paper in papers)
         daily = {
             "schemaVersion": 1, "date": day.isoformat(), "timezone": "Asia/Shanghai",

@@ -88,7 +88,7 @@ AgentOps 与 AgentHarness 可以同时出现；普通 Benchmark 不自动算 Age
 
 ## 资料
 
-- 当前实现：`collector/__init__.py`、`collector/categories.json`、`.github/workflows/daily.yml`、`web/src/ArxivDaily.jsx`。
+- 标签实现：`collector/tagging.py`、`.github/workflows/daily.yml`、`web/src/ArxivDaily.jsx`。本文记录标签首次实现时的采集范围；后续总区分页与全部 CS 分类范围见 [CS 公告采集方案](cs-announcement-pagination.md)。
 - [arXiv 分类](https://arxiv.org/category_taxonomy)与 [RSS 规范](https://info.arxiv.org/help/rss_specifications.html)。
 - [DMXAPI Jev 接入](https://doc.dmxapi.cn/jev-1.13.0-typesafe-structured-judgment.html)。
 - [TypeSafe Noul 问题](https://docs.typesafe.ai/primitives/noul)与[模型说明](https://docs.typesafe.ai/models)。

@@ -125,7 +125,7 @@ Actions 的 collect 步骤直接使用采集器退出码；返回非零时，依
 新数据继续使用 `schemaVersion: 1`，新增来源类型，同时兼容不含 `source.kind` 的旧 RSS 归档：
 
 - 公告页来源：`source.kind = "cs-announcement-list"`，`url` 为总区 `/list/cs/new`，`announcementDate` 为页面明确给出的日期并等于日报日期，`updatedAt = null`。`source.counts` 为 `total`、`new`、`cross`、`replace` 四个非负整数，三种分节之和等于总数且总数非零。`stats.fetched` 等于来源总数。
-- 公告页没有提供精确的提交或更新时间，新条目的 `publishedAt`、`updatedAt` 使用 `null`；不额外逐篇请求 API，不伪造时间戳。分类、主分类和原文链接按页面提供的信息保存，保留来源实际给出的 ID，不擅自补 `v1`。
+- 公告页没有提供精确的提交或更新时间，新条目的 `publishedAt`、`updatedAt` 使用 `null`；不额外逐篇请求 API，不伪造时间戳。分类、主分类和原文链接按页面提供的信息保存，保留来源实际给出的 ID，不擅自补 `v1`。未提供 HTML 全文链接时，新公告页条目的 `htmlUrl` 为 `null`，旧归档字段保持原样。
 - 周末来源：`source.kind = "announcement-schedule"`，`url` 指向官方公告排期，`reason = "weekend"`，`updatedAt = null`。仅允许北京时间周六、周日，论文和四项既有统计均为零。此类型不声称取得了当天空公告。
 - 新公告页或排期归档增加 `stats.duplicates`，为翻译前剔除的前七天重复候选数；排期归档为零。旧归档可以没有此字段，同日重跑保留原来源及已记录的去重统计。
 - 新来源元数据同时通过 Python 发布校验和页面读取边界验证；旧归档继续可读。正常零篇页面沿用现有交互，无额外来源提示。

@@ -4257,5 +4257,45 @@
       "enMarkdown": "https://updates.cyunlab.com/research/enterprise-agent/webarena-2023/f51e0ec6ca0aae89ad44cec45849f1bc14d10857f599f33f2f3dbb4a6f92ffbd/en.md",
       "zhMarkdown": "https://updates.cyunlab.com/research/enterprise-agent/webarena-2023/1aefa950e0edd8b5ab8e9128cdcf3e42ca515bac0c84dc46b279641b1661d88a/zh.md"
     }
+  },
+  {
+    "id": "autovend-2026",
+    "name": "AutoVend",
+    "title": "AutoVend: Benchmarking LLM Agents on Long-Horizon Autonomous Vending Operations",
+    "titleZh": "连续经营 20 台售货机，检验决策能否转化为长期收益",
+    "publishedAt": "2026-10-27",
+    "version": "arXiv v1 · 2026.10.27",
+    "authors": [
+      "Qiming Shi",
+      "Yikun Li",
+      "Beidi Luan",
+      "Rui Sun",
+      "Yan Ma",
+      "Jing Li",
+      "Daxin Jiang",
+      "Zuo Bai"
+    ],
+    "institutions": [
+      "StepFun",
+      "Zhejiang University",
+      "Xi’an Jiaotong-Liverpool University",
+      "FinStep"
+    ],
+    "tags": [
+      "经营模拟",
+      "供应链"
+    ],
+    "summary": "让一个 Agent 在共享仓库、采购延迟、付费补货和商品过期的约束下经营 20 台售货机，检验跨站点协调与长期决策能否带来持续收益。",
+    "abstract": "AutoVend 基于真实售货记录构建模拟器，让单个 LLM Agent 经营分布在五类场所的 20 台自动售货机，持续 180 个模拟日。Agent 通过工具接口选品、定价、采购和安排补货，需要协调共享仓库，并承担配送等待、现场补货、库存过期和日常经营成本。评估以期末净资产为核心，同时分析推理成本、站点协调及经营过程。五个受测模型中，四个低于规则库存控制基线；按单位推理成本衡量收益时，模型排名也会变化。轨迹分析发现，可执行性检查、库存承诺管理和持续修正策略仍有困难。这些结果来自单一环境、每个模型三次运行，尚不能直接推广到真实经营。",
+    "sourceUrl": "https://arxiv.org/abs/2610.36980v1",
+    "sourcePdfUrl": "https://arxiv.org/pdf/2610.36980v1",
+    "codeUrl": null,
+    "citation": "Qiming Shi et al. (2026). AutoVend: Benchmarking LLM Agents on Long-Horizon Autonomous Vending Operations. arXiv:2610.36980v1.",
+    "license": "arXiv non-exclusive distribution",
+    "licenseUrl": "https://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+    "translationScope": "正文第 1–10 页，末页裁去右栏参考文献，保留完整结论；不含附录，译文仅供本地研读",
+    "assets": {},
+    "publicationStatus": "source-only",
+    "publicationNote": "论文当前采用 arXiv 非独占分发许可，尚未确认允许公开分发译文的授权；本站提供研究简介和官方英文原文。"
   }
 ]

@@ -2,6 +2,7 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, test, vi } from "vitest";
 import App from "../src/App.jsx";
+import benchmarkPapers from "../src/data/enterprise-papers.json";
 
 const hash = "a".repeat(64);
 const root = "https://updates.cyunlab.com/research/arxiv-daily/";
@@ -342,12 +343,12 @@ test("the research home provides exactly the daily and benchmark entry points", 
   expect(within(entries).getByRole("link", { name: /企业 Agent Benchmark/ })).toHaveAttribute("href", "/enterprise-agent-benchmark");
 });
 
-test("benchmark route preserves 101 studies, nine categories and mutually exclusive details", async () => {
+test("benchmark route lists the complete catalog, nine categories and mutually exclusive details", async () => {
   const user = userEvent.setup();
   window.history.replaceState(null, "", "/enterprise-agent-benchmark");
   render(<App />);
   await screen.findByRole("heading", { name: "企业 Agent Benchmark", level: 1 });
-  expect(screen.getAllByRole("article")).toHaveLength(101);
+  expect(screen.getAllByRole("article")).toHaveLength(benchmarkPapers.length);
   const filters = screen.getByRole("group", { name: "按标签筛选" });
   expect(within(filters).getAllByRole("button")).toHaveLength(10);
   await user.click(screen.getByRole("button", { name: "展开 WorkArena++ 的论文详情" }));

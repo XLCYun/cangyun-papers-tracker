@@ -54,7 +54,7 @@ Bucket 继续保持 private；新日报 JSON 使用对象级 `public-read`。每
 - `https://research.cyunlab.com/`、`/arxiv-daily`、`/enterprise-agent-benchmark` 均可直接打开、刷新，并有正确的独立 TLS 证书。
 - HTML 为 `no-cache`，抽查构建中的带哈希资源为 `immutable`，不存在的 `/assets/missing.js` 返回 404。
 - OSS `index.json` 与当日不可变 JSON 可匿名读取，日报字节的 SHA-256 与索引一致；分别以研究站和官网 Origin 请求，检查对应的 `Access-Control-Allow-Origin` 和 `Vary: Origin`。
-- 桌面和手机浏览器核对每日日期切换、搜索与英文回退；Benchmark 仍为 101 项、九标签，保留 74 项公共资产与 27 项 source-only，卡片互斥展开。
+- 桌面和手机浏览器核对每日日期切换、搜索与英文回退；Benchmark 条目数与当前目录元数据一致，使用九个业务标签，公开文件与 source-only 条目保持各自入口，卡片互斥展开。
 
 新站通过后才移除官网的研究入口及两条旧研究路径。官网 Nginx 中原研究路径的重定向也须撤掉，让旧路径明确返回 404；官网云景首页和现有产品规则继续使用原配置。
 

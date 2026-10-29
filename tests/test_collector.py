@@ -6,14 +6,14 @@ from datetime import datetime
 import hashlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
-from pathlib import Path
 from threading import Event, Lock, Thread
-import xml.etree.ElementTree as ET
+from urllib.parse import urlsplit
+
+from listing_fixtures import listing_response, listing_page, selected_entries, tagging_listing
 
 import pytest
 
 
-FIXTURES = Path(__file__).parent / "fixtures"
 NOW = datetime.fromisoformat("2026-10-22T13:30:00+08:00")
 
 
@@ -22,42 +22,14 @@ def fixture_configuration(monkeypatch):
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.delenv("OPENAI_THINKING", raising=False)
     monkeypatch.setenv("ARXIV_RETRY_DELAY_SECONDS", "0")
+    monkeypatch.setenv("ARXIV_PAGE_DELAY_SECONDS", "0")
     for name in ("JEV_API_KEY", "JEV_BASE_URL", "JEV_MODEL", "JEV_THRESHOLD", "JEV_RULES_VERSION", "JEV_WORKERS", "JEV_RETRY_ATTEMPTS"):
         monkeypatch.delenv(name, raising=False)
     monkeypatch.setenv("JEV_RETRY_DELAY_SECONDS", "0")
 
 
-def rss_response(*ids):
-    root = ET.parse(FIXTURES / "rss-selected.xml").getroot()
-    channel = root.find("channel")
-    for item in channel.findall("item"):
-        if item.findtext("guid").removeprefix("oai:arXiv.org:") not in ids:
-            channel.remove(item)
-    return ET.tostring(root)
-
-
 def model_response(translations):
     return json.dumps({"choices": [{"message": {"content": json.dumps({"translations": translations}, ensure_ascii=False)}}]}).encode()
-
-
-def tagging_feed(*papers):
-    root = ET.fromstring(rss_response("2610.28637v1"))
-    channel = root.find("channel")
-    original = channel.find("item")
-    channel.remove(original)
-    for position, values in enumerate(papers, 1):
-        item = deepcopy(original)
-        identifier = f"2610.{position:05d}v1"
-        item.find("guid").text = "oai:arXiv.org:" + identifier
-        item.find("link").text = "https://arxiv.org/abs/" + identifier
-        item.find("title").text = values["title"]
-        item.find("description").text = "Abstract: " + values["abstract"]
-        for category in item.findall("category"):
-            item.remove(category)
-        for category in values.get("categories", ["cs.AI"]):
-            ET.SubElement(item, "category").text = category
-        channel.append(item)
-    return ET.tostring(root)
 
 
 def jev_response(scores):
@@ -71,7 +43,7 @@ def jev_response(scores):
 def service(routes):
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
-            route = routes[self.path]
+            route = routes.get(self.path, routes.get(urlsplit(self.path).path, (404, b"unexpected fixture request")))
             status, body = route() if callable(route) else route
             self.send_response(status)
             self.end_headers()
@@ -79,7 +51,7 @@ def service(routes):
 
         def do_POST(self):
             request = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
-            route = routes[self.path]
+            route = routes.get(self.path, routes.get(urlsplit(self.path).path, (404, b"unexpected fixture request")))
             status, body = route(request) if callable(route) else route
             self.send_response(status)
             self.end_headers()
@@ -103,25 +75,26 @@ def test_command_archives_official_metadata_and_english_fallback(tmp_path, monke
     from collector import main
 
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
-    with service({"/rss/cs": (200, rss_response("2610.28637v1"))}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+    with service({"/list/cs/new": (200, listing_response("2610.28637v1"))}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         assert main(["--date", "2026-10-22", "--output-dir", str(tmp_path)], now=NOW) == 0
 
     daily = json.loads((tmp_path / "2026-10-22.json").read_text())
     assert (daily["schemaVersion"], daily["date"], daily["timezone"], daily["fetchedAt"]) == (
         1, "2026-10-22", "Asia/Shanghai", "2026-10-22T13:30:00+08:00"
     )
-    assert daily["source"]["updatedAt"] == "2026-10-22T00:00:00-04:00"
-    assert daily["stats"] == {"fetched": 1, "matched": 1, "translated": 0, "fallback": 1}
+    assert daily["source"]["updatedAt"] is None
+    assert daily["source"]["announcementDate"] == "2026-10-22"
+    assert daily["stats"] == {"fetched": 1, "matched": 1, "translated": 0, "fallback": 1, "duplicates": 0}
     paper = daily["papers"][0]
     assert (paper["id"], paper["authors"], paper["categories"], paper["announceType"]) == (
         "2610.28637v1", ["Dong Liu", "Yanxuan Yu", "Eric Jiang", "Shu Wang", "Ying Nian Wu"],
         ["cs.LG", "cs.DC"], "new"
     )
-    assert paper["primaryCategory"] == ""
+    assert paper["primaryCategory"] == "cs.LG"
     assert paper["affiliations"] == []
     assert paper["updatedAt"] is None
-    assert paper["publishedAt"] == "2026-10-22T00:00:00-04:00"
+    assert paper["publishedAt"] is None
     assert paper["pdfUrl"] == "https://arxiv.org/pdf/2610.28637v1"
     assert paper["htmlUrl"] == "https://arxiv.org/html/2610.28637v1"
     assert paper["title"].startswith("To Keep or Not to Keep:")
@@ -135,7 +108,7 @@ def test_command_archives_official_metadata_and_english_fallback(tmp_path, monke
     assert len(index["days"][0]["sha256"]) == 64
 
 
-def test_command_keeps_only_new_before_translation_and_applies_original_topic_and_category_rules(tmp_path, monkeypatch):
+def test_command_keeps_only_new_and_topics_across_all_cs_categories_before_translation(tmp_path, monkeypatch):
     from collector import main
 
     submitted = []
@@ -145,41 +118,43 @@ def test_command_keeps_only_new_before_translation_and_applies_original_topic_an
         submitted.extend(paper["id"] for paper in papers)
         return 503, b"fixture translation unavailable"
 
-    with service({"/rss/cs": (200, (FIXTURES / "rss-selected.xml").read_bytes()), "/v1/chat/completions": model}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+    with service({"/list/cs/new": (200, listing_response()), "/v1/chat/completions": model}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         monkeypatch.setenv("OPENAI_API_KEY", "fixture-not-a-secret")
         monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
         assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
 
     daily = json.loads((tmp_path / "2026-10-22.json").read_text())
     assert [(paper["id"], paper["announceType"]) for paper in daily["papers"]] == [
-        ("2610.28637v1", "new"),
+        ("2610.28637v1", "new"), ("2610.29003v1", "new"),
     ]
-    assert submitted == ["2610.28637v1"]
-    assert daily["stats"] == {"fetched": 7, "matched": 1, "translated": 0, "fallback": 1}
+    assert submitted == ["2610.28637v1", "2610.29003v1"]
+    assert daily["stats"] == {"fetched": 7, "matched": 2, "translated": 0, "fallback": 2, "duplicates": 0}
 
 
 def test_command_archives_zero_when_only_other_announcement_types_match(tmp_path, monkeypatch):
     from collector import main
 
-    with service({"/rss/cs": (200, rss_response("2609.00755v1", "2106.06060v5", "2608.15900v2"))}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+    with service({"/list/cs/new": (200, listing_response("2609.00755v1", "2106.06060v5", "2608.15900v2"))}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
     daily = json.loads((tmp_path / "2026-10-22.json").read_text())
     assert daily["papers"] == []
-    assert daily["stats"] == {"fetched": 3, "matched": 0, "translated": 0, "fallback": 0}
+    assert daily["stats"] == {"fetched": 3, "matched": 0, "translated": 0, "fallback": 0, "duplicates": 0}
     assert json.loads((tmp_path / "index.json").read_text())["days"][0]["count"] == 0
 
 
 def test_command_refilters_legacy_archive_without_retranslating_or_fetching_source(tmp_path, monkeypatch):
     from collector import main
 
-    with service({"/rss/cs": (200, rss_response("2610.28637v1"))}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+    with service({"/list/cs/new": (200, listing_response("2610.28637v1"))}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
 
     path = tmp_path / "2026-10-22.json"
     legacy = json.loads(path.read_text())
+    legacy["source"] = {"url": "https://rss.arxiv.org/rss/cs", "updatedAt": "2026-10-22T00:00:00-04:00"}
+    legacy["papers"][0]["publishedAt"] = "2026-10-22T00:00:00-04:00"
     kept = legacy["papers"][0]
     kept["translation"] = {"status": "translated", "title": "已成功标题", "abstract": "已成功摘要。", "brief": "已成功总结。"}
     expected = deepcopy(kept)
@@ -204,8 +179,8 @@ def test_command_refilters_legacy_archive_without_retranslating_or_fetching_sour
         requests.append(request)
         return 503, b"translation should not be called"
 
-    with service({"/rss/cs": (503, b"source should not be fetched"), "/v1/chat/completions": unexpected_translation}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+    with service({"/list/cs/new": (503, b"source should not be fetched"), "/v1/chat/completions": unexpected_translation}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         monkeypatch.setenv("OPENAI_API_KEY", "fixture-not-a-secret")
         monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
         assert main(["--date", "2026-10-22", "--output-dir", str(tmp_path)], now=NOW) == 0
@@ -227,10 +202,10 @@ def test_command_publishes_compatible_model_translation_without_losing_originals
         "id": "2610.28637v1", "chinese_title": "缓存保留研究", "chinese_summary": "示例译文。", "brief_summary": "针对缓存问题，通过学习方法选择保留内容。"
     }]}, ensure_ascii=False)}}]}
     with service({
-        "/rss/cs": (200, rss_response("2610.28637v1")),
+        "/list/cs/new": (200, listing_response("2610.28637v1")),
         "/v1/chat/completions": (200, json.dumps(model_response).encode()),
     }) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         monkeypatch.setenv("OPENAI_API_KEY", "fixture-not-a-secret")
         monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
         monkeypatch.setenv("OPENAI_MODEL", "fixture-model")
@@ -241,7 +216,7 @@ def test_command_publishes_compatible_model_translation_without_losing_originals
         "status": "translated", "title": "缓存保留研究", "abstract": "示例译文。", "brief": "针对缓存问题，通过学习方法选择保留内容。"
     }
     assert daily["papers"][0]["abstract"].startswith("Disaggregated")
-    assert daily["stats"] == {"fetched": 1, "matched": 1, "translated": 1, "fallback": 0}
+    assert daily["stats"] == {"fetched": 1, "matched": 1, "translated": 1, "fallback": 0, "duplicates": 0}
 
 
 def test_command_replays_archived_day_without_fetching_current_feed_or_retranslating_success(tmp_path, monkeypatch):
@@ -249,12 +224,9 @@ def test_command_replays_archived_day_without_fetching_current_feed_or_retransla
 
     first_translation = {"id": "2610.28637v1", "chinese_title": "已成功标题", "chinese_summary": "已成功摘要。", "brief_summary": "已成功总结。"}
     retry_translation = {"id": "2610.29003v1", "chinese_title": "补译标题", "chinese_summary": "补译摘要。", "brief_summary": "补译总结。"}
-    feed = ET.fromstring(rss_response("2610.28637v1", "2610.29003v1"))
-    for item in feed.find("channel").findall("item"):
-        if item.findtext("guid").endswith("2610.29003v1"):
-            item.find("category").text = "cs.LG"
-    with service({"/rss/cs": (200, ET.tostring(feed)), "/v1/chat/completions": (200, model_response([first_translation]))}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+    feed = listing_response("2610.28637v1", "2610.29003v1")
+    with service({"/list/cs/new": (200, feed), "/v1/chat/completions": (200, model_response([first_translation]))}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
         monkeypatch.setenv("OPENAI_API_KEY", "fixture-not-a-secret")
         assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
@@ -265,61 +237,54 @@ def test_command_replays_archived_day_without_fetching_current_feed_or_retransla
             return 400, b"unexpected repeat translation"
         return 200, model_response([retry_translation])
 
-    with service({"/rss/cs": (503, b"unavailable"), "/v1/chat/completions": retry_model}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+    with service({"/list/cs/new": (503, b"unavailable"), "/v1/chat/completions": retry_model}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
         assert main(["--date", "2026-10-22", "--output-dir", str(tmp_path)], now=datetime.fromisoformat("2026-10-23T13:30:00+08:00")) == 0
 
     daily = json.loads((tmp_path / "2026-10-22.json").read_text())
-    assert daily["source"]["url"] != origin + "/rss/cs"
+    assert daily["source"]["url"] != origin + "/list/cs/new"
     assert daily["fetchedAt"] == "2026-10-22T13:30:00+08:00"
-    assert daily["source"]["updatedAt"] == "2026-10-22T00:00:00-04:00"
+    assert daily["source"]["updatedAt"] is None
+    assert daily["source"]["announcementDate"] == "2026-10-22"
     assert json.loads((tmp_path / "index.json").read_text())["updatedAt"] == "2026-10-23T13:30:00+08:00"
     assert [(paper["translation"]["status"], paper["translation"]["title"]) for paper in daily["papers"]] == [("translated", "已成功标题"), ("translated", "补译标题")]
-    assert daily["stats"] == {"fetched": 2, "matched": 2, "translated": 2, "fallback": 0}
+    assert daily["stats"] == {"fetched": 2, "matched": 2, "translated": 2, "fallback": 0, "duplicates": 0}
 
 
 def test_command_refuses_to_label_the_current_feed_as_missing_history(tmp_path, monkeypatch):
     from collector import main
 
-    with service({"/rss/cs": (200, rss_response("2610.28637v1"))}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+    with service({"/list/cs/new": (200, listing_response("2610.28637v1"))}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         assert main(["--date", "2026-10-21", "--output-dir", str(tmp_path)], now=NOW) == 1
     assert list(tmp_path.iterdir()) == []
 
 
-@pytest.mark.parametrize("batch_date,exit_code", [("22 Oct 2026", 0), ("21 Oct 2026", 1)])
-def test_command_archives_zero_only_when_the_empty_batch_belongs_to_today(tmp_path, monkeypatch, batch_date, exit_code):
+@pytest.mark.parametrize("batch_date", ["2026-10-22", "2026-10-21"])
+def test_command_refuses_empty_or_stale_weekday_sources(tmp_path, monkeypatch, batch_date):
     from collector import main
 
-    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
-    content = (FIXTURES / "rss-empty.xml").read_bytes().replace(b"22 Oct 2026", batch_date.encode())
-    with service({"/rss/cs": (200, content)}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
-        assert main(["--output-dir", str(tmp_path)], now=NOW) == exit_code
-    if exit_code:
-        assert list(tmp_path.iterdir()) == []
-    else:
-        daily = json.loads((tmp_path / "2026-10-22.json").read_text())
-        assert daily["papers"] == []
-        assert daily["stats"] == {"fetched": 0, "matched": 0, "translated": 0, "fallback": 0}
-        assert json.loads((tmp_path / "index.json").read_text())["days"][0]["count"] == 0
+    with service({"/list/cs/new": (200, listing_page([], day=batch_date))}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
+        assert main(["--output-dir", str(tmp_path)], now=NOW) == 1
+    assert list(tmp_path.iterdir()) == []
 
 
 @pytest.mark.parametrize("response", [
-    b"<rss><channel>",
+    b"<html><body><dl id='articles'>",
     b"<html><body>rate limit</body></html>",
     b'<feed xmlns="http://www.w3.org/2005/Atom"><entry><id>error</id></entry></feed>',
-    rss_response("2610.28637v1").replace(b"<title>To Keep or Not to Keep: Learning KV Cache Retention in Disaggregated LLM Serving Systems</title>", b"<title/>"),
-    rss_response("2610.28637v1").replace(b"<category>cs.LG</category>", b"").replace(b"<category>cs.DC</category>", b""),
-], ids=["truncated-xml", "html-challenge", "atom-error", "missing-title", "missing-categories"])
+    listing_response("2610.28637v1").replace(b"To Keep or Not to Keep: Learning KV Cache Retention in Disaggregated LLM Serving Systems", b""),
+    listing_response("2610.28637v1").replace(b"(cs.LG)", b"").replace(b"(cs.DC)", b""),
+], ids=["truncated-html", "html-challenge", "atom-error", "missing-title", "missing-categories"])
 def test_command_rejects_invalid_source_without_changing_the_last_valid_index(tmp_path, monkeypatch, response):
     from collector import main
 
     previous = b'{"schemaVersion":1,"updatedAt":null,"days":[]}\n'
     (tmp_path / "index.json").write_bytes(previous)
-    with service({"/rss/cs": (200, response)}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+    with service({"/list/cs/new": (200, response)}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         assert main(["--output-dir", str(tmp_path)], now=NOW) == 1
     assert (tmp_path / "index.json").read_bytes() == previous
     assert not (tmp_path / "2026-10-22.json").exists()
@@ -328,34 +293,13 @@ def test_command_rejects_invalid_source_without_changing_the_last_valid_index(tm
 def test_command_retries_a_transient_source_limit_then_archives_the_complete_batch(tmp_path, monkeypatch):
     from collector import main
 
-    responses = iter([(429, b"temporarily limited"), (200, rss_response("2610.28637v1"))])
-    with service({"/rss/cs": lambda: next(responses)}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+    responses = iter([(429, b"temporarily limited"), (200, listing_response("2610.28637v1")), (200, listing_response("2610.28637v1"))])
+    with service({"/list/cs/new": lambda: next(responses)}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         monkeypatch.setenv("ARXIV_RETRY_DELAY_SECONDS", "0")
         monkeypatch.delenv("OPENAI_API_KEY", raising=False)
         assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
     assert json.loads((tmp_path / "2026-10-22.json").read_text())["stats"]["matched"] == 1
-
-
-def test_command_splits_a_possibly_truncated_archive_feed_into_complete_categories(tmp_path, monkeypatch):
-    from collector import main
-
-    from copy import deepcopy
-    root = ET.fromstring(rss_response("2610.28637v1"))
-    channel = root.find("channel")
-    item = channel.find("item")
-    for _ in range(1999):
-        channel.append(deepcopy(item))
-    categories = json.loads((Path(__file__).parents[1] / "collector/categories.json").read_text())["categories"]
-    routes = {f"/rss/{category['code']}": (200, (FIXTURES / "rss-empty.xml").read_bytes()) for category in categories if category["enabled"]}
-    routes["/rss/cs"] = (200, ET.tostring(root))
-    routes["/rss/cs.LG"] = (200, rss_response("2610.28637v1"))
-    with service(routes) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
-        assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
-    daily = json.loads((tmp_path / "2026-10-22.json").read_text())
-    assert [paper["id"] for paper in daily["papers"]] == ["2610.28637v1"]
-    assert daily["stats"]["fetched"] == 1
 
 
 @pytest.mark.parametrize("status,response", [
@@ -367,8 +311,8 @@ def test_command_splits_a_possibly_truncated_archive_feed_into_complete_categori
 def test_translation_failures_keep_complete_english_without_publishing_provider_details(tmp_path, monkeypatch, capsys, status, response):
     from collector import main
 
-    with service({"/rss/cs": (200, rss_response("2610.28637v1")), "/v1/chat/completions": (status, response)}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+    with service({"/list/cs/new": (200, listing_response("2610.28637v1")), "/v1/chat/completions": (status, response)}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         monkeypatch.setenv("OPENAI_API_KEY", "fixture-not-a-secret")
         monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
         assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
@@ -385,8 +329,8 @@ def test_permanent_source_failure_keeps_existing_index_and_logs_only_safe_status
 
     previous = b'{"schemaVersion":1,"updatedAt":null,"days":[]}\n'
     (tmp_path / "index.json").write_bytes(previous)
-    with service({"/rss/cs": (503, b'private upstream response')}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+    with service({"/list/cs/new": (503, b'private upstream response')}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         assert main(["--output-dir", str(tmp_path)], now=NOW) == 1
     assert (tmp_path / "index.json").read_bytes() == previous
     assert not (tmp_path / "2026-10-22.json").exists()
@@ -399,8 +343,8 @@ def test_permanent_source_failure_keeps_existing_index_and_logs_only_safe_status
 def test_command_does_not_overwrite_an_invalid_archived_source(tmp_path, monkeypatch, defect):
     from collector import main
 
-    with service({"/rss/cs": (200, rss_response("2610.28637v1"))}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+    with service({"/list/cs/new": (200, listing_response("2610.28637v1"))}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
     path = tmp_path / "2026-10-22.json"
     daily = json.loads(path.read_text())
@@ -420,40 +364,6 @@ def test_command_does_not_overwrite_an_invalid_archived_source(tmp_path, monkeyp
     assert (tmp_path / "index.json").read_bytes() == index
 
 
-def test_command_refuses_a_category_that_still_reaches_the_source_limit(tmp_path, monkeypatch):
-    from collector import main
-    from copy import deepcopy
-
-    root = ET.fromstring(rss_response("2610.28637v1"))
-    channel = root.find("channel")
-    item = channel.find("item")
-    for _ in range(1999):
-        channel.append(deepcopy(item))
-    capped = ET.tostring(root)
-    with service({"/rss/cs": (200, capped), "/rss/cs.AI": (200, capped)}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
-        assert main(["--output-dir", str(tmp_path)], now=NOW) == 1
-    assert list(tmp_path.iterdir()) == []
-
-
-def test_command_deduplicates_only_identical_versions_in_the_current_batch(tmp_path, monkeypatch):
-    from collector import main
-    from copy import deepcopy
-
-    root = ET.fromstring(rss_response("2610.28637v1"))
-    channel = root.find("channel")
-    item = channel.find("item")
-    channel.append(deepcopy(item))
-    version_two = deepcopy(item)
-    version_two.find("guid").text = "oai:arXiv.org:2610.28637v2"
-    channel.append(version_two)
-    with service({"/rss/cs": (200, ET.tostring(root))}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
-        assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
-    daily = json.loads((tmp_path / "2026-10-22.json").read_text())
-    assert [paper["id"] for paper in daily["papers"]] == ["2610.28637v1", "2610.28637v2"]
-
-
 def test_command_can_disable_provider_thinking_when_explicitly_configured(tmp_path, monkeypatch):
     from collector import main
 
@@ -462,8 +372,8 @@ def test_command_can_disable_provider_thinking_when_explicitly_configured(tmp_pa
             return 400, b"thinking flag required by fixture"
         return 200, model_response([{"id": "2610.28637v1", "chinese_title": "配置成功", "chinese_summary": "示例摘要。", "brief_summary": "示例总结。"}])
 
-    with service({"/rss/cs": (200, rss_response("2610.28637v1")), "/v1/chat/completions": model}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+    with service({"/list/cs/new": (200, listing_response("2610.28637v1")), "/v1/chat/completions": model}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         monkeypatch.setenv("OPENAI_API_KEY", "fixture-not-a-secret")
         monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
         monkeypatch.setenv("OPENAI_THINKING", "disabled")
@@ -476,13 +386,13 @@ def test_command_can_disable_provider_thinking_when_explicitly_configured(tmp_pa
 def test_command_adds_independent_rule_tags_without_a_jev_credential(tmp_path, monkeypatch):
     from collector import main
 
-    feed = tagging_feed(
+    feed = tagging_listing(
         {"title": "LLM-assisted experiments", "abstract": "Scientific tooling.", "categories": ["cs.SE", "cs.AI"]},
         {"title": "Agentic memory", "abstract": "Runtime controls."},
         {"title": "LLMs and Agents", "abstract": "Development studies.", "categories": ["cs.SE"]},
     )
-    with service({"/rss/cs": (200, feed)}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+    with service({"/list/cs/new": (200, feed)}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
     daily = json.loads((tmp_path / "2026-10-22.json").read_text())
     assert [paper["tags"] for paper in daily["papers"]] == [["LLM", "软件工程"], ["Agent"], ["LLM", "Agent", "软件工程"]]
@@ -492,7 +402,7 @@ def test_command_adds_independent_rule_tags_without_a_jev_credential(tmp_path, m
             "threshold": 0.7, "inputSha256": paper["tagging"]["inputSha256"], "scores": {},
         }
         assert len(paper["tagging"]["inputSha256"]) == 64
-    assert daily["stats"] == {"fetched": 3, "matched": 3, "translated": 0, "fallback": 3}
+    assert daily["stats"] == {"fetched": 3, "matched": 3, "translated": 0, "fallback": 3, "duplicates": 0}
 
 
 @pytest.mark.parametrize("scores,expected", [
@@ -517,9 +427,9 @@ def test_command_adds_six_independent_jev_labels_even_when_translation_fails(tmp
         return 200, jev_response(scores)
 
     metadata = {"title": "LLM Agents for research", "abstract": "Original English input.", "categories": ["cs.SE"]}
-    with service({"/rss/cs": (200, tagging_feed(metadata)), "/typesafe/v1/systemone": jev,
+    with service({"/list/cs/new": (200, tagging_listing(metadata)), "/typesafe/v1/systemone": jev,
                   "/v1/chat/completions": (503, b"translation temporarily unavailable")}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         monkeypatch.setenv("OPENAI_API_KEY", "translation-fixture-not-a-secret")
         monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
         monkeypatch.setenv("JEV_API_KEY", "tagging-fixture-not-a-secret")
@@ -554,9 +464,9 @@ def test_command_reuses_tagged_papers_and_only_retries_failed_tagging_without_re
             return 200, b'{"answers":{}}'
         return 200, jev_response({"ai4s": 0, "codingagent": 0, "agentops": 0, "agentharness": 0, "enterprise_agent": 0})
 
-    with service({"/rss/cs": (200, tagging_feed(*[{"title": title, "abstract": "English input."} for title in titles])),
+    with service({"/list/cs/new": (200, tagging_listing(*[{"title": title, "abstract": "English input."} for title in titles])),
                   "/typesafe/v1/systemone": initial_jev, "/v1/chat/completions": (200, model_response(translated))}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         monkeypatch.setenv("OPENAI_API_KEY", "translation-fixture-not-a-secret")
         monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
         monkeypatch.setenv("JEV_API_KEY", "tagging-fixture-not-a-secret")
@@ -575,9 +485,9 @@ def test_command_reuses_tagged_papers_and_only_retries_failed_tagging_without_re
         translation_requests.append(request)
         return 503, b"must reuse translations"
 
-    with service({"/rss/cs": (503, b"must not fetch current source"), "/typesafe/v1/systemone": retry_jev,
+    with service({"/list/cs/new": (503, b"must not fetch current source"), "/typesafe/v1/systemone": retry_jev,
                   "/v1/chat/completions": unexpected_translation}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
         monkeypatch.setenv("JEV_BASE_URL", origin + "/typesafe/v1")
         assert main(["--date", "2026-10-22", "--output-dir", str(tmp_path)],
@@ -606,8 +516,8 @@ def test_command_retries_a_transient_jev_error_before_archiving_success(tmp_path
             return 503, b"private provider body: tagging-fixture-not-a-secret"
         return 200, jev_response({"ai4s": 0, "codingagent": 1, "agentops": 0, "agentharness": 0, "enterprise_agent": 0})
 
-    with service({"/rss/cs": (200, rss_response("2610.28637v1")), "/typesafe/v1/systemone": jev}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+    with service({"/list/cs/new": (200, listing_response("2610.28637v1")), "/typesafe/v1/systemone": jev}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         monkeypatch.setenv("JEV_API_KEY", "tagging-fixture-not-a-secret")
         monkeypatch.setenv("JEV_BASE_URL", origin + "/typesafe/v1")
         assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
@@ -633,9 +543,9 @@ def test_command_stops_global_jev_failures_but_finishes_translation_and_safe_rul
             "id": f"2610.{position:05d}v1", "chinese_title": "成功标题", "chinese_summary": "成功摘要。", "brief_summary": "成功总结。"
         } for position in (1, 2, 3)])
 
-    with service({"/rss/cs": (200, tagging_feed(*[{"title": f"LLM Agent {position}", "abstract": "English input."} for position in (1, 2, 3)])),
+    with service({"/list/cs/new": (200, tagging_listing(*[{"title": f"LLM Agent {position}", "abstract": "English input."} for position in (1, 2, 3)])),
                   "/typesafe/v1/systemone": jev, "/v1/chat/completions": translate}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         monkeypatch.setenv("OPENAI_API_KEY", "translation-fixture-not-a-secret")
         monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
         monkeypatch.setenv("JEV_API_KEY", "tagging-fixture-not-a-secret")
@@ -645,7 +555,7 @@ def test_command_stops_global_jev_failures_but_finishes_translation_and_safe_rul
     daily = json.loads(content)
     assert len(tagging_requests) == expected_calls
     assert len(translation_requests) == 1
-    assert daily["stats"] == {"fetched": 3, "matched": 3, "translated": 3, "fallback": 0}
+    assert daily["stats"] == {"fetched": 3, "matched": 3, "translated": 3, "fallback": 0, "duplicates": 0}
     assert all(paper["tags"] == ["LLM", "Agent"] and paper["tagging"]["status"] == "fallback" and paper["tagging"]["scores"] == {} for paper in daily["papers"])
     output = capsys.readouterr()
     assert "private provider body" not in content + output.out + output.err
@@ -664,9 +574,9 @@ def test_command_archives_a_bulk_day_after_exhausted_jev_service_failures_withou
             return 200, jev_response({"ai4s": 0, "codingagent": 1, "agentops": 0, "agentharness": 0, "enterprise_agent": 0})
         return 503, b"fixture service unavailable"
 
-    feed = tagging_feed(*[{"title": f"LLM Agent {position}", "abstract": "English input."} for position in range(208)])
-    with service({"/rss/cs": (200, feed), "/typesafe/v1/systemone": jev}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+    feed = tagging_listing(*[{"title": f"LLM Agent {position}", "abstract": "English input."} for position in range(208)])
+    with service({"/list/cs/new": (200, feed), "/typesafe/v1/systemone": jev}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         monkeypatch.setenv("JEV_API_KEY", "tagging-fixture-not-a-secret")
         monkeypatch.setenv("JEV_BASE_URL", origin + "/typesafe/v1")
         monkeypatch.setenv("JEV_WORKERS", "1")
@@ -674,7 +584,7 @@ def test_command_archives_a_bulk_day_after_exhausted_jev_service_failures_withou
 
     daily = json.loads((tmp_path / "2026-10-22.json").read_text())
     assert calls == ["LLM Agent 0", "LLM Agent 1", "LLM Agent 1", "LLM Agent 1"]
-    assert daily["stats"] == {"fetched": 208, "matched": 208, "translated": 0, "fallback": 208}
+    assert daily["stats"] == {"fetched": 208, "matched": 208, "translated": 0, "fallback": 208, "duplicates": 0}
     assert daily["papers"][0]["tags"] == ["LLM", "Agent", "CodingAgent"]
     assert daily["papers"][0]["tagging"]["status"] == "tagged"
     assert all(paper["tags"] == ["LLM", "Agent"] and paper["tagging"]["status"] == "fallback"
@@ -696,8 +606,8 @@ def test_command_invalidates_successful_tag_cache_when_configuration_or_english_
 
     metadata = {"title": "LLM Agent original", "abstract": "Original input.", "categories": ["cs.AI"]}
     path = tmp_path / "2026-10-22.json"
-    with service({"/rss/cs": (200, tagging_feed(metadata)), "/typesafe/v1/systemone": jev}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+    with service({"/list/cs/new": (200, tagging_listing(metadata)), "/typesafe/v1/systemone": jev}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         monkeypatch.setenv("JEV_API_KEY", "tagging-fixture-not-a-secret")
         monkeypatch.setenv("JEV_BASE_URL", origin + "/typesafe/v1")
         if change == "rulesVersion":
@@ -746,8 +656,8 @@ def test_command_invalidates_successful_tag_cache_when_configuration_or_english_
 def test_command_backfills_legacy_untagged_archive_without_fetching_or_retranslating(tmp_path, monkeypatch):
     from collector import main
 
-    with service({"/rss/cs": (200, rss_response("2610.28637v1"))}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+    with service({"/list/cs/new": (200, listing_response("2610.28637v1"))}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
     path = tmp_path / "2026-10-22.json"
     legacy = json.loads(path.read_text())
@@ -763,9 +673,9 @@ def test_command_backfills_legacy_untagged_archive_without_fetching_or_retransla
         requests.append(request)
         return 200, jev_response({"ai4s": 0, "codingagent": 0, "agentops": 0, "agentharness": 0, "enterprise_agent": 0})
 
-    with service({"/rss/cs": (503, b"must not fetch"), "/v1/chat/completions": (503, b"must not translate"),
+    with service({"/list/cs/new": (503, b"must not fetch"), "/v1/chat/completions": (503, b"must not translate"),
                   "/typesafe/v1/systemone": jev}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         monkeypatch.setenv("OPENAI_API_KEY", "translation-fixture-not-a-secret")
         monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
         monkeypatch.setenv("JEV_API_KEY", "tagging-fixture-not-a-secret")
@@ -789,10 +699,10 @@ def test_command_never_implicitly_uses_translation_credentials_for_jev(tmp_path,
         requests.append(request)
         return 403, b"must not share implicit credentials"
 
-    with service({"/rss/cs": (200, rss_response("2610.28637v1")), "/typesafe/v1/systemone": unexpected_jev,
+    with service({"/list/cs/new": (200, listing_response("2610.28637v1")), "/typesafe/v1/systemone": unexpected_jev,
                   "/v1/chat/completions": (200, model_response([{"id": "2610.28637v1", "chinese_title": "成功标题",
                                                                "chinese_summary": "成功摘要。", "brief_summary": "成功总结。"}]))}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         monkeypatch.setenv("OPENAI_API_KEY", "translation-fixture-not-a-secret")
         monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
         monkeypatch.setenv("JEV_BASE_URL", origin + "/typesafe/v1")
@@ -823,8 +733,8 @@ def test_command_does_not_mark_malformed_jev_responses_as_success_or_publish_pro
         calls.append(request)
         return 200, body
 
-    with service({"/rss/cs": (200, rss_response("2610.28637v1")), "/typesafe/v1/systemone": jev}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+    with service({"/list/cs/new": (200, listing_response("2610.28637v1")), "/typesafe/v1/systemone": jev}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         monkeypatch.setenv("JEV_API_KEY", "tagging-fixture-not-a-secret")
         monkeypatch.setenv("JEV_BASE_URL", origin + "/typesafe/v1")
         assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
@@ -860,9 +770,9 @@ def test_command_honors_the_jev_concurrency_limit_after_the_initial_health_reque
             state["active"] -= 1
         return 200, response
 
-    feed = tagging_feed(*[{"title": f"LLM Agent {position}", "abstract": "English input."} for position in range(5)])
-    with service({"/rss/cs": (200, feed), "/typesafe/v1/systemone": jev}) as origin:
-        monkeypatch.setenv("ARXIV_FEED_URL", origin + "/rss/cs")
+    feed = tagging_listing(*[{"title": f"LLM Agent {position}", "abstract": "English input."} for position in range(5)])
+    with service({"/list/cs/new": (200, feed), "/typesafe/v1/systemone": jev}) as origin:
+        monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         monkeypatch.setenv("JEV_API_KEY", "tagging-fixture-not-a-secret")
         monkeypatch.setenv("JEV_BASE_URL", origin + "/typesafe/v1")
         monkeypatch.setenv("JEV_WORKERS", "2")

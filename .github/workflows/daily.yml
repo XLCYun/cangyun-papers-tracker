@@ -90,7 +90,7 @@ jobs:
         env:
           DAILY_DATE: ${{ steps.date.outputs.date }}
         run: uv run --locked python -m collector.publish --date "$DAILY_DATE" --data-dir data/arxiv-daily --check
-      - name: Record translation and tagging counts
+      - name: Record source, deduplication, translation, and tagging counts
         if: always() && steps.collect.outcome == 'success'
         env:
           DAILY_DATE: ${{ steps.date.outputs.date }}
@@ -102,16 +102,23 @@ jobs:
           day = os.environ['DAILY_DATE']
           daily = json.loads(Path(f'data/arxiv-daily/{day}.json').read_text())
           stats = daily['stats']
+          source_kind = {
+              'cs-announcement-list': 'CS announcement listing',
+              'announcement-schedule': 'Scheduled weekend',
+              'legacy-rss': 'Legacy RSS archive',
+          }.get(daily['source'].get('kind', 'legacy-rss'), 'Unknown source')
+          duplicates = stats.get('duplicates', 0)
           tagging_statuses = [paper.get('tagging', {}).get('status') for paper in daily['papers']]
           tagged = tagging_statuses.count('tagged')
           tagging_fallback = tagging_statuses.count('fallback')
           untagged = tagging_statuses.count(None)
-          message = f"{day}: fetched={stats['fetched']}, matched={stats['matched']}, translated={stats['translated']}, fallback={stats['fallback']}"
+          message = f"{day}: source={source_kind}, fetched={stats['fetched']}, duplicates={duplicates}, matched={stats['matched']}, translated={stats['translated']}, fallback={stats['fallback']}"
           print(f'{message}, tagged={tagged}, tagging_fallback={tagging_fallback}, untagged={untagged}')
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
               summary.write(f'## arXiv daily {day}\n\n')
-              summary.write('| Fetched | Matched | Translated | English fallback |\n| --- | --- | --- | --- |\n')
-              summary.write(f"| {stats['fetched']} | {stats['matched']} | {stats['translated']} | {stats['fallback']} |\n\n")
+              summary.write(f'Source: {source_kind}. Duplicate window: preceding seven calendar dates.\n\n')
+              summary.write('| Fetched | Duplicates removed | Matched | Translated | English fallback |\n| --- | --- | --- | --- | --- |\n')
+              summary.write(f"| {stats['fetched']} | {duplicates} | {stats['matched']} | {stats['translated']} | {stats['fallback']} |\n\n")
               summary.write('| Jev tagged | Rule tags only | Not yet tagged (legacy) |\n| --- | --- | --- |\n')
               summary.write(f'| {tagged} | {tagging_fallback} | {untagged} |\n\n')
           if stats['fallback']:

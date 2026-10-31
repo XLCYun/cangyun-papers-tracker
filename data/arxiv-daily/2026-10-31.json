@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-31",
+  "timezone": "Asia/Shanghai",
+  "fetchedAt": "2026-10-31T13:31:39.120137+08:00",
+  "source": {
+    "kind": "announcement-schedule",
+    "url": "https://info.arxiv.org/help/availability.html#announcement-schedule",
+    "reason": "weekend",
+    "updatedAt": null
+  },
+  "stats": {
+    "fetched": 0,
+    "matched": 0,
+    "translated": 0,
+    "fallback": 0,
+    "duplicates": 0
+  },
+  "papers": []
+}

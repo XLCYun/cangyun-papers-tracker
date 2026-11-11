@@ -115,7 +115,7 @@ def test_command_keeps_only_new_and_topics_across_all_cs_categories_before_trans
 
     def model(request):
         papers = json.loads(request["messages"][1]["content"].split("论文资料：\n", 1)[1])
-        submitted.extend(paper["id"] for paper in papers)
+        submitted.extend(papers)
         return 503, b"fixture translation unavailable"
 
     with service({"/list/cs/new": (200, listing_response()), "/v1/chat/completions": model}) as origin:
@@ -128,7 +128,10 @@ def test_command_keeps_only_new_and_topics_across_all_cs_categories_before_trans
     assert [(paper["id"], paper["announceType"]) for paper in daily["papers"]] == [
         ("2610.28637v1", "new"), ("2610.29003v1", "new"),
     ]
-    assert submitted == ["2610.28637v1", "2610.29003v1"]
+    assert submitted == [
+        {"id": f"paper_{number}", "title": paper["title"], "abstract": paper["abstract"]}
+        for number, paper in enumerate(daily["papers"], 1)
+    ]
     assert daily["stats"] == {"fetched": 7, "matched": 2, "translated": 0, "fallback": 2, "duplicates": 0}
 
 
@@ -195,15 +198,31 @@ def test_command_refilters_legacy_archive_without_retranslating_or_fetching_sour
     assert entry["count"] == 1 and entry["sha256"] == hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def test_command_publishes_compatible_model_translation_without_losing_originals(tmp_path, monkeypatch):
+def test_command_maps_translation_batch_keys_to_original_ids(tmp_path, monkeypatch):
     from collector import main
 
-    model_response = {"choices": [{"message": {"content": json.dumps({"translations": [{
-        "id": "2610.28637v1", "chinese_title": "缓存保留研究", "chinese_summary": "示例译文。", "brief_summary": "针对缓存问题，通过学习方法选择保留内容。"
-    }]}, ensure_ascii=False)}}]}
+    identifiers = ["2610.28630", "2610.29003"]
+    papers = [
+        {"id": identifier, "title": f"LLM study {number}", "abstract": f"English abstract {number}."}
+        for number, identifier in enumerate(identifiers, 1)
+    ]
+    submitted_keys = []
+
+    def model(request):
+        batch = json.loads(request["messages"][1]["content"].split("论文资料：\n", 1)[1])
+        submitted_keys.extend(paper["id"] for paper in batch)
+        replies = []
+        for number, paper in enumerate(batch, 1):
+            key = paper["id"]
+            # Simulate a provider turning a decimal-looking identifier into a JSON number.
+            replies.append({"id": float(key) if key.replace(".", "", 1).isdigit() else key,
+                            "chinese_title": f"研究标题 {number}", "chinese_summary": f"中文摘要 {number}",
+                            "brief_summary": f"一句话总结 {number}"})
+        return 200, model_response(list(reversed(replies)))
+
     with service({
-        "/list/cs/new": (200, listing_response("2610.28637v1")),
-        "/v1/chat/completions": (200, json.dumps(model_response).encode()),
+        "/list/cs/new": (200, tagging_listing(*papers)),
+        "/v1/chat/completions": model,
     }) as origin:
         monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         monkeypatch.setenv("OPENAI_API_KEY", "fixture-not-a-secret")
@@ -212,28 +231,31 @@ def test_command_publishes_compatible_model_translation_without_losing_originals
         assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
 
     daily = json.loads((tmp_path / "2026-10-22.json").read_text())
-    assert daily["papers"][0]["translation"] == {
-        "status": "translated", "title": "缓存保留研究", "abstract": "示例译文。", "brief": "针对缓存问题，通过学习方法选择保留内容。"
-    }
-    assert daily["papers"][0]["abstract"].startswith("Disaggregated")
-    assert daily["stats"] == {"fetched": 1, "matched": 1, "translated": 1, "fallback": 0, "duplicates": 0}
+    assert daily["stats"] == {"fetched": 2, "matched": 2, "translated": 2, "fallback": 0, "duplicates": 0}
+    assert submitted_keys == ["paper_1", "paper_2"]
+    for number, (paper, original) in enumerate(zip(daily["papers"], papers, strict=True), 1):
+        assert {field: paper[field] for field in original} == original
+        assert paper["translation"] == {"status": "translated", "title": f"研究标题 {number}",
+                                        "abstract": f"中文摘要 {number}", "brief": f"一句话总结 {number}"}
 
 
-def test_command_replays_archived_day_without_fetching_current_feed_or_retranslating_success(tmp_path, monkeypatch):
+def test_command_replays_archived_day_without_fetching_current_feed_or_retranslating_success(tmp_path, monkeypatch, capsys):
     from collector import main
 
-    first_translation = {"id": "2610.28637v1", "chinese_title": "已成功标题", "chinese_summary": "已成功摘要。", "brief_summary": "已成功总结。"}
-    retry_translation = {"id": "2610.29003v1", "chinese_title": "补译标题", "chinese_summary": "补译摘要。", "brief_summary": "补译总结。"}
-    feed = listing_response("2610.28637v1", "2610.29003v1")
+    first_translation = {"id": "paper_1", "chinese_title": "已成功标题", "chinese_summary": "已成功摘要。", "brief_summary": "已成功总结。"}
+    retry_translation = {"id": "paper_1", "chinese_title": "补译标题", "chinese_summary": "补译摘要。", "brief_summary": "补译总结。"}
+    entries = selected_entries("2610.28637v1", "2610.29003v1")
+    feed = listing_page(entries)
     with service({"/list/cs/new": (200, feed), "/v1/chat/completions": (200, model_response([first_translation]))}) as origin:
         monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         monkeypatch.setenv("OPENAI_BASE_URL", origin + "/v1")
         monkeypatch.setenv("OPENAI_API_KEY", "fixture-not-a-secret")
         assert main(["--output-dir", str(tmp_path)], now=NOW) == 0
+    assert "Translation response incomplete (unknown): 1/2 accepted, 0 invalid batch keys." in capsys.readouterr().err
 
     def retry_model(request):
         submitted = json.loads(request["messages"][1]["content"].split("论文资料：\n", 1)[1])
-        if [paper["id"] for paper in submitted] != ["2610.29003v1"]:
+        if submitted != [{"id": "paper_1", "title": entries[1]["title"], "abstract": entries[1]["abstract"]}]:
             return 400, b"unexpected repeat translation"
         return 200, model_response([retry_translation])
 
@@ -306,7 +328,7 @@ def test_command_retries_a_transient_source_limit_then_archives_the_complete_bat
     (402, b'private provider body: fixture-not-a-secret'),
     (429, b'private provider body: fixture-not-a-secret'),
     (200, b'{"choices":[]}'),
-    (200, model_response([{"id": "2610.28637v1", "chinese_title": "missing fields"}])),
+    (200, model_response([{"id": "paper_1", "chinese_title": "missing fields"}])),
 ], ids=["balance", "rate-limit", "invalid-response", "incomplete-translation"])
 def test_translation_failures_keep_complete_english_without_publishing_provider_details(tmp_path, monkeypatch, capsys, status, response):
     from collector import main
@@ -370,7 +392,7 @@ def test_command_can_disable_provider_thinking_when_explicitly_configured(tmp_pa
     def model(request):
         if request.get("thinking") != {"type": "disabled"}:
             return 400, b"thinking flag required by fixture"
-        return 200, model_response([{"id": "2610.28637v1", "chinese_title": "配置成功", "chinese_summary": "示例摘要。", "brief_summary": "示例总结。"}])
+        return 200, model_response([{"id": "paper_1", "chinese_title": "配置成功", "chinese_summary": "示例摘要。", "brief_summary": "示例总结。"}])
 
     with service({"/list/cs/new": (200, listing_response("2610.28637v1")), "/v1/chat/completions": model}) as origin:
         monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
@@ -456,7 +478,7 @@ def test_command_reuses_tagged_papers_and_only_retries_failed_tagging_without_re
     from collector import main
 
     titles = ["LLM Agent first", "LLM Agent retry"]
-    translated = [{"id": f"2610.{position:05d}v1", "chinese_title": f"中文标题{position}",
+    translated = [{"id": f"paper_{position}", "chinese_title": f"中文标题{position}",
                    "chinese_summary": "成功译文。", "brief_summary": "成功总结。"} for position in (1, 2)]
 
     def initial_jev(request):
@@ -540,7 +562,7 @@ def test_command_stops_global_jev_failures_but_finishes_translation_and_safe_rul
     def translate(request):
         translation_requests.append(request)
         return 200, model_response([{
-            "id": f"2610.{position:05d}v1", "chinese_title": "成功标题", "chinese_summary": "成功摘要。", "brief_summary": "成功总结。"
+            "id": f"paper_{position}", "chinese_title": "成功标题", "chinese_summary": "成功摘要。", "brief_summary": "成功总结。"
         } for position in (1, 2, 3)])
 
     with service({"/list/cs/new": (200, tagging_listing(*[{"title": f"LLM Agent {position}", "abstract": "English input."} for position in (1, 2, 3)])),
@@ -700,7 +722,7 @@ def test_command_never_implicitly_uses_translation_credentials_for_jev(tmp_path,
         return 403, b"must not share implicit credentials"
 
     with service({"/list/cs/new": (200, listing_response("2610.28637v1")), "/typesafe/v1/systemone": unexpected_jev,
-                  "/v1/chat/completions": (200, model_response([{"id": "2610.28637v1", "chinese_title": "成功标题",
+                  "/v1/chat/completions": (200, model_response([{"id": "paper_1", "chinese_title": "成功标题",
                                                                "chinese_summary": "成功摘要。", "brief_summary": "成功总结。"}]))}) as origin:
         monkeypatch.setenv("ARXIV_LIST_URL", origin + "/list/cs/new")
         monkeypatch.setenv("OPENAI_API_KEY", "translation-fixture-not-a-secret")

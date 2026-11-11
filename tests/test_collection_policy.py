@@ -80,12 +80,12 @@ def test_duplicate_filtering_precedes_models_and_replay_reuses_successes(tmp_pat
     previous_bytes = (tmp_path / "2026-10-15.json").read_bytes()
     current = selected_entries("2610.28637v1", "2610.29003v1")
     current[0]["id"] = "2610.28637"
-    translated_ids, tagged_inputs = [], []
+    translated_inputs, tagged_inputs = [], []
 
     def translate(request):
         batch = json.loads(request["messages"][1]["content"].split("论文资料：\n", 1)[1])
-        translated_ids.extend(paper["id"] for paper in batch)
-        return 200, model_response([{"id": "2610.29003v1", "chinese_title": "新论文",
+        translated_inputs.extend(batch)
+        return 200, model_response([{"id": "paper_1", "chinese_title": "新论文",
                                     "chinese_summary": "摘要", "brief_summary": "总结"}])
 
     def tag(request):
@@ -104,7 +104,7 @@ def test_duplicate_filtering_precedes_models_and_replay_reuses_successes(tmp_pat
     daily = json.loads((tmp_path / "2026-10-22.json").read_text())
     assert [paper["id"] for paper in daily["papers"]] == ["2610.29003v1"]
     assert daily["stats"] == {"fetched": 2, "matched": 1, "translated": 1, "fallback": 0, "duplicates": 1}
-    assert translated_ids == ["2610.29003v1"]
+    assert translated_inputs == [{"id": "paper_1", "title": current[1]["title"], "abstract": current[1]["abstract"]}]
     assert [value["title"] for value in tagged_inputs] == [current[1]["title"]]
     assert (tmp_path / "2026-10-15.json").read_bytes() == previous_bytes
 

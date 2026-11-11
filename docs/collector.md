@@ -34,7 +34,7 @@ uv run --locked python -m pytest tests/test_collector.py
 | `ARXIV_RETRY_ATTEMPTS` | `3` | 来源请求、解析或批次一致性失败后，重试整个批次的最大次数 |
 | `ARXIV_RETRY_DELAY_SECONDS` | `2` | 批次重试初始间隔，后续指数增加 |
 
-凭证由运行环境或 GitHub Secrets 注入。采集器不自动读取、复制或归档 `.env`。日志只输出错误类别和 HTTP 状态，不输出提供商错误正文、请求头或密钥。
+凭证由运行环境或 GitHub Secrets 注入。采集器不自动读取、复制或归档 `.env`。模型诊断日志记录错误类别、HTTP 状态及译文通过数等信息，省略提供商响应正文、请求头和密钥。
 
 线上翻译通过 DMXAPI 调用 `glm-5.3-flash`。GitHub Actions 优先将独立的 `JEV_API_KEY` Secret 注入打标步骤；未设置时，显式复用 `OPENAI_API_KEY` Secret。同一 DMXAPI 账户的 token 仍须允许 Jev 模型及专用接口；若翻译可用但 Jev 返回权限错误，可提供单独的 `JEV_API_KEY` Secret，无须更换翻译配置。本地运行须自行设置 `JEV_API_KEY`。
 
@@ -48,7 +48,7 @@ uv run --locked python -m pytest tests/test_collector.py
 - 分类和 `primaryCategory` 按页面保存，机构未知时为 `[]`。公告日期放入 `source.announcementDate`；页面未提供精确更新时间或论文提交时间，因此 `source.updatedAt`、论文 `publishedAt` 和 `updatedAt` 使用 `null`。保留页面提供的论文 ID 和 HTML 链接，未提供 HTML 链接时为 `null`；不擅自补 `v1`，不逐篇请求 API 或下载 PDF 补元数据。
 - 北京时间周六、周日在来源和模型请求前按正常排期生成 `announcement-schedule` 零篇日报，Actions 成功，发布后 ECS 认定当天完成。完整当日公告仅因专题筛选无命中时也成功生成零篇。非周末的空响应、HTTP 错误、挑战网页、畸形条目或旧批次都失败，不能伪装成零篇；不额外维护节假日日历。
 - 本轮只影响后续首次采集，不重建历史日报。重跑已有日期继续复用归档来源、原始抓取时间和去重统计，不读取今天的新批次，也不因自身已有相同论文而失败。
-- 归档中的完整英文元数据可用于重跑。成功译文不重复请求，未成功项继续尝试；失败始终保留 `fallback` 状态。不会校对翻译内容。
+- 翻译请求使用 `paper_1` 等批内键，采集器用这些键将译文写回原始 arXiv ID。归档中的完整英文元数据可用于重跑。成功译文不重复请求，未成功项继续尝试；失败始终保留 `fallback` 状态。不会校对翻译内容。
 - 标签不扩大入选范围。LLM、Agent 分别按原文 `\bllm`、`\bagent` 匹配，软件工程依据 `cs.SE`；其余六个标签由 Jev 根据英文标题、摘要和分类判断，不读取 PDF。固定名称、边界与展示顺序见 [标签方案](plans/arxiv-daily-tags.md) 和 `shared/daily-tags.json`。
 - 翻译和打标分别缓存。相同英文输入、模型、规则版本及阈值下，成功标签（包括六个细标签均未命中）可复用，普通重跑仅补失败或旧归档缺失的标签。更改上述配置或原文输入会重新打标，不影响已有成功译文。
 - Jev 暂时性错误有限重试。401/402/403/404，或暂时性服务错误、网络错误及超时耗尽重试后，会停止尚未发起的打标请求；已在进行的请求结束后保存结果，不继续逐篇等待失效服务。成功项继续保留，未成功项保留规则标签与 `tagging.status=fallback`，后续重跑可补齐。Actions Summary 分别显示翻译、Jev 成功及规则回退数量；旧归档缺少打标结果时单独计数，不冒充成功。

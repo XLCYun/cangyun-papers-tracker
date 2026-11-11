@@ -4297,5 +4297,35 @@
     "assets": {},
     "publicationStatus": "source-only",
     "publicationNote": "论文当前采用 arXiv 非独占分发许可，尚未确认允许公开分发译文的授权；本站提供研究简介和官方英文原文。"
+  },
+  {
+    "id": "deputybench-2026",
+    "name": "DEPUTYBENCH",
+    "title": "DEPUTYBENCH: Evaluating Contextual Safety in Enterprise Agents",
+    "titleZh": "检验企业 Agent 在授权证据不足时能否停手",
+    "publishedAt": "2026-11-11",
+    "version": "arXiv v1 · 2026.11.09",
+    "authors": [
+      "Hao Zhao",
+      "Minghao Lin"
+    ],
+    "institutions": [
+      "University of Southern California"
+    ],
+    "tags": [
+      "法律合规"
+    ],
+    "summary": "给同一个企业请求配上不同的权限、审批和同意记录，测试 Agent 能否完成获准的工作，并在授权依据不足时停止执行。",
+    "abstract": "DEPUTYBENCH 将 79 个基础任务扩展为 375 个实例，通过成对设置比较 Agent 在不同授权情境下的行为。修订审计后，12 个模型的汇总安全率为 88.0%，配对成功率为 79.1%。在 6 个模型、27 项匹配任务的二次分析中，关键授权证据被隐藏时，受限操作的执行率为 10.3%；明确没有权限时为 3.5%。这类执行主要集中在少数需要核对累计记录或个人同意的隐私任务，不能据此推断模型的内部机制或生产环境的风险。",
+    "sourceUrl": "https://arxiv.org/abs/2611.13355v1",
+    "sourcePdfUrl": "https://arxiv.org/pdf/2611.13355v1",
+    "codeUrl": null,
+    "citation": "Hao Zhao and Minghao Lin (2026). DEPUTYBENCH: Evaluating Contextual Safety in Enterprise Agents. arXiv:2611.13355v1.",
+    "license": "arXiv non-exclusive distribution",
+    "licenseUrl": "https://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+    "translationScope": "正文第 1–8 页，保留局限、结论及代码和数据可用性说明；不含参考文献和附录，译文仅供本地研读",
+    "assets": {},
+    "publicationStatus": "source-only",
+    "publicationNote": "该版本采用 arXiv 非独占分发许可，尚未确认公开分发译文的授权。本站提供研究介绍和官方英文原文。"
   }
 ]

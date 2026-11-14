@@ -4327,5 +4327,44 @@
     "assets": {},
     "publicationStatus": "source-only",
     "publicationNote": "该版本采用 arXiv 非独占分发许可，尚未确认公开分发译文的授权。本站提供研究介绍和官方英文原文。"
+  },
+  {
+    "id": "erosionbench-2026",
+    "name": "ErosionBench",
+    "title": "ErosionBench: Probing Alignment Decay in Enterprise Multi-Agent Systems",
+    "titleZh": "追踪企业多 Agent 系统中的跨会话越权",
+    "publishedAt": "2026-11-10",
+    "version": "arXiv v1 · 2026.11.08",
+    "authors": [
+      "Riya Bharathwaj",
+      "Akshara Prabhakar",
+      "Roshan Ram",
+      "Avni Kothari",
+      "Sarah Tan",
+      "Huan Wang",
+      "Silvio Savarese"
+    ],
+    "institutions": [
+      "Salesforce AI Research",
+      "Georgia Institute of Technology"
+    ],
+    "tags": [
+      "通用评测"
+    ],
+    "summary": "当共享状态、文档和同伴消息跨会话传递时，单条看似正常的信息可能共同促成越权。基准通过实际执行的工具调用核对授权和信息来源。",
+    "abstract": "ErosionBench 在沙箱中构造 1,728 个场景，覆盖量化金融、CI/CD、数据工程和 CRM，另有 198 个与文本版本配对的图像攻击。论文根据实际工具调用、授权条件和信息来源评分，并用配对的正常任务衡量误拒绝。受测的入口防御拒绝了 54%–92% 的正常任务。结合同步状态检查与异步轨迹监控的 Meta-Auditor 在 906 个留出文本场景中达到 98.5% 的召回率和 2.9% 的误报率。上述数值来自论文所用的沙箱和模型配置。",
+    "sourceUrl": "https://arxiv.org/abs/2611.11266v1",
+    "sourcePdfUrl": "https://arxiv.org/pdf/2611.11266v1",
+    "codeUrl": "https://github.com/SalesforceAIResearch/ErosionBench",
+    "citation": "Riya Bharathwaj et al. (2026). ErosionBench: Probing Alignment Decay in Enterprise Multi-Agent Systems. arXiv:2611.11266v1.",
+    "license": "CC BY-NC-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "translationScope": "正文第 1–10 页，保留结论、伦理、可复现性及 AI 使用声明。不含参考文献和附录",
+    "assets": {
+      "enPdf": "https://updates.cyunlab.com/research/enterprise-agent/erosionbench-2026/16abaa57d0fb53d9e09ae92919618c8e76661c02b5f2d2a65257c8d0e221b709/en.pdf",
+      "zhPdf": "https://updates.cyunlab.com/research/enterprise-agent/erosionbench-2026/86ac5cae93715b598ab212a2e471394a54811c26746dda52c1741415413c6b09/zh.pdf",
+      "enMarkdown": "https://updates.cyunlab.com/research/enterprise-agent/erosionbench-2026/4e32a95392af061bfc0f003af5ed0f6e5eb30076bc3beb00a5a0f57a6645fe9b/en.md",
+      "zhMarkdown": "https://updates.cyunlab.com/research/enterprise-agent/erosionbench-2026/26d10cd20f4a403279e8deaba28677d560a42318ead02db863fc7ba499e021f2/zh.md"
+    }
   }
 ]

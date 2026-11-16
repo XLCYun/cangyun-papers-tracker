@@ -4366,5 +4366,41 @@
       "enMarkdown": "https://updates.cyunlab.com/research/enterprise-agent/erosionbench-2026/4e32a95392af061bfc0f003af5ed0f6e5eb30076bc3beb00a5a0f57a6645fe9b/en.md",
       "zhMarkdown": "https://updates.cyunlab.com/research/enterprise-agent/erosionbench-2026/26d10cd20f4a403279e8deaba28677d560a42318ead02db863fc7ba499e021f2/zh.md"
     }
+  },
+  {
+    "id": "outfitterbench-2026",
+    "name": "OutfitterBench",
+    "title": "OutfitterBench: Evaluating LLM Agents on Long-Horizon Resource Allocation and Commitment Coordination",
+    "titleZh": "经营户外装备租赁店，检验长期预订与库存分配",
+    "publishedAt": "2026-11-16",
+    "version": "arXiv v1 · 2026.11.13",
+    "authors": [
+      "Jie Huang",
+      "Yuecheng Hong",
+      "Yao Chen",
+      "Shengding Jiao",
+      "Xudong Liu",
+      "Qiang Ye"
+    ],
+    "institutions": [
+      "Harbin Institute of Technology",
+      "Peking University",
+      "University of Science and Technology of China"
+    ],
+    "tags": [
+      "经营模拟"
+    ],
+    "summary": "让 Agent 在设备资金有限的情况下协调未来预订和临时租赁，观察它能否兑现已有承诺，并随着需求变化重新分配装备。",
+    "abstract": "OutfitterBench 模拟一家户外装备租赁店。Agent 在 200 天内从 46 种商品中采购装备，并处理约 1,100 笔预订请求。预订和临时客户共用库存，装备归还后还需留出清洁与维护时间。经营期结束后有 14 天自动结算，按现金、可转售装备价值和未清负债衡量经营结果。在七个受测模型中，只有表现最好的 Agent 在两个模拟设定下都超过了规则基线。轨迹分析发现，一些 Agent 作新决定时会忽略已有预订，即使履约更稳定，也可能错过收益更高的装备安排。每个模型在每种设定下只运行一次，排名的稳定性仍有待检验。",
+    "sourceUrl": "https://arxiv.org/abs/2611.17933v1",
+    "sourcePdfUrl": "https://arxiv.org/pdf/2611.17933v1",
+    "codeUrl": "https://github.com/adminblackjack/OutfitterBench",
+    "citation": "Jie Huang et al. (2026). OutfitterBench: Evaluating LLM Agents on Long-Horizon Resource Allocation and Commitment Coordination. arXiv:2611.17933v1.",
+    "license": "arXiv non-exclusive distribution",
+    "licenseUrl": "https://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+    "translationScope": "正文第 1–12 页，保留结论和局限，裁去末页右栏参考文献，排除附录",
+    "assets": {},
+    "publicationStatus": "source-only",
+    "publicationNote": "该版本采用 arXiv 非独占分发许可。页面提供官方英文 PDF，中文译文供本地研读。"
   }
 ]

@@ -2228,32 +2228,38 @@
   {
     "id": "atlas-finance-2026",
     "name": "ATLAS-Finance",
-    "documentType": "report",
-    "title": "ATLAS-Finance: Evaluating AI Agents Inside a Bank",
+    "title": "ATLAS-Finance: Benchmarking AI Agents in Realistic Banking Environments",
     "titleZh": "在银行工作环境中搜集上下文并交付金融模型",
     "publishedAt": "2026-09-14",
-    "version": "官方网页报告 · 2026.09.17 更新（2026.10.21 核验）",
+    "version": "arXiv v1 · 2026.11.17（此前已有官方报告）",
     "authors": [
-      "Handshake"
+      "Elaine Lau",
+      "Antoine Pangas",
+      "Alexandre Finot",
+      "Collin Schweiker",
+      "Amir Bouzidi",
+      "Hui Wen Goh",
+      "Andrew Peter Martin",
+      "Jonas Mueller"
     ],
     "institutions": [
-      "Handshake"
+      "Handshake AI"
     ],
     "tags": [
       "财务金融",
       "办公协作"
     ],
-    "summary": "把 Agent 放进包含邮箱、聊天、网盘、日历和笔记的金融机构环境，要求其找齐分散的业务依据、处理相互冲突的信息，并交付符合要求的财务模型和文件。",
-    "abstract": "ATLAS-Finance 包含 13 个金融机构环境中的 100 项专家任务，覆盖九个行业和二十余种分析方法。Agent 在 Linux 工作站上通过 MCP 访问多种办公应用，整理上下文、吸收任务中途更新，并制作金融分析交付物。专家制定的评分规则检查财务逻辑、范围、公式和交付要求；通过任务须满足全部关键条款且没有触发惩罚项。报告分析指出，完整且可计算的工作簿仍可能采用错误假设，或遗漏下游依赖。当前发布形态为官方网页报告、代码和数据，独立论文仍待发布。",
-    "sourceUrl": "https://joinhandshake.com/research/benchmarks/articles/atlas-finance-evaluating-ai-agents-inside-a-bank/",
-    "sourcePdfUrl": null,
+    "summary": "让 Agent 从邮件、聊天和文件中找齐需求、处理矛盾与更新，再交付可计算的金融模型，检验它能否独立完成投行业务。",
+    "abstract": "ATLAS-Finance 包含 13 家模拟金融机构中的 100 项投行任务，由有实际交易经验的银行从业者设计。Agent 需要从邮箱、聊天、日历、笔记和文件中搜集分散信息，处理冲突或中途更新，并制作金融模型。专家评分规则检查财务逻辑、表格构建、完整性与格式，每项任务的评分条件中位数为 124.5 条。论文 v1 中表现最好的模型通过率仍低于 11%。部分交付物虽然外观完整，却采用了错误假设或遗漏关键依赖。",
+    "sourceUrl": "https://arxiv.org/abs/2611.22085v1",
+    "sourcePdfUrl": "https://arxiv.org/pdf/2611.22085v1",
     "codeUrl": "https://github.com/Handshake-AI-Research/ATLAS-Finance",
-    "citation": "Handshake (2026). ATLAS-Finance: Evaluating AI Agents Inside a Bank. Official benchmark report. https://joinhandshake.com/research/benchmarks/articles/atlas-finance-evaluating-ai-agents-inside-a-bank/",
-    "license": "未确认公开改编许可",
-    "licenseUrl": "https://joinhandshake.com/research/benchmarks/articles/atlas-finance-evaluating-ai-agents-inside-a-bank/",
-    "translationScope": "官方网页报告，未发现已发布的独立报告 PDF；暂无全文译本",
+    "citation": "Elaine Lau et al. (2026). ATLAS-Finance: Benchmarking AI Agents in Realistic Banking Environments. arXiv:2611.22085v1.",
+    "license": "arXiv non-exclusive distribution",
+    "licenseUrl": "https://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+    "translationScope": "正文第 1–12 页，保留局限的续段，在致谢前裁切，排除参考文献和附录",
     "publicationStatus": "source-only",
-    "publicationNote": "官方网页报告尚未发布独立论文 PDF，页面未标明允许公开转载及翻译的许可；本页提供原创介绍和官方入口。",
+    "publicationNote": "该版本采用 arXiv 非独占分发许可。页面提供官方英文 PDF，中文正文译本供本地研读。",
     "assets": {}
   },
   {
@@ -4402,5 +4408,74 @@
     "assets": {},
     "publicationStatus": "source-only",
     "publicationNote": "该版本采用 arXiv 非独占分发许可。页面提供官方英文 PDF，中文译文供本地研读。"
+  },
+  {
+    "id": "officeprism-2026",
+    "name": "OfficePrism",
+    "title": "OfficePrism: Benchmarking Agents on Single-Domain Operations Across Enterprise Business Functions",
+    "titleZh": "逐项检验企业各业务职能内的操作能力",
+    "publishedAt": "2026-11-18",
+    "version": "arXiv v1 · 2026.11.17",
+    "authors": [
+      "Hanfeng Liu",
+      "Zhenyu Luo",
+      "Dongchao Zhang",
+      "Zexi Liu",
+      "Zulong Chen",
+      "Jinxin Hu",
+      "Jia Xu",
+      "Zeyi Wen"
+    ],
+    "institutions": [
+      "Alibaba Group",
+      "HKUST(GZ)",
+      "Alibaba International Digital Commerce Group",
+      "Guangzhou University"
+    ],
+    "tags": [
+      "办公协作"
+    ],
+    "summary": "每项任务限定在一个企业业务职能内，用自然语言答复和数据库最终状态共同检验 Agent 是否完成工作。",
+    "abstract": "OfficePrism 构造了 420 项中文企业任务，覆盖行政、财务、人力资源、IT、法务、采购和项目工作七个职能，并用共同的 L1–L3 标准区分任务结构。任务基于同一个合成组织，每次在独立环境中执行。论文比较直接提供完整工具定义与搜索后调用工具两种接口。在 124 种模型、执行框架及接口组合中，联合答复与数据库状态的通过率为 22.6%–76.4%，中位数为 67.9%。搜索接口在 50 个匹配组合中有 30 个得分更高，也有 19 个更低。",
+    "sourceUrl": "https://arxiv.org/abs/2611.22262v1",
+    "sourcePdfUrl": "https://arxiv.org/pdf/2611.22262v1",
+    "codeUrl": "https://github.com/Leozyu/OfficePrism",
+    "citation": "Hanfeng Liu et al. (2026). OfficePrism: Benchmarking Agents on Single-Domain Operations Across Enterprise Business Functions. arXiv:2611.22262v1.",
+    "license": "arXiv non-exclusive distribution",
+    "licenseUrl": "https://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+    "translationScope": "正文第 1–8 页，保留局限与结论，排除致谢、参考文献和附录",
+    "publicationStatus": "source-only",
+    "publicationNote": "该版本采用 arXiv 非独占分发许可。页面提供官方英文 PDF，中文正文译本供本地研读。",
+    "assets": {}
+  },
+  {
+    "id": "mango-arena-2026",
+    "name": "MANGO Arena",
+    "title": "MANGO Arena: Same Seeds, Different Chains Evaluating LLM Agents in a Disrupted Supply Chain",
+    "titleZh": "在供应链中断下，比较多 Agent 订货与规则遵循",
+    "publishedAt": "2026-11-19",
+    "version": "arXiv v1 · 2026.11.17",
+    "authors": [
+      "Sara Amar"
+    ],
+    "institutions": [
+      "Bowling Green State University"
+    ],
+    "tags": [
+      "供应链",
+      "经营模拟"
+    ],
+    "summary": "让四个 Agent 分别经营供应链中的一家公司，观察中断后的订货放大、规则遵循，以及相同随机种子下的结果波动。",
+    "abstract": "MANGO Arena 将课堂供应链游戏改造成多 Agent 测试环境，设置运力、现金和产能约束，并记录违规尝试和沟通内容。试验比较三个小型推理模型、两种规则策略、供应商火灾与正常运行两种条件，以及三个需求种子。Agent 的订货使需求波动向上游放大。评测还发现，API 失败曾被默认为不下单，相同种子重新运行且没有失败请求时，上游牛鞭效应仍可相差最高 17 倍。论文因此强调记录失败调用、报告重复运行的变动范围。",
+    "sourceUrl": "https://arxiv.org/abs/2611.23613v1",
+    "sourcePdfUrl": "https://arxiv.org/pdf/2611.23613v1",
+    "codeUrl": "https://doi.org/10.5281/zenodo.24325448",
+    "citation": "Sara Amar (2026). MANGO Arena: Same Seeds, Different Chains Evaluating LLM Agents in a Disrupted Supply Chain. arXiv:2611.23613v1.",
+    "license": "arXiv non-exclusive distribution",
+    "licenseUrl": "https://arxiv.org/licenses/nonexclusive-distrib/1.0/",
+    "translationScope": "正文第 1–7 页，保留局限、未来工作与代码数据说明，在参考文献前裁切，排除后续附录",
+    "publicationStatus": "source-only",
+    "publicationNote": "该版本采用 arXiv 非独占分发许可。页面提供官方英文 PDF，中文正文译本供本地研读。",
+    "assets": {}
   }
 ]

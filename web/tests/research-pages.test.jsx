@@ -373,8 +373,12 @@ test("benchmark source-only papers and reports keep their original publication b
   expect(within(entworld).getByRole("link", { name: "在新窗口预览 EntWorld 英文原文 PDF" })).toHaveAttribute("href", "https://arxiv.org/pdf/2601.17722v1");
   expect(within(entworld).queryByRole("link", { name: /中文正文 PDF/ })).not.toBeInTheDocument();
   expect(within(entworld).queryByRole("link", { name: "中文 Markdown" })).not.toBeInTheDocument();
-  await user.click(screen.getByRole("button", { name: "展开 ATLAS-Finance 的报告详情" }));
-  const report = screen.getByRole("region", { name: "ATLAS-Finance" });
+  await user.click(screen.getByRole("button", { name: "展开 ATLAS-Finance 的论文详情" }));
+  const atlas = screen.getByRole("region", { name: "ATLAS-Finance" });
+  expect(within(atlas).getByRole("link", { name: "在新窗口预览 ATLAS-Finance 英文原文 PDF" })).toHaveAttribute("href", "https://arxiv.org/pdf/2611.22085v1");
+  expect(within(atlas).queryByRole("link", { name: /中文正文 PDF/ })).not.toBeInTheDocument();
+  await user.click(screen.getByRole("button", { name: "展开 Vending-Bench 2 的报告详情" }));
+  const report = screen.getByRole("region", { name: "Vending-Bench 2" });
   expect(within(report).getByRole("link", { name: "官方报告" })).toBeVisible();
   expect(within(report).queryByRole("link", { name: /PDF/ })).not.toBeInTheDocument();
 });

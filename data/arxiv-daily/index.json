@@ -1,7 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-24T16:31:42.621554+08:00",
+  "updatedAt": "2026-11-25T13:31:47.381788+08:00",
   "days": [
+    {
+      "date": "2026-11-25",
+      "count": 266,
+      "sha256": "a7fae5b1d2dab33092d986e9d6cf608776d5709da9e3839079d5bdef648d96a3",
+      "file": "2026-11-25/a7fae5b1d2dab33092d986e9d6cf608776d5709da9e3839079d5bdef648d96a3.json"
+    },
     {
       "date": "2026-11-24",
       "count": 418,
